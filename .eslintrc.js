@@ -4,7 +4,7 @@ module.exports = {
         "es6": true,
         "jest/globals": true
     },
-    "extends": ["eslint:recommended"],
+    "extends": ["eslint:recommended", "airbnb-base"],
     "parser": "babel-eslint",
     "parserOptions": {
         "ecmaFeatures": {
@@ -15,33 +15,16 @@ module.exports = {
     "plugins": [
         "jest"
     ],
+    "settings": {
+        "import/resolver": {
+            "webpack": {
+                "config": "webpack.config.js"
+            }
+        }
+    },
     "rules": {
-        "indent": [
-            "error",
-            2,
-            {
-                "SwitchCase": 1
-            }
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "single"
-        ],
-        "semi": [
-            "error",
-            "never"
-        ],
-        "no-unused-vars": [
-            "error",
-            {
-                "vars": "all",
-                "args": "after-used",
-                "ignoreRestSiblings": true
-            }
-        ]
+        "no-plusplus": "off",
+        "no-nested-ternary": "off",
+        "no-underscore-dangle": ["error", { "allowAfterThis": true }]
     }
 };

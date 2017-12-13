@@ -1,36 +1,36 @@
 export default function validateSource(options) {
   switch (options.sourceType) {
     case 'current-canvas':
-      return
+      return;
 
     case 'canvas':
       if (
         !(options.source instanceof HTMLElement) ||
         options.source.tagName !== 'CANVAS'
       ) {
-        throw new Error('PhotoEditor source for sourceType "canvas" should be a canvas')
+        throw new Error('PhotoEditor source for sourceType "canvas" should be a canvas');
       }
 
-      return
+      return;
 
     case 'img':
       if (
         !(options.source instanceof HTMLElement) ||
         options.source.tagName !== 'IMG'
       ) {
-        throw new Error('PhotoEditor source for sourceType "img" should be an image')
+        throw new Error('PhotoEditor source for sourceType "img" should be an image');
       }
 
-      return
+      return;
 
     case 'base64':
       if (typeof options.source !== 'string') {
-        throw new Error('PhotoEditor source for sourceType "base64" should be a string')
+        throw new Error('PhotoEditor source for sourceType "base64" should be a string');
       }
 
-      return
+      return;
 
     default:
-      throw new Error('"sourceType" should be one of: "current-canvas", "canvas", "img", "base64"')
+      throw new Error('"sourceType" should be one of: "current-canvas", "canvas", "img", "base64"');
   }
 }

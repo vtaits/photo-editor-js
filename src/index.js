@@ -1,1 +1,2 @@
-export {default as PhotoEditor} from './PhotoEditor'
+/* eslint-disable import/prefer-default-export */
+export { default as PhotoEditor } from './PhotoEditor';
