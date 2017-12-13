@@ -30,17 +30,17 @@
   },
   "homepage": "https://github.com/vtaits/photo-editor-js#readme",
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-eslint": "^7.2.3",
-    "babel-jest": "^20.0.3",
-    "babel-loader": "^7.1.1",
-    "babel-preset-es2015": "^6.24.1",
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.3",
+    "babel-jest": "^21.2.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
     "babel-preset-stage-2": "^6.24.1",
-    "cross-env": "^5.0.1",
-    "eslint": "^4.2.0",
-    "eslint-plugin-jest": "^20.0.3",
-    "jest": "^20.0.4",
+    "cross-env": "^5.1.1",
+    "eslint": "^4.13.1",
+    "eslint-plugin-jest": "^21.4.2",
+    "jest": "^21.2.1",
     "path": "^0.12.7",
-    "webpack": "^3.1.0"
+    "webpack": "^3.10.0"
   }
 }
