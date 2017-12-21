@@ -1,4 +1,5 @@
 class Tool {
+  el = null;
   enabled = false;
   pushState = null;
 
@@ -11,9 +12,20 @@ class Tool {
       throw new Error('Tool options can\'t be null');
     }
 
+    if (
+      !(options.el instanceof HTMLElement) ||
+      options.el.tagName !== 'CANVAS'
+    ) {
+      throw new Error('Element for init Tool should be a canvas');
+    }
+
+    this.el = options.el;
+
     if (typeof options.pushState !== 'function') {
       throw new Error('Tool option "pushState" should be a function');
     }
+
+    this.pushState = options.pushState;
   }
 
   disable() {

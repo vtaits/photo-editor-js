@@ -1,6 +1,7 @@
 import Tool from '../Tool';
 
 const toolOptions = {
+  el: document.createElement('canvas'),
   pushState: () => {},
 };
 
@@ -19,9 +20,18 @@ test('should throw an exception if options is null', () => {
     .toThrowError('Tool options can\'t be null');
 });
 
-test('should throw an exception if pushState is not a function', () => {
+test('should throw an exception if element is not canvas', () => {
   expect(() => {
     new Tool({});
+  })
+    .toThrowError('Element for init Tool should be a canvas');
+});
+
+test('should throw an exception if pushState is not a function', () => {
+  expect(() => {
+    new Tool({
+      el: document.createElement('canvas'),
+    });
   })
     .toThrowError('Tool option "pushState" should be a function');
 });
