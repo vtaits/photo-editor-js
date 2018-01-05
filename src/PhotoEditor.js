@@ -12,6 +12,8 @@ class PhotoEditor {
   _currentState = -1;
   _states = [];
 
+  _enabledToolId = null;
+
   tools = {};
 
   constructor(el, editorOptions) {
@@ -73,6 +75,28 @@ class PhotoEditor {
 
   getCurrentState() {
     return this._states[this._currentState];
+  }
+
+  enableTool(toolId) {
+    if (!this.tools[toolId]) {
+      throw new Error(`PhotoEditor tool with id "${toolId}" is not defined`);
+    }
+
+    if (this._enabledToolId) {
+      this.tools[this._enabledToolId].disable();
+    }
+
+    this._enabledToolId = toolId;
+
+    this.tools[toolId].enable();
+  }
+
+  disableTool = () => {
+    if (this._enabledToolId) {
+      this.tools[this._enabledToolId].disable();
+    }
+
+    this._enabledToolId = null;
   }
 }
 

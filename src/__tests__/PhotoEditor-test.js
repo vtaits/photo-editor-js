@@ -135,6 +135,7 @@ test('should set correct initial state and init tools', async () => {
 
   expect(photoEditor._el).toEqual(el);
   expect(photoEditor._options).toEqual(options);
+  expect(photoEditor._enabledToolId).toEqual(null);
 
   await PhotoEditor.prototype._init.call(photoEditor);
 
@@ -229,4 +230,50 @@ test('should return correct currentState with getCurrentState', () => {
   photoEditor._pushState('data:image/png;base64,test5');
 
   expect(photoEditor.getCurrentState()).toBe('data:image/png;base64,test5');
+});
+
+test('should enable tool', () => {
+  const el = document.createElement('canvas');
+  const options = {
+    tools: {
+      tool1: Tool,
+      tool2: Tool,
+    },
+    sourceType: 'base64',
+    source: 'data:image/png;base64,test',
+  };
+
+  const photoEditor = new SyncPhotoEditor(el, options);
+
+  photoEditor.enableTool('tool1');
+
+  expect(photoEditor._enabledToolId).toBe('tool1');
+  expect(photoEditor.tools.tool1.enabled).toBe(true);
+  expect(photoEditor.tools.tool2.enabled).toBe(false);
+
+  photoEditor.enableTool('tool2');
+  expect(photoEditor._enabledToolId).toBe('tool2');
+  expect(photoEditor.tools.tool1.enabled).toBe(false);
+  expect(photoEditor.tools.tool2.enabled).toBe(true);
+});
+
+test('should disable enabled tool', () => {
+  const el = document.createElement('canvas');
+  const options = {
+    tools: {
+      tool1: Tool,
+      tool2: Tool,
+    },
+    sourceType: 'base64',
+    source: 'data:image/png;base64,test',
+  };
+
+  const photoEditor = new SyncPhotoEditor(el, options);
+
+  photoEditor.enableTool('tool1');
+  photoEditor.disableTool();
+
+  expect(photoEditor._enabledToolId).toBe(null);
+  expect(photoEditor.tools.tool1.enabled).toBe(false);
+  expect(photoEditor.tools.tool2.enabled).toBe(false);
 });
