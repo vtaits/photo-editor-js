@@ -137,6 +137,7 @@ test('should set correct initial state and init tools', async () => {
   expect(photoEditor._options).toEqual(options);
   expect(photoEditor._enabledToolId).toEqual(null);
   expect(photoEditor._touched).toEqual(false);
+  expect(photoEditor._destroyed).toEqual(false);
 
   await PhotoEditor.prototype._init.call(photoEditor);
 
@@ -361,4 +362,37 @@ test('should set next state on undo call', () => {
   expect(photoEditor._enabledToolId).toBe(null);
   expect(photoEditor._currentState).toBe(2);
   expect(photoEditor._drawCurrentState.mock.calls.length).toBe(1);
+});
+
+test('should set destroyed state and destroy all tools', async () => {
+  const tool1DestroyMock = jest.fn();
+  const tool2DestroyMock = jest.fn();
+
+  class Tool1 extends Tool {
+    onBeforeDestroy = tool1DestroyMock;
+  }
+
+  class Tool2 extends Tool {
+    onBeforeDestroy = tool2DestroyMock;
+  }
+
+  const el = document.createElement('canvas');
+  const options = {
+    tools: {
+      tool1: Tool1,
+      tool2: Tool2,
+    },
+    sourceType: 'base64',
+    source: 'data:image/png;base64,test',
+  };
+
+  const photoEditor = new SyncPhotoEditor(el, options);
+
+  expect(tool1DestroyMock.mock.calls.length).toBe(0);
+  expect(tool2DestroyMock.mock.calls.length).toBe(0);
+
+  photoEditor.destroy();
+
+  expect(tool1DestroyMock.mock.calls.length).toBe(1);
+  expect(tool2DestroyMock.mock.calls.length).toBe(1);
 });

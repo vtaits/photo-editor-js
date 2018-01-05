@@ -16,6 +16,8 @@ class PhotoEditor {
   _enabledToolId = null;
   _touched = false;
 
+  _destroyed = false;
+
   tools = {};
 
   constructor(el, editorOptions) {
@@ -85,11 +87,26 @@ class PhotoEditor {
 
     await waitForImageComplete(image);
 
+    if (this._destroyed) {
+      return;
+    }
+
     this._el.width = image.naturalWidth;
     this._el.height = image.naturalHeight;
 
     const ctx = this._el.getContext('2d');
     ctx.drawImage(image, 0, 0);
+  }
+
+  destroy() {
+    this._destroyed = true;
+
+    Object.keys(this.tools)
+      .forEach((toolId) => {
+        const tool = this.tools[toolId];
+
+        tool.destroy();
+      });
   }
 
   getCurrentState() {
