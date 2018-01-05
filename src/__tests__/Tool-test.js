@@ -107,4 +107,18 @@ test('should call hooks on disable tool', () => {
   expect(mockFnBefore.mock.calls.length).toEqual(1);
   expect(mockFnAfter.mock.calls.length).toEqual(1);
 });
+
+test('should call hook on destroy tool', () => {
+  const mockFnDestroy = jest.fn();
+
+  class CustomTool extends Tool {
+    onBeforeDestroy = mockFnDestroy;
+  }
+
+  const tool = new CustomTool(toolOptions);
+
+  tool.destroy();
+
+  expect(mockFnDestroy.mock.calls.length).toEqual(1);
+});
 /* eslint-enable no-new */

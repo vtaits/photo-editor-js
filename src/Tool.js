@@ -52,6 +52,12 @@ class Tool {
     }
   }
 
+  destroy() {
+    if (this.onBeforeDestroy) {
+      this.onBeforeDestroy();
+    }
+  }
+
   // eslint-disable-next-line class-methods-use-this
   reset() {
 
