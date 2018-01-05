@@ -1,20 +1,8 @@
 // TO DO: tests
 
+import waitForImageComplete from './waitForImageComplete';
+
 const emptyImageWarning = 'PhotoEditor: source image is loaded with error';
-
-/* eslint-disable no-param-reassign */
-export function waitForImageComplete(image) {
-  return new Promise((resolve, reject) => {
-    image.onload = () => {
-      resolve();
-    };
-
-    image.onerror = () => {
-      reject();
-    };
-  });
-}
-/* eslint-enable no-param-reassign */
 
 export async function imageToBase64(image) {
   if (image.complete) {

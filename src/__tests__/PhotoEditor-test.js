@@ -136,6 +136,7 @@ test('should set correct initial state and init tools', async () => {
   expect(photoEditor._el).toEqual(el);
   expect(photoEditor._options).toEqual(options);
   expect(photoEditor._enabledToolId).toEqual(null);
+  expect(photoEditor._touched).toEqual(false);
 
   await PhotoEditor.prototype._init.call(photoEditor);
 
@@ -276,4 +277,30 @@ test('should disable enabled tool', () => {
   expect(photoEditor._enabledToolId).toBe(null);
   expect(photoEditor.tools.tool1.enabled).toBe(false);
   expect(photoEditor.tools.tool2.enabled).toBe(false);
+});
+
+test('should set touched state', () => {
+  const el = document.createElement('canvas');
+  const options = {
+    tools: {
+      tool1: Tool,
+      tool2: Tool,
+    },
+    sourceType: 'base64',
+    source: 'data:image/png;base64,test',
+  };
+
+  const photoEditor = new SyncPhotoEditor(el, options);
+
+  photoEditor._drawCurrentState = jest.fn();
+
+  photoEditor.enableTool('tool1');
+  photoEditor.touch();
+
+  expect(photoEditor._touched).toBe(true);
+
+  photoEditor.disableTool();
+
+  expect(photoEditor._touched).toBe(false);
+  expect(photoEditor._drawCurrentState.mock.calls.length).toBe(1);
 });

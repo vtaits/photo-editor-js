@@ -1,6 +1,7 @@
 import getInitialState from './getInitialState';
 import validateOptions from './validateOptions';
 import Tool from './Tool';
+import waitForImageComplete from './waitForImageComplete';
 
 const defaultOptions = {
   sourceType: 'current-canvas',
@@ -13,6 +14,7 @@ class PhotoEditor {
   _states = [];
 
   _enabledToolId = null;
+  _touched = false;
 
   tools = {};
 
@@ -73,6 +75,23 @@ class PhotoEditor {
     this._states = slicedStates;
   }
 
+  async _drawCurrentState() {
+    // TO DO: test
+    const base64 = this.getCurrentState();
+
+    const image = new Image();
+
+    image.src = base64;
+
+    await waitForImageComplete(image);
+
+    this._el.width = image.naturalWidth;
+    this._el.height = image.naturalHeight;
+
+    const ctx = this._el.getContext('2d');
+    ctx.drawImage(image, 0, 0);
+  }
+
   getCurrentState() {
     return this._states[this._currentState];
   }
@@ -82,9 +101,7 @@ class PhotoEditor {
       throw new Error(`PhotoEditor tool with id "${toolId}" is not defined`);
     }
 
-    if (this._enabledToolId) {
-      this.tools[this._enabledToolId].disable();
-    }
+    this.disableTool();
 
     this._enabledToolId = toolId;
 
@@ -94,9 +111,19 @@ class PhotoEditor {
   disableTool = () => {
     if (this._enabledToolId) {
       this.tools[this._enabledToolId].disable();
-    }
 
-    this._enabledToolId = null;
+      if (this._touched) {
+        this._drawCurrentState();
+      }
+
+      this._touched = false;
+
+      this._enabledToolId = null;
+    }
+  }
+
+  touch = () => {
+    this._touched = true;
   }
 }
 
