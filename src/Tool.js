@@ -2,6 +2,8 @@ class Tool {
   el = null;
   enabled = false;
   pushState = null;
+  touch = null;
+  disable = null;
 
   constructor(options) {
     if (typeof options !== 'object') {
@@ -26,9 +28,21 @@ class Tool {
     }
 
     this.pushState = options.pushState;
+
+    if (typeof options.disable !== 'function') {
+      throw new Error('Tool option "disable" should be a function');
+    }
+
+    this.disable = options.disable;
+
+    if (typeof options.touch !== 'function') {
+      throw new Error('Tool option "touch" should be a function');
+    }
+
+    this.touch = options.touch;
   }
 
-  disable() {
+  disableFromEditor() {
     if (this.onBeforeDisable) {
       this.onBeforeDisable();
     }
@@ -40,7 +54,7 @@ class Tool {
     }
   }
 
-  enable() {
+  enableFromEditor() {
     if (this.onBeforeEnable) {
       this.onBeforeEnable();
     }

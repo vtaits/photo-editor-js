@@ -59,6 +59,8 @@ class PhotoEditor {
         const tool = new ToolConstructor({
           el: this._el,
           pushState: this._pushState,
+          disable: this.disableTool,
+          touch: this.touch,
         });
 
         if (!(tool instanceof Tool)) {
@@ -122,12 +124,12 @@ class PhotoEditor {
 
     this._enabledToolId = toolId;
 
-    this.tools[toolId].enable();
+    this.tools[toolId].enableFromEditor();
   }
 
   disableTool = () => {
     if (this._enabledToolId) {
-      this.tools[this._enabledToolId].disable();
+      this.tools[this._enabledToolId].disableFromEditor();
 
       if (this._touched) {
         this._drawCurrentState();

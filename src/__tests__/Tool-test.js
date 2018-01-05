@@ -3,6 +3,8 @@ import Tool from '../Tool';
 const toolOptions = {
   el: document.createElement('canvas'),
   pushState: () => {},
+  disable: () => {},
+  touch: () => {},
 };
 
 /* eslint-disable no-new */
@@ -36,6 +38,27 @@ test('should throw an exception if pushState is not a function', () => {
     .toThrowError('Tool option "pushState" should be a function');
 });
 
+test('should throw an exception if disable is not a function', () => {
+  expect(() => {
+    new Tool({
+      el: document.createElement('canvas'),
+      pushState: () => {},
+    });
+  })
+    .toThrowError('Tool option "disable" should be a function');
+});
+
+test('should throw an exception if touch is not a function', () => {
+  expect(() => {
+    new Tool({
+      el: document.createElement('canvas'),
+      pushState: () => {},
+      disable: () => {},
+    });
+  })
+    .toThrowError('Tool option "touch" should be a function');
+});
+
 test('should be disabled after init', () => {
   const tool = new Tool(toolOptions);
 
@@ -45,7 +68,7 @@ test('should be disabled after init', () => {
 test('should enable tool', () => {
   const tool = new Tool(toolOptions);
 
-  tool.enable();
+  tool.enableFromEditor();
 
   expect(tool.enabled).toEqual(true);
 });
@@ -68,7 +91,7 @@ test('should call hooks on enable tool', () => {
 
   const tool = new CustomTool(toolOptions);
 
-  tool.enable();
+  tool.enableFromEditor();
 
   expect(mockFnBefore.mock.calls.length).toEqual(1);
   expect(mockFnAfter.mock.calls.length).toEqual(1);
@@ -77,13 +100,13 @@ test('should call hooks on enable tool', () => {
 test('should disable tool', () => {
   const tool = new Tool(toolOptions);
 
-  tool.enable();
-  tool.disable();
+  tool.enableFromEditor();
+  tool.disableFromEditor();
 
   expect(tool.enabled).toEqual(false);
 });
 
-test('should call hooks on disable tool', () => {
+test('should call hooks on disableFromEditor tool', () => {
   const mockFnBefore = jest.fn();
   const mockFnAfter = jest.fn();
 
@@ -101,8 +124,8 @@ test('should call hooks on disable tool', () => {
 
   const tool = new CustomTool(toolOptions);
 
-  tool.enable();
-  tool.disable();
+  tool.enableFromEditor();
+  tool.disableFromEditor();
 
   expect(mockFnBefore.mock.calls.length).toEqual(1);
   expect(mockFnAfter.mock.calls.length).toEqual(1);
