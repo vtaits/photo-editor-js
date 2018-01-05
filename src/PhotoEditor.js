@@ -125,6 +125,26 @@ class PhotoEditor {
   touch = () => {
     this._touched = true;
   }
+
+  undo() {
+    if (this._currentState > 0) {
+      --this._currentState;
+
+      this.disableTool();
+
+      this._drawCurrentState();
+    }
+  }
+
+  redo() {
+    if (this._currentState < this._states.length - 1) {
+      ++this._currentState;
+
+      this.disableTool();
+
+      this._drawCurrentState();
+    }
+  }
 }
 
 export default PhotoEditor;

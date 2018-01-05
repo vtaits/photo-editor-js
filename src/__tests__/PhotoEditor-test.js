@@ -304,3 +304,61 @@ test('should set touched state', () => {
   expect(photoEditor._touched).toBe(false);
   expect(photoEditor._drawCurrentState.mock.calls.length).toBe(1);
 });
+
+test('should set previous state on undo call', () => {
+  const el = document.createElement('canvas');
+  const options = {
+    tools: {
+      tool1: Tool,
+      tool2: Tool,
+    },
+    sourceType: 'base64',
+    source: 'data:image/png;base64,test',
+  };
+
+  const photoEditor = new SyncPhotoEditor(el, options);
+  photoEditor._drawCurrentState = jest.fn();
+
+  photoEditor.enableTool('tool1');
+
+  photoEditor._pushState('data:image/png;base64,test2');
+  photoEditor._pushState('data:image/png;base64,test3');
+  photoEditor._pushState('data:image/png;base64,test4');
+  photoEditor._pushState('data:image/png;base64,test5');
+
+  photoEditor.undo();
+
+  expect(photoEditor._enabledToolId).toBe(null);
+  expect(photoEditor._currentState).toBe(3);
+  expect(photoEditor._drawCurrentState.mock.calls.length).toBe(1);
+});
+
+test('should set next state on undo call', () => {
+  const el = document.createElement('canvas');
+  const options = {
+    tools: {
+      tool1: Tool,
+      tool2: Tool,
+    },
+    sourceType: 'base64',
+    source: 'data:image/png;base64,test',
+  };
+
+  const photoEditor = new SyncPhotoEditor(el, options);
+  photoEditor._drawCurrentState = jest.fn();
+
+  photoEditor.enableTool('tool1');
+
+  photoEditor._pushState('data:image/png;base64,test2');
+  photoEditor._pushState('data:image/png;base64,test3');
+  photoEditor._pushState('data:image/png;base64,test4');
+  photoEditor._pushState('data:image/png;base64,test5');
+
+  photoEditor._currentState = 1;
+
+  photoEditor.redo();
+
+  expect(photoEditor._enabledToolId).toBe(null);
+  expect(photoEditor._currentState).toBe(2);
+  expect(photoEditor._drawCurrentState.mock.calls.length).toBe(1);
+});
