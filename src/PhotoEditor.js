@@ -1,3 +1,5 @@
+import { EventEmitter } from 'fbemitter';
+
 import getInitialState from './getInitialState';
 import validateOptions from './validateOptions';
 import Tool from './Tool';
@@ -7,7 +9,7 @@ const defaultOptions = {
   sourceType: 'current-canvas',
 };
 
-class PhotoEditor {
+class PhotoEditor extends EventEmitter {
   _el = null;
   _options = null;
   _currentState = -1;
@@ -21,6 +23,8 @@ class PhotoEditor {
   tools = {};
 
   constructor(el, editorOptions) {
+    super();
+
     const options = {
       ...defaultOptions,
       ...editorOptions,
@@ -45,6 +49,8 @@ class PhotoEditor {
     this._states = [initialState];
 
     this._initTools();
+
+    this.emit('ready');
   }
 
   _initTools() {
@@ -125,11 +131,15 @@ class PhotoEditor {
     this._enabledToolId = toolId;
 
     this.tools[toolId].enableFromEditor();
+
+    this.emit('enableTool', toolId);
   }
 
   disableTool = () => {
     if (this._enabledToolId) {
       this.tools[this._enabledToolId].disableFromEditor();
+
+      this.emit('disableTool', this._enabledToolId);
 
       if (this._touched) {
         this._drawCurrentState();

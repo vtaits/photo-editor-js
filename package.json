@@ -45,5 +45,8 @@
     "jest": "^21.2.1",
     "path": "^0.12.7",
     "webpack": "^3.10.0"
+  },
+  "dependencies": {
+    "fbemitter": "^2.1.1"
   }
 }

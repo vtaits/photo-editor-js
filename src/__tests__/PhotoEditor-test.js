@@ -93,8 +93,9 @@ test('should throw an exception if sourceType is "base64" and source not string'
 });
 /* eslint-enable no-new */
 
-test('should set correct initial state and init tools', async () => {
+test('should set correct initial state, init tools and emit "ready" event', async () => {
   const initMock = jest.fn();
+  const readyMock = jest.fn();
 
   const tool1Mock = jest.fn();
   const tool2Mock = jest.fn();
@@ -130,6 +131,7 @@ test('should set correct initial state and init tools', async () => {
   };
 
   const photoEditor = new WithSeparatedInit(el, options);
+  photoEditor.addListener('ready', readyMock);
 
   expect(initMock.mock.calls.length).toBe(1);
 
@@ -159,6 +161,8 @@ test('should set correct initial state and init tools', async () => {
 
   expect(photoEditor.tools.tool1 instanceof Tool1).toBe(true);
   expect(photoEditor.tools.tool2 instanceof Tool2).toBe(true);
+
+  expect(readyMock.mock.calls.length).toBe(1);
 });
 
 test('should save state on pushState', () => {
@@ -237,6 +241,8 @@ test('should return correct currentState with getCurrentState', () => {
 });
 
 test('should enable tool', () => {
+  const onEnableToolMock = jest.fn();
+
   const el = document.createElement('canvas');
   const options = {
     tools: {
@@ -248,6 +254,7 @@ test('should enable tool', () => {
   };
 
   const photoEditor = new SyncPhotoEditor(el, options);
+  photoEditor.addListener('enableTool', onEnableToolMock);
 
   photoEditor.enableTool('tool1');
 
@@ -255,13 +262,21 @@ test('should enable tool', () => {
   expect(photoEditor.tools.tool1.enabled).toBe(true);
   expect(photoEditor.tools.tool2.enabled).toBe(false);
 
+  expect(onEnableToolMock.mock.calls.length).toBe(1);
+  expect(onEnableToolMock.mock.calls[0][0]).toBe('tool1');
+
   photoEditor.enableTool('tool2');
   expect(photoEditor._enabledToolId).toBe('tool2');
   expect(photoEditor.tools.tool1.enabled).toBe(false);
   expect(photoEditor.tools.tool2.enabled).toBe(true);
+
+  expect(onEnableToolMock.mock.calls.length).toBe(2);
+  expect(onEnableToolMock.mock.calls[1][0]).toBe('tool2');
 });
 
 test('should disable enabled tool', () => {
+  const onDisableToolMock = jest.fn();
+
   const el = document.createElement('canvas');
   const options = {
     tools: {
@@ -273,6 +288,7 @@ test('should disable enabled tool', () => {
   };
 
   const photoEditor = new SyncPhotoEditor(el, options);
+  photoEditor.addListener('disableTool', onDisableToolMock);
 
   photoEditor.enableTool('tool1');
   photoEditor.disableTool();
@@ -280,6 +296,9 @@ test('should disable enabled tool', () => {
   expect(photoEditor._enabledToolId).toBe(null);
   expect(photoEditor.tools.tool1.enabled).toBe(false);
   expect(photoEditor.tools.tool2.enabled).toBe(false);
+
+  expect(onDisableToolMock.mock.calls.length).toBe(1);
+  expect(onDisableToolMock.mock.calls[0][0]).toBe('tool1');
 });
 
 test('should set touched state', () => {
