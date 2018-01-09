@@ -301,6 +301,40 @@ test('should disable enabled tool', () => {
   expect(onDisableToolMock.mock.calls[0][0]).toBe('tool1');
 });
 
+test('should toggle tool', () => {
+  const onEnableToolMock = jest.fn();
+  const onDisableToolMock = jest.fn();
+
+  const el = document.createElement('canvas');
+  const options = {
+    tools: {
+      tool1: Tool,
+    },
+    sourceType: 'base64',
+    source: 'data:image/png;base64,test',
+  };
+
+  const photoEditor = new SyncPhotoEditor(el, options);
+  photoEditor.addListener('enableTool', onEnableToolMock);
+  photoEditor.addListener('disableTool', onDisableToolMock);
+
+  photoEditor.toggleTool('tool1');
+
+  expect(photoEditor._enabledToolId).toBe('tool1');
+  expect(photoEditor.tools.tool1.enabled).toBe(true);
+
+  expect(onEnableToolMock.mock.calls.length).toBe(1);
+  expect(onEnableToolMock.mock.calls[0][0]).toBe('tool1');
+  expect(onDisableToolMock.mock.calls.length).toBe(0);
+
+  photoEditor.toggleTool('tool1');
+  expect(photoEditor._enabledToolId).toBe(null);
+  expect(photoEditor.tools.tool1.enabled).toBe(false);
+
+  expect(onEnableToolMock.mock.calls.length).toBe(1);
+  expect(onDisableToolMock.mock.calls.length).toBe(1);
+});
+
 test('should set touched state', () => {
   const el = document.createElement('canvas');
   const options = {

@@ -151,6 +151,14 @@ class PhotoEditor extends EventEmitter {
     }
   }
 
+  toggleTool(toolId) {
+    if (this._enabledToolId === toolId) {
+      this.disableTool();
+    } else {
+      this.enableTool(toolId);
+    }
+  }
+
   touch = () => {
     this._touched = true;
   }
