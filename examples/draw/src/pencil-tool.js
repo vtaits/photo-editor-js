@@ -39,6 +39,8 @@ class Pencil extends Tool {
 
     this.lastX = null;
     this.lastY = null;
+
+    this.pushState(this.el.toDataURL());
   }
 
   onAfterEnable() {

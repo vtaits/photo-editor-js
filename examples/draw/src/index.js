@@ -4,6 +4,8 @@ import { PhotoEditor } from 'photo-editor';
 import Pencil from './pencil-tool';
 
 const pencilButtonEl = document.getElementById('pencil');
+const undoButtonEl = document.getElementById('undo');
+const redoButtonEl = document.getElementById('redo');
 const canvasButtonEl = document.getElementById('canvas');
 
 const photoEditor = new PhotoEditor(canvasButtonEl, {
@@ -24,4 +26,12 @@ photoEditor.addListener('disableTool', () => {
 
 pencilButtonEl.onclick = () => {
   photoEditor.toggleTool('pencil');
+};
+
+undoButtonEl.onclick = () => {
+  photoEditor.undo();
+};
+
+redoButtonEl.onclick = () => {
+  photoEditor.redo();
 };
