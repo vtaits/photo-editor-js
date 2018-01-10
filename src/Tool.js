@@ -1,4 +1,6 @@
-class Tool {
+import { EventEmitter } from 'fbemitter';
+
+class Tool extends EventEmitter {
   el = null;
   enabled = false;
   pushState = null;
@@ -6,6 +8,8 @@ class Tool {
   disable = null;
 
   constructor(options) {
+    super();
+
     if (typeof options !== 'object') {
       throw new Error('Tool options should be an object');
     }

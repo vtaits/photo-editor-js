@@ -1,3 +1,5 @@
+import { EventEmitter } from 'fbemitter';
+
 import Tool from '../Tool';
 
 const toolOptions = {
@@ -63,6 +65,12 @@ test('should be disabled after init', () => {
   const tool = new Tool(toolOptions);
 
   expect(tool.enabled).toEqual(false);
+});
+
+test('should extend EventEmitter', () => {
+  const tool = new Tool(toolOptions);
+
+  expect(tool instanceof EventEmitter).toEqual(true);
 });
 
 test('should enable tool', () => {
