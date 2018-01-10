@@ -119,6 +119,9 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
     _init() {
       initMock();
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    _drawCurrentState() {}
   }
   const el = document.createElement('canvas');
   const options = {
@@ -163,6 +166,58 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
   expect(photoEditor.tools.tool2 instanceof Tool2).toBe(true);
 
   expect(readyMock.mock.calls.length).toBe(1);
+});
+
+test('should not draw initialState if source-type is "current-canvas"', async () => {
+  const drawCurrentStateMock = jest.fn();
+
+  class WithSeparatedInit extends PhotoEditor {
+    // eslint-disable-next-line class-methods-use-this
+    _init() {}
+
+    _drawCurrentState = drawCurrentStateMock;
+  }
+
+  const el = document.createElement('canvas');
+  const options = {
+    tools: {
+      tool1: Tool,
+      tool2: Tool,
+    },
+    sourceType: 'current-canvas',
+  };
+
+  const photoEditor = new WithSeparatedInit(el, options);
+  await PhotoEditor.prototype._init.call(photoEditor);
+
+  expect(drawCurrentStateMock.mock.calls.length).toBe(0);
+});
+
+// TO DO: check all source types
+test('should draw initialState if source-type is not "current-canvas"', async () => {
+  const drawCurrentStateMock = jest.fn();
+
+  class WithSeparatedInit extends PhotoEditor {
+    // eslint-disable-next-line class-methods-use-this
+    _init() {}
+
+    _drawCurrentState = drawCurrentStateMock;
+  }
+
+  const el = document.createElement('canvas');
+  const options = {
+    tools: {
+      tool1: Tool,
+      tool2: Tool,
+    },
+    sourceType: 'base64',
+    source: 'data:image/png;base64,test',
+  };
+
+  const photoEditor = new WithSeparatedInit(el, options);
+  await PhotoEditor.prototype._init.call(photoEditor);
+
+  expect(drawCurrentStateMock.mock.calls.length).toBe(1);
 });
 
 test('should save state on pushState', () => {

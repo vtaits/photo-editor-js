@@ -48,6 +48,10 @@ class PhotoEditor extends EventEmitter {
     this._currentState = 0;
     this._states = [initialState];
 
+    if (this._options.sourceType !== 'current-canvas') {
+      await this._drawCurrentState();
+    }
+
     this._initTools();
 
     this.emit('ready');
