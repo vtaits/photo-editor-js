@@ -19,9 +19,9 @@ const rotateLeftButtonEl = document.getElementById('rotate-left');
 const rotateRightButtonEl = document.getElementById('rotate-right');
 const undoButtonEl = document.getElementById('undo');
 const redoButtonEl = document.getElementById('redo');
-const canvasButtonEl = document.getElementById('canvas');
+const canvasEl = document.getElementById('canvas');
 
-const photoEditor = new PhotoEditor(canvasButtonEl, {
+const photoEditor = new PhotoEditor(canvasEl, {
   tools: {
     blur: Blur,
     crop: Crop,
