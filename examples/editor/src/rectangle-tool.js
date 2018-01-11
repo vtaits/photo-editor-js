@@ -20,8 +20,8 @@ class Rectangle extends Tool {
     ctx.drawImage(this.originalImage, 0, 0, this.el.width, this.el.height);
 
     ctx.beginPath();
-    ctx.lineWidth = '5';
-    ctx.strokeStyle = '#ff0000';
+    ctx.lineWidth = '4';
+    ctx.strokeStyle = '#CB0000';
     ctx.rect(x, y, width, height);
     ctx.stroke();
   }

@@ -65,6 +65,8 @@ class Crop extends Tool {
     ctx.drawImage(this.darkenImage, 0, 0, this.el.width, this.el.height);
 
     this.emit('unset');
+
+    this.disable();
   }
 
   sortCoords() {
