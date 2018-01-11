@@ -200,8 +200,8 @@ class Blur extends Tool {
   onStartDraw = (event) => {
     this.bluring = true;
 
-    this.lastX = event.pageX - this.el.offsetLeft;
-    this.lastY = event.pageY - this.el.offsetTop;
+    this.lastX = event.offsetX;
+    this.lastY = event.offsetY;
   }
 
   onProcessDraw = (event) => {
@@ -209,8 +209,8 @@ class Blur extends Tool {
       return;
     }
 
-    const newLastX = event.pageX - this.el.offsetLeft;
-    const newLastY = event.pageY - this.el.offsetTop;
+    const newLastX = event.offsetX;
+    const newLastY = event.offsetY;
 
     this.blurAtPoint(newLastX, newLastY);
 

@@ -27,8 +27,8 @@ class Rectangle extends Tool {
   }
 
   onStartDraw = (event) => {
-    const x = event.pageX - this.el.offsetLeft;
-    const y = event.pageY - this.el.offsetTop;
+    const x = event.offsetX;
+    const y = event.offsetY;
 
     this.drawing = true;
 
@@ -37,8 +37,8 @@ class Rectangle extends Tool {
   }
 
   onProcessDraw = (event) => {
-    const x = event.pageX - this.el.offsetLeft;
-    const y = event.pageY - this.el.offsetTop;
+    const x = event.offsetX;
+    const y = event.offsetY;
 
     if (this.drawing) {
       this.finishX = x;

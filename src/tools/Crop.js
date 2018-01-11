@@ -127,8 +127,8 @@ class Crop extends Tool {
   }
 
   onStartDraw = (event) => {
-    const x = event.pageX - this.el.offsetLeft;
-    const y = event.pageY - this.el.offsetTop;
+    const x = event.offsetX;
+    const y = event.offsetY;
 
     if (this.setted) {
       const resizingBorder = this.getResizingBorder(x, y);
@@ -148,8 +148,8 @@ class Crop extends Tool {
   }
 
   onProcessDraw = (event) => {
-    const x = event.pageX - this.el.offsetLeft;
-    const y = event.pageY - this.el.offsetTop;
+    const x = event.offsetX;
+    const y = event.offsetY;
 
     if (this.resizingBorder) {
       switch (this.resizingBorder) {
