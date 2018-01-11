@@ -21,7 +21,10 @@ class Crop extends Tool {
     const width = Math.abs(this.startX - this.finishX);
     const height = Math.abs(this.startY - this.finishY);
 
+    ctx.clearRect(0, 0, this.el.width, this.el.height);
     ctx.drawImage(this.darkenImage, 0, 0, this.el.width, this.el.height);
+
+    ctx.clearRect(x, y, width, height);
     ctx.drawImage(
       this.originalImage,
       x, y, width, height,

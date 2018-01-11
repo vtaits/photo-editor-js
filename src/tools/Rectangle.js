@@ -17,6 +17,7 @@ class Rectangle extends Tool {
     const width = Math.abs(this.startX - this.finishX);
     const height = Math.abs(this.startY - this.finishY);
 
+    ctx.clearRect(0, 0, this.el.width, this.el.height);
     ctx.drawImage(this.originalImage, 0, 0, this.el.width, this.el.height);
 
     ctx.beginPath();
