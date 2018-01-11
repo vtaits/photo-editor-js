@@ -10,6 +10,8 @@ class Crop extends Tool {
   finishX = null;
   finishY = null;
 
+  resizingBorder = null;
+
   showCropState() {
     const ctx = this.el.getContext('2d');
 
@@ -65,33 +67,152 @@ class Crop extends Tool {
     this.emit('unset');
   }
 
+  sortCoords() {
+    if (this.startX > this.finishX) {
+      const t = this.finishX;
+      this.finishX = this.startX;
+      this.startX = t;
+    }
+
+    if (this.startY > this.finishY) {
+      const t = this.finishY;
+      this.finishY = this.startY;
+      this.startY = t;
+    }
+  }
+
+  getResizingBorder(x, y) {
+    if (x > this.startX && x < this.finishX) {
+      if (y > this.startY - 5 && y < this.startY + 5) {
+        return 'top';
+      }
+
+      if (y > this.finishY - 5 && y < this.finishY + 5) {
+        return 'bottom';
+      }
+    }
+
+    if (y > this.startY && y < this.finishY) {
+      if (x > this.startX - 5 && x < this.startX + 5) {
+        return 'left';
+      }
+
+      if (x > this.finishX - 5 && x < this.finishX + 5) {
+        return 'right';
+      }
+    }
+
+    return null;
+  }
+
+  setCursorForResizingBorder(resizingBorder) {
+    switch (resizingBorder) {
+      case 'top':
+      case 'bottom':
+        this.el.style.cursor = 'row-resize';
+        break;
+
+      case 'left':
+      case 'right':
+        this.el.style.cursor = 'col-resize';
+        break;
+
+      default:
+        throw new Error(`Unknown border "${resizingBorder}"`);
+    }
+  }
+
   onStartDraw = (event) => {
+    const x = event.pageX - this.el.offsetLeft;
+    const y = event.pageY - this.el.offsetTop;
+
+    if (this.setted) {
+      const resizingBorder = this.getResizingBorder(x, y);
+
+      if (resizingBorder) {
+        this.resizingBorder = resizingBorder;
+        this.setCursorForResizingBorder(resizingBorder);
+
+        return;
+      }
+    }
+
     this.cropping = true;
 
-    this.startX = event.pageX - this.el.offsetLeft;
-    this.startY = event.pageY - this.el.offsetTop;
+    this.startX = x;
+    this.startY = y;
   }
 
   onProcessDraw = (event) => {
-    if (!this.cropping) {
+    const x = event.pageX - this.el.offsetLeft;
+    const y = event.pageY - this.el.offsetTop;
+
+    if (this.resizingBorder) {
+      switch (this.resizingBorder) {
+        case 'top':
+          this.startY = y;
+          break;
+
+        case 'bottom':
+          this.finishY = y;
+          break;
+
+        case 'left':
+          this.startX = x;
+          break;
+
+        case 'right':
+          this.finishX = x;
+          break;
+
+        default:
+          throw new Error(`Unknown border "${this.resizingBorder}"`);
+          break;
+      }
+
+      this.showCropState();
+
       return;
     }
 
-    this.finishX = event.pageX - this.el.offsetLeft;
-    this.finishY = event.pageY - this.el.offsetTop;
+    if (this.cropping) {
+      this.finishX = x;
+      this.finishY = y;
 
-    this.showCropState();
+      this.showCropState();
+
+      return;
+    }
+
+    if (this.setted) {
+      const resizingBorder = this.getResizingBorder(x, y);
+
+      if (resizingBorder) {
+        this.setCursorForResizingBorder(resizingBorder);
+      } else {
+        this.el.style.removeProperty('cursor');
+      }
+    }
   }
 
   onStopDraw = (event) => {
-    if (!this.cropping) {
+    if (this.resizingBorder) {
+      this.resizingBorder = null;
+      this.el.style.removeProperty('cursor');
+
+      this.sortCoords();
+
       return;
     }
 
-    this.cropping = false;
-    this.setted = false;
+    if (this.cropping) {
+      this.sortCoords();
 
-    this.emit('set');
+      this.cropping = false;
+      this.setted = true;
+
+      this.emit('set');
+    }
   }
 
   onAfterEnable() {
@@ -123,6 +244,9 @@ class Crop extends Tool {
   onBeforeDisable() {
     this.cropping = false;
     this.setted = false;
+    this.resizingBorder = null;
+
+    this.el.style.removeProperty('cursor');
 
     if (this.darkenImage) {
       this.el.getContext('2d').drawImage(this.originalImage, 0, 0);
