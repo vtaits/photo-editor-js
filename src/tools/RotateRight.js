@@ -1,6 +1,6 @@
-import { Tool } from 'photo-editor';
+import Tool from '../Tool';
 
-class RotateLeft extends Tool {
+class RotateRight extends Tool {
   onAfterEnable() {
     const ctx = this.el.getContext('2d');
 
@@ -17,12 +17,12 @@ class RotateLeft extends Tool {
 
     otherCtx.clearRect(0, 0, width, height);
     otherCtx.translate(height / 2, width / 2);
-    otherCtx.rotate(-Math.PI / 2);
+    otherCtx.rotate(Math.PI / 2);
     otherCtx.translate(-width / 2, -height / 2);
     otherCtx.drawImage(this.el, 0, 0);
 
-    canvas.width = height;
-    canvas.height = width;
+    this.el.width = height;
+    this.el.height = width;
 
     ctx.drawImage(otherCanvas, 0, 0);
 
@@ -32,4 +32,4 @@ class RotateLeft extends Tool {
   }
 }
 
-export default RotateLeft;
+export default RotateRight;

@@ -1,4 +1,4 @@
-import { Tool } from 'photo-editor';
+import Tool from '../Tool';
 
 class Crop extends Tool {
   originalImage = null;
@@ -22,7 +22,8 @@ class Crop extends Tool {
     const height = Math.abs(this.startY - this.finishY);
 
     ctx.drawImage(this.darkenImage, 0, 0, this.el.width, this.el.height);
-    ctx.drawImage(this.originalImage,
+    ctx.drawImage(
+      this.originalImage,
       x, y, width, height,
       x, y, width, height,
     );
@@ -40,7 +41,8 @@ class Crop extends Tool {
 
     const ctx = this.el.getContext('2d');
 
-    ctx.drawImage(this.originalImage,
+    ctx.drawImage(
+      this.originalImage,
       x, y, width, height,
       0, 0, width, height,
     );
@@ -169,7 +171,6 @@ class Crop extends Tool {
 
         default:
           throw new Error(`Unknown border "${this.resizingBorder}"`);
-          break;
       }
 
       this.showCropState();
@@ -197,7 +198,7 @@ class Crop extends Tool {
     }
   }
 
-  onStopDraw = (event) => {
+  onStopDraw = () => {
     if (this.resizingBorder) {
       this.resizingBorder = null;
       this.el.style.removeProperty('cursor');

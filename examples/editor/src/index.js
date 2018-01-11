@@ -1,11 +1,14 @@
 import 'babel-polyfill'
+
 import { PhotoEditor } from 'photo-editor';
 
-import Blur from './blur-tool';
-import Crop from './crop-tool';
-import Rectangle from './rectangle-tool';
-import RotateLeft from './rotate-left-tool';
-import RotateRight from './rotate-right-tool';
+import {
+  Blur,
+  Crop,
+  Rectangle,
+  RotateLeft,
+  RotateRight,
+} from 'photo-editor/lib/tools';
 
 const blurButtonEl = document.getElementById('blur');
 const cropButtonEl = document.getElementById('crop');

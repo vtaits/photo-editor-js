@@ -1,4 +1,4 @@
-import { Tool } from 'photo-editor';
+import Tool from '../Tool';
 
 const radius = 10;
 
@@ -13,7 +13,7 @@ function generateBlurMask(blurMaskRadius) {
       const dx = blurMaskRadius - i;
       const dy = blurMaskRadius - j;
 
-      result.push(dx * dx + dy * dy <= blurMaskRadius2);
+      result.push((dx * dx) + (dy * dy) <= blurMaskRadius2);
     }
   }
 
@@ -22,7 +22,7 @@ function generateBlurMask(blurMaskRadius) {
 
 const blurMask = generateBlurMask(radius);
 
-const sigma = 3;
+const defaultSigma = 3;
 
 class Pixel {
   constructor(r, g, b) {
@@ -55,10 +55,10 @@ class Pixel {
 // standard deviation, number of boxes
 function boxesForGauss(sigma, n) {
   // Ideal averaging filter width
-  const wIdeal = Math.sqrt((12 * sigma * sigma / n) + 1);
+  const wIdeal = Math.sqrt(((12 * sigma * sigma) / n) + 1);
 
   let wl = Math.floor(wIdeal);
-  if (wl % 2 == 0) {
+  if (wl % 2 === 0) {
     --wl;
   }
 
@@ -70,8 +70,8 @@ function boxesForGauss(sigma, n) {
     (4 * n * wl) -
     (3 * n)
   ) / (
-    (-4 * wl) - 4
-  );
+      (-4 * wl) - 4
+    );
   const m = Math.round(mIdeal);
 
   const sizes = [];
@@ -83,6 +83,7 @@ function boxesForGauss(sigma, n) {
   return sizes;
 }
 
+/* eslint-disable no-param-reassign */
 function boxBlurH4(scl, tcl, w, h, r) {
   const iarr = 1 / (r + r + 1);
 
@@ -92,7 +93,7 @@ function boxBlurH4(scl, tcl, w, h, r) {
     let ri = ti + r;
 
     const fv = scl[ti];
-    const lv = scl[ti + w - 1];
+    const lv = scl[ti + (w - 1)];
 
     let val = fv.mul(r + 1);
 
@@ -125,22 +126,24 @@ function boxBlurH4(scl, tcl, w, h, r) {
     }
   }
 }
+/* eslint-enable no-param-reassign */
 
+/* eslint-disable no-param-reassign */
 function boxBlurT4(scl, tcl, w, h, r) {
   const iarr = 1 / (r + r + 1);
 
   for (let i = 0; i < w; ++i) {
     let ti = i;
     let li = ti;
-    let ri = ti + r * w;
+    let ri = ti + (r * w);
 
     const fv = scl[ti];
-    const lv = scl[ti + w * (h - 1)];
+    const lv = scl[ti + (w * (h - 1))];
 
     let val = fv.mul(r + 1);
 
     for (let j = 0; j < r; ++j) {
-      val = val.add(scl[ti + j * w]);
+      val = val.add(scl[ti + (j * w)]);
     }
 
     for (let j = 0; j <= r; j++) {
@@ -168,7 +171,9 @@ function boxBlurT4(scl, tcl, w, h, r) {
     }
   }
 }
+/* eslint-enable no-param-reassign */
 
+/* eslint-disable no-param-reassign */
 function boxBlur4(scl, tcl, w, h, r) {
   for (let i = 0; i < scl.length; ++i) {
     tcl[i] = scl[i].clone();
@@ -177,6 +182,7 @@ function boxBlur4(scl, tcl, w, h, r) {
   boxBlurH4(tcl, scl, w, h, r);
   boxBlurT4(scl, tcl, w, h, r);
 }
+/* eslint-enable no-param-reassign */
 
 function gaussBlur4(scl, tcl, w, h, r) {
   const bxs = boxesForGauss(r, 3);
@@ -212,7 +218,7 @@ class Blur extends Tool {
     this.lastY = newLastY;
   }
 
-  onStopDraw = (event) => {
+  onStopDraw = () => {
     if (!this.bluring) {
       return;
     }
@@ -231,18 +237,10 @@ class Blur extends Tool {
     const x = Math.round(_x);
     const y = Math.round(_y);
 
-    function getPixelData(targetX, targetY) {
-      const data = ctx.getImageData(targetX, targetY, 1, 1).data;
-
-      return {
-        r: data[0],
-        g: data[1],
-        b: data[2],
-      };
-    };
-
-    const width = this.el.width;
-    const height = this.el.height;
+    const {
+      width,
+      height,
+    } = this.el;
 
     const startX = Math.max(x - radius, 0);
     const finishX = Math.min(x + radius, width);
@@ -255,7 +253,7 @@ class Blur extends Tool {
 
     const newImgData = ctx.getImageData(startX, startY, newImgWidth, newImgHeight);
 
-    let sourceChannel = [];
+    const sourceChannel = [];
     {
       const {
         data,
@@ -264,15 +262,13 @@ class Blur extends Tool {
       for (let i = 0, l = newImgWidth * newImgHeight; i < l; ++i) {
         const offset = i * 4;
 
-        sourceChannel.push(
-          new Pixel(data[offset], data[offset + 1], data[offset + 2]),
-        );
+        sourceChannel.push(new Pixel(data[offset], data[offset + 1], data[offset + 2]));
       }
     }
 
     const targetChannel = sourceChannel;
 
-    gaussBlur4(sourceChannel, targetChannel, newImgWidth, newImgHeight, sigma);
+    gaussBlur4(sourceChannel, targetChannel, newImgWidth, newImgHeight, defaultSigma);
 
     for (let i = 0, l = newImgWidth * newImgHeight; i < l; ++i) {
       if (blurMask[i]) {

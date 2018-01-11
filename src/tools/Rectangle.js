@@ -1,4 +1,4 @@
-import { Tool } from 'photo-editor';
+import Tool from '../Tool';
 
 class Rectangle extends Tool {
   originalImage = null;
@@ -48,7 +48,7 @@ class Rectangle extends Tool {
     }
   }
 
-  onStopDraw = (event) => {
+  onStopDraw = () => {
     if (this.drawing) {
       this.drawing = false;
 

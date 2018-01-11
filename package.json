@@ -2,7 +2,7 @@
   "name": "photo-editor",
   "version": "0.1.0",
   "description": "Simple and customizable photo editor for web applications.",
-  "main": "./dist/photo-editor.js",
+  "main": "./lib/index.js",
   "scripts": {
     "build": "npm run build:lib && npm run build:umd && npm run build:umd:min",
     "build:lib": "babel src --out-dir lib --ignore __tests__",
