@@ -9,6 +9,7 @@ import RotateRight from './rotate-right-tool';
 const blurButtonEl = document.getElementById('blur');
 const cropButtonEl = document.getElementById('crop');
 const applyCropButtonEl = document.getElementById('apply-crop');
+const cancelCropButtonEl = document.getElementById('cancel-crop');
 const rotateLeftButtonEl = document.getElementById('rotate-left');
 const rotateRightButtonEl = document.getElementById('rotate-right');
 const undoButtonEl = document.getElementById('undo');
@@ -40,11 +41,18 @@ photoEditor.addListener('disableTool', () => {
   blurButtonEl.style.removeProperty('border');
   cropButtonEl.style.removeProperty('border');
   applyCropButtonEl.disabled = true;
+  cancelCropButtonEl.disabled = true;
 });
 
 photoEditor.addListener('ready', () => {
   photoEditor.tools.crop.addListener('set', () => {
     applyCropButtonEl.disabled = false;
+    cancelCropButtonEl.disabled = false;
+  });
+
+  photoEditor.tools.crop.addListener('unset', () => {
+    applyCropButtonEl.disabled = true;
+    cancelCropButtonEl.disabled = true;
   });
 });
 
@@ -58,6 +66,10 @@ cropButtonEl.onclick = () => {
 
 applyCropButtonEl.onclick = () => {
   photoEditor.tools.crop.applyCrop();
+};
+
+cancelCropButtonEl.onclick = () => {
+  photoEditor.tools.crop.cancelCrop();
 };
 
 rotateLeftButtonEl.onclick = () => {

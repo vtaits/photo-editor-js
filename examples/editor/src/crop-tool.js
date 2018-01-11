@@ -4,6 +4,7 @@ class Crop extends Tool {
   originalImage = null;
   darkenImage = null;
   cropping = false;
+  setted = false;
   startX = null;
   startY = null;
   finishX = null;
@@ -50,6 +51,20 @@ class Crop extends Tool {
     this.disable();
   }
 
+  cancelCrop() {
+    this.startX = null;
+    this.startY = null;
+    this.finishX = null;
+    this.finishY = null;
+
+    this.setted = false;
+
+    const ctx = this.el.getContext('2d');
+    ctx.drawImage(this.darkenImage, 0, 0, this.el.width, this.el.height);
+
+    this.emit('unset');
+  }
+
   onStartDraw = (event) => {
     this.cropping = true;
 
@@ -74,6 +89,8 @@ class Crop extends Tool {
     }
 
     this.cropping = false;
+    this.setted = false;
+
     this.emit('set');
   }
 
@@ -105,6 +122,7 @@ class Crop extends Tool {
 
   onBeforeDisable() {
     this.cropping = false;
+    this.setted = false;
 
     if (this.darkenImage) {
       this.el.getContext('2d').drawImage(this.originalImage, 0, 0);
