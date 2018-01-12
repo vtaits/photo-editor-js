@@ -192,6 +192,31 @@ function gaussBlur4(scl, tcl, w, h, r) {
   boxBlur4(scl, tcl, w, h, (bxs[2] - 1) / 2);
 }
 
+function getMask(mask, r, x = 0, y = 0) {
+  const d = r * 2;
+  const newMask = [];
+
+  if (x === 0 && y === 0) {
+    return [...mask];
+  } else if (Math.abs(x) >= d || Math.abs(y) >= d) {
+    return newMask;
+  }
+
+  for (let i = y < 0 ? d * -y : 0; i < mask.length; i++) {
+    const X = (i % d) + x;
+
+    if (X < d && X >= 0) {
+      newMask.push(mask[i]);
+    }
+
+    if ((Math.floor((i + 1) / d) + y) >= r * 2) {
+      break;
+    }
+  }
+
+  return newMask;
+}
+
 class Blur extends Tool {
   bluring = false;
   lastX = null;
@@ -270,8 +295,15 @@ class Blur extends Tool {
 
     gaussBlur4(sourceChannel, targetChannel, newImgWidth, newImgHeight, defaultSigma);
 
+    const mask = getMask(
+      blurMask,
+      radius,
+      Math.max((x + radius) - width, 0) + Math.min(x - radius, 0),
+      Math.max((y + radius) - height, 0) + Math.min(y - radius, 0),
+    );
+
     for (let i = 0, l = newImgWidth * newImgHeight; i < l; ++i) {
-      if (blurMask[i]) {
+      if (mask[i]) {
         const { r, g, b } = targetChannel[i];
         const offset = i * 4;
 
