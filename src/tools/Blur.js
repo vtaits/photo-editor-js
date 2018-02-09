@@ -225,8 +225,13 @@ class Blur extends Tool {
   onStartDraw = (event) => {
     this.bluring = true;
 
-    this.lastX = event.offsetX;
-    this.lastY = event.offsetY;
+    const newLastX = (event.offsetX) / (this.el.clientWidth / this.el.width);
+    const newLastY = (event.offsetY) / (this.el.clientHeight / this.el.height);
+
+    this.blurAtPoint(newLastX, newLastY);
+
+    this.lastX = newLastX;
+    this.lastY = newLastY;
   }
 
   onProcessDraw = (event) => {
@@ -234,8 +239,8 @@ class Blur extends Tool {
       return;
     }
 
-    const newLastX = event.offsetX;
-    const newLastY = event.offsetY;
+    const newLastX = (event.offsetX) / (this.el.clientWidth / this.el.width);
+    const newLastY = (event.offsetY) / (this.el.clientHeight / this.el.height);
 
     this.blurAtPoint(newLastX, newLastY);
 
@@ -268,13 +273,17 @@ class Blur extends Tool {
     } = this.el;
 
     const startX = Math.max(x - radius, 0);
-    const finishX = Math.min(x + radius, width);
+    const finishX = Math.max(Math.min(x + radius, width), 0);
 
     const startY = Math.max(y - radius, 0);
-    const finishY = Math.min(y + radius, height);
+    const finishY = Math.max(Math.min(y + radius, height), 0);
 
     const newImgWidth = finishX - startX;
     const newImgHeight = finishY - startY;
+
+    if (newImgWidth <= 0 || newImgHeight <= 0) {
+      return;
+    }
 
     const newImgData = ctx.getImageData(startX, startY, newImgWidth, newImgHeight);
 

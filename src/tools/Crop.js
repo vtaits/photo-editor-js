@@ -76,15 +76,11 @@ class Crop extends Tool {
 
   sortCoords() {
     if (this.startX > this.finishX) {
-      const t = this.finishX;
-      this.finishX = this.startX;
-      this.startX = t;
+      [this.startX, this.finishX] = [this.finishX, this.startX];
     }
 
     if (this.startY > this.finishY) {
-      const t = this.finishY;
-      this.finishY = this.startY;
-      this.startY = t;
+      [this.startY, this.finishY] = [this.finishY, this.startY];
     }
   }
 
@@ -130,8 +126,10 @@ class Crop extends Tool {
   }
 
   onStartDraw = (event) => {
-    const x = event.offsetX;
-    const y = event.offsetY;
+    const x = Math.min(Math.max(event.offsetX, 0), this.el.clientWidth)
+      / (this.el.clientWidth / this.el.width);
+    const y = Math.min(Math.max(event.offsetY, 0), this.el.clientHeight)
+      / (this.el.clientHeight / this.el.height);
 
     if (this.setted) {
       const resizingBorder = this.getResizingBorder(x, y);
@@ -151,8 +149,10 @@ class Crop extends Tool {
   }
 
   onProcessDraw = (event) => {
-    const x = event.offsetX;
-    const y = event.offsetY;
+    const x = Math.min(Math.max(event.offsetX, 0), this.el.clientWidth)
+      / (this.el.clientWidth / this.el.width);
+    const y = Math.min(Math.max(event.offsetY, 0), this.el.clientHeight)
+      / (this.el.clientHeight / this.el.height);
 
     if (this.resizingBorder) {
       switch (this.resizingBorder) {

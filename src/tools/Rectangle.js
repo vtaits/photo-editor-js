@@ -28,8 +28,8 @@ class Rectangle extends Tool {
   }
 
   onStartDraw = (event) => {
-    const x = event.offsetX;
-    const y = event.offsetY;
+    const x = (event.offsetX) / (this.el.clientWidth / this.el.width);
+    const y = (event.offsetY) / (this.el.clientHeight / this.el.height);
 
     this.drawing = true;
 
@@ -38,8 +38,8 @@ class Rectangle extends Tool {
   }
 
   onProcessDraw = (event) => {
-    const x = event.offsetX;
-    const y = event.offsetY;
+    const x = (event.offsetX) / (this.el.clientWidth / this.el.width);
+    const y = (event.offsetY) / (this.el.clientHeight / this.el.height);
 
     if (this.drawing) {
       this.finishX = x;
@@ -50,13 +50,13 @@ class Rectangle extends Tool {
   }
 
   onStopDraw = () => {
-    if (this.drawing) {
-      this.drawing = false;
-
-      this.originalImage.getContext('2d').drawImage(this.el, 0, 0);
-
-      this.pushState(this.el.toDataURL());
+    if (!this.drawing) {
+      return;
     }
+
+    this.drawing = false;
+    this.originalImage.getContext('2d').drawImage(this.el, 0, 0);
+    this.pushState(this.el.toDataURL());
   }
 
   onAfterEnable() {
