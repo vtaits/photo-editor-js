@@ -1,4 +1,4 @@
-import 'babel-polyfill'
+import 'babel-polyfill';
 
 import { PhotoEditor } from 'photo-editor';
 
@@ -65,40 +65,41 @@ photoEditor.addListener('ready', () => {
     applyCropButtonEl.disabled = true;
     cancelCropButtonEl.disabled = true;
   });
+
+
+  blurButtonEl.onclick = () => {
+    photoEditor.toggleTool('blur');
+  };
+
+  cropButtonEl.onclick = () => {
+    photoEditor.toggleTool('crop');
+  };
+
+  applyCropButtonEl.onclick = () => {
+    photoEditor.tools.crop.applyCrop();
+  };
+
+  cancelCropButtonEl.onclick = () => {
+    photoEditor.tools.crop.cancelCrop();
+  };
+
+  rectangleButtonEl.onclick = () => {
+    photoEditor.toggleTool('rectangle');
+  };
+
+  rotateLeftButtonEl.onclick = () => {
+    photoEditor.enableTool('rotateLeft');
+  };
+
+  rotateRightButtonEl.onclick = () => {
+    photoEditor.enableTool('rotateRight');
+  };
+
+  undoButtonEl.onclick = () => {
+    photoEditor.undo();
+  };
+
+  redoButtonEl.onclick = () => {
+    photoEditor.redo();
+  };
 });
-
-blurButtonEl.onclick = () => {
-  photoEditor.toggleTool('blur');
-};
-
-cropButtonEl.onclick = () => {
-  photoEditor.toggleTool('crop');
-};
-
-applyCropButtonEl.onclick = () => {
-  photoEditor.tools.crop.applyCrop();
-};
-
-cancelCropButtonEl.onclick = () => {
-  photoEditor.tools.crop.cancelCrop();
-};
-
-rectangleButtonEl.onclick = () => {
-  photoEditor.toggleTool('rectangle');
-};
-
-rotateLeftButtonEl.onclick = () => {
-  photoEditor.enableTool('rotateLeft');
-};
-
-rotateRightButtonEl.onclick = () => {
-  photoEditor.enableTool('rotateRight');
-};
-
-undoButtonEl.onclick = () => {
-  photoEditor.undo();
-};
-
-redoButtonEl.onclick = () => {
-  photoEditor.redo();
-};
