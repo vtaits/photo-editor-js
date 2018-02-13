@@ -11,6 +11,9 @@ import {
 } from 'photo-editor/lib/tools';
 
 const blurButtonEl = document.getElementById('blur');
+const blurSettings = document.getElementById('blurSettings');
+const blurRadius = document.getElementById('radius');
+const blurSigma = document.getElementById('sigma');
 const cropButtonEl = document.getElementById('crop');
 const applyCropButtonEl = document.getElementById('apply-crop');
 const cancelCropButtonEl = document.getElementById('cancel-crop');
@@ -101,5 +104,28 @@ photoEditor.addListener('ready', () => {
 
   redoButtonEl.onclick = () => {
     photoEditor.redo();
+  };
+
+  const afterEnableBlur = photoEditor.tools.blur.onAfterEnable;
+  photoEditor.tools.blur.onAfterEnable = () => {
+    if (afterEnableBlur) {
+      afterEnableBlur.call(photoEditor.tools.blur);
+    }
+
+    blurSettings.classList.remove('hide');
+    blurRadius.value = photoEditor.tools.blur.radius;
+    blurSigma.value = photoEditor.tools.blur.sigma;
+  };
+
+  photoEditor.tools.blur.onAfterDisable = () => {
+    blurSettings.classList.add('hide');
+  };
+
+  blurRadius.onchange = (e) => {
+    photoEditor.tools.blur.radius = e.target.value;
+  };
+
+  blurSigma.onchange = (e) => {
+    photoEditor.tools.blur.sigma = e.target.value;
   };
 });
