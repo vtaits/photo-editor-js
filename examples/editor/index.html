@@ -8,7 +8,7 @@
       user-select: none;
     }
 
-    div {
+    .block {
       margin: 1em;
     }
 
@@ -18,7 +18,7 @@
   </style>
 </head>
 <body>
-  <div>
+  <div class="block">
     <button id="blur">Blur</button>
     <span id="blurSettings" class="hide">
       Blur radius: <input type="number" id="radius" min="10" max="100" step="1" />
@@ -34,7 +34,7 @@
     <button id="redo">Redo</button>
   </div>
 
-  <div>
+  <div class="block">
     <canvas
       id="canvas"
       width="640"
@@ -42,7 +42,7 @@
     ></canvas>
   </div>
 
-  <div class="hide">
+  <div class="block hide">
     <img
       id="source"
       src="/img/image.jpeg"
