@@ -9,6 +9,8 @@ class Crop extends Tool {
   startY = null;
   finishX = null;
   finishY = null;
+  mousedownX = null;
+  mousedownY = null;
 
   resizingBorder = null;
 
@@ -23,6 +25,10 @@ class Crop extends Tool {
 
     ctx.clearRect(0, 0, this.el.width, this.el.height);
     ctx.drawImage(this.darkenImage, 0, 0, this.el.width, this.el.height);
+
+    if (height <= 0 || width <= 0) {
+      return;
+    }
 
     ctx.clearRect(x, y, width, height);
     ctx.drawImage(
@@ -143,9 +149,8 @@ class Crop extends Tool {
     }
 
     this.cropping = true;
-
-    this.startX = x;
-    this.startY = y;
+    this.mousedownX = x;
+    this.mousedownY = y;
   }
 
   onProcessDraw = (event) => {
@@ -153,6 +158,13 @@ class Crop extends Tool {
       / (this.el.clientWidth / this.el.width);
     const y = Math.min(Math.max(event.offsetY, 0), this.el.clientHeight)
       / (this.el.clientHeight / this.el.height);
+
+    if (this.mousedownX !== null && this.mousedownY !== null) {
+      this.startX = this.mousedownX;
+      this.startY = this.mousedownY;
+      this.mousedownX = null;
+      this.mousedownY = null;
+    }
 
     if (this.resizingBorder) {
       switch (this.resizingBorder) {
@@ -202,6 +214,9 @@ class Crop extends Tool {
   }
 
   onStopDraw = () => {
+    this.mousedownX = null;
+    this.mousedownY = null;
+
     if (this.resizingBorder) {
       this.resizingBorder = null;
       this.el.style.removeProperty('cursor');
