@@ -5,6 +5,7 @@ import Tool from '../Tool';
 const toolOptions = {
   el: document.createElement('canvas'),
   pushState: () => {},
+  updateState: () => {},
   disable: () => {},
   touch: () => {},
 };
@@ -35,9 +36,20 @@ test('should throw an exception if pushState is not a function', () => {
   expect(() => {
     new Tool({
       el: document.createElement('canvas'),
+      updateState: () => {},
     });
   })
     .toThrowError('Tool option "pushState" should be a function');
+});
+
+test('should throw an exception if updateState is not a function', () => {
+  expect(() => {
+    new Tool({
+      el: document.createElement('canvas'),
+      pushState: () => {},
+    });
+  })
+    .toThrowError('Tool option "updateState" should be a function');
 });
 
 test('should throw an exception if disable is not a function', () => {
@@ -45,6 +57,7 @@ test('should throw an exception if disable is not a function', () => {
     new Tool({
       el: document.createElement('canvas'),
       pushState: () => {},
+      updateState: () => {},
     });
   })
     .toThrowError('Tool option "disable" should be a function');
@@ -55,6 +68,7 @@ test('should throw an exception if touch is not a function', () => {
     new Tool({
       el: document.createElement('canvas'),
       pushState: () => {},
+      updateState: () => {},
       disable: () => {},
     });
   })

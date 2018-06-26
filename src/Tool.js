@@ -4,6 +4,7 @@ class Tool extends EventEmitter {
   el = null;
   enabled = false;
   pushState = null;
+  updateState = null;
   touch = null;
   disable = null;
 
@@ -32,6 +33,12 @@ class Tool extends EventEmitter {
     }
 
     this.pushState = options.pushState;
+
+    if (typeof options.updateState !== 'function') {
+      throw new Error('Tool option "updateState" should be a function');
+    }
+
+    this.updateState = options.updateState;
 
     if (typeof options.disable !== 'function') {
       throw new Error('Tool option "disable" should be a function');

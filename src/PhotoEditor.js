@@ -69,6 +69,7 @@ class PhotoEditor extends EventEmitter {
         const tool = new ToolConstructor({
           el: this._el,
           pushState: this._pushState,
+          updateState: this._updateState,
           disable: this.disableTool,
           touch: this.touch,
         });
@@ -86,6 +87,13 @@ class PhotoEditor extends EventEmitter {
     slicedStates.push(state);
 
     ++this._currentState;
+    this._states = slicedStates;
+  }
+
+  _updateState = (state) => {
+    const slicedStates = this._states.slice(0, this._currentState);
+    slicedStates.push(state);
+
     this._states = slicedStates;
   }
 
