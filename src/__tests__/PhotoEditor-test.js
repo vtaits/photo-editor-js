@@ -157,6 +157,7 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
     expect(tool1Mock.mock.calls[0][0]).toEqual({
       el,
       pushState: photoEditor._pushState,
+      updateState: photoEditor._updateState,
       disable: photoEditor.disableTool,
       touch: photoEditor.touch,
     });
