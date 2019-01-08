@@ -2,7 +2,8 @@ import Filter from './Filter';
 
 class Contrast extends Filter {
   newImageData = () => {
-    const { value, originalImageData } = this;
+    const value = this.getValue();
+    const { originalImageData } = this;
 
     const { width, height, data } = originalImageData;
     const imageData = new ImageData(width, height);

@@ -25,6 +25,13 @@ module.exports = {
     "rules": {
         "no-plusplus": "off",
         "no-nested-ternary": "off",
-        "no-underscore-dangle": ["error", { "allowAfterThis": true }]
+
+        "no-underscore-dangle": ["error", { "allowAfterThis": true }],
+
+        "no-restricted-syntax": [
+            "error",
+            { "selector": "MethodDefinition[kind='set']", "message": "Property setters are not allowed" },
+            { "selector": "MethodDefinition[kind='get']", "message": "Property getters are not allowed" }
+        ],
     }
 };

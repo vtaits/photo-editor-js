@@ -2,7 +2,9 @@ import { Tool } from 'photo-editor';
 
 class Pencil extends Tool {
   drawing = false;
+
   lastX = null;
+
   lastY = null;
 
   onStartDraw = (event) => {
@@ -30,7 +32,7 @@ class Pencil extends Tool {
     this.lastY = newLastY;
   }
 
-  onStopDraw = (event) => {
+  onStopDraw = () => {
     if (!this.drawing) {
       return;
     }

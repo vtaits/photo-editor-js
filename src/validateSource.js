@@ -5,8 +5,8 @@ export default function validateSource(options) {
 
     case 'canvas':
       if (
-        !(options.source instanceof HTMLElement) ||
-        options.source.tagName !== 'CANVAS'
+        !(options.source instanceof HTMLElement)
+        || options.source.tagName !== 'CANVAS'
       ) {
         throw new Error('PhotoEditor source for sourceType "canvas" should be a canvas');
       }
@@ -15,8 +15,8 @@ export default function validateSource(options) {
 
     case 'img':
       if (
-        !(options.source instanceof HTMLElement) ||
-        options.source.tagName !== 'IMG'
+        !(options.source instanceof HTMLElement)
+        || options.source.tagName !== 'IMG'
       ) {
         throw new Error('PhotoEditor source for sourceType "img" should be an image');
       }

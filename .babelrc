@@ -1,3 +1,31 @@
 {
-  "presets": ["env", "stage-2"]
+  "env": {
+    "cjs": {
+      "presets": [
+        "@babel/preset-env"
+      ]
+    },
+
+    "es": {
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "modules": false
+          }
+        ]
+      ]
+    },
+
+    "test": {
+      "presets": [
+        "@babel/preset-env"
+      ]
+    }
+  },
+
+  "plugins": [
+    "@babel/plugin-transform-runtime",
+    "@babel/plugin-proposal-class-properties"
+  ]
 }

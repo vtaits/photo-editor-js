@@ -2,10 +2,15 @@ import Tool from '../Tool';
 
 class Rectangle extends Tool {
   originalImage = null;
+
   drawing = false;
+
   startX = null;
+
   startY = null;
+
   finishX = null;
+
   finishY = null;
 
   showRectangle() {

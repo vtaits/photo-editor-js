@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import { PhotoEditor } from 'photo-editor';
 
 import Pencil from './pencil-tool';

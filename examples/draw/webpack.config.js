@@ -1,9 +1,9 @@
-const webpack = require('webpack')
-const path = require('path')
+const path = require('path');
 
-const context = path.join(__dirname, 'src')
+const context = path.join(__dirname, 'src');
 
 module.exports = {
+  mode: 'development',
   context,
   entry: './index.js',
   output: {

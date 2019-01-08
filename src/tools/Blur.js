@@ -41,13 +41,13 @@ function boxesForGauss(sigma, n) {
   const wu = wl + 2;
 
   const mIdeal = (
-    (12 * sigma * sigma) -
-    (n * wl * wl) -
-    (4 * n * wl) -
-    (3 * n)
+    (12 * sigma * sigma)
+    - (n * wl * wl)
+    - (4 * n * wl)
+    - (3 * n)
   ) / (
-      (-4 * wl) - 4
-    );
+    (-4 * wl) - 4
+  );
   const m = Math.round(mIdeal);
 
   const sizes = [];
@@ -170,25 +170,29 @@ function gaussBlur(scl, tcl, w, h, r) {
 
 class Blur extends Tool {
   bluring = false;
+
   lastX = null;
+
   lastY = null;
-  _sigma = 3;
-  _radius = 10;
 
-  set radius(value) {
-    this._radius = Math.max(parseInt(value, 10), 1);
+  sigma = 3;
+
+  radius = 10;
+
+  setRadius(value) {
+    this.radius = Math.max(value, 1);
   }
 
-  get radius() {
-    return this._radius;
+  getRadius() {
+    return this.radius;
   }
 
-  set sigma(value) {
-    this._sigma = Math.max(parseFloat(value), 0.1);
+  setSigma(value) {
+    this.sigma = Math.max(parseFloat(value), 0.1);
   }
 
-  get sigma() {
-    return this._sigma;
+  getSigma() {
+    return this.sigma;
   }
 
   onStartDraw = (event) => {
@@ -236,7 +240,8 @@ class Blur extends Tool {
 
   blurAtPoint(_x, _y) {
     const ctx = this.el.getContext('2d');
-    const { radius, sigma } = this;
+    const radius = this.getRadius();
+    const sigma = this.getSigma();
     const x = Math.round(_x);
     const y = Math.round(_y);
 

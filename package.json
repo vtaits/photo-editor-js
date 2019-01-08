@@ -3,16 +3,17 @@
   "version": "0.1.6",
   "description": "Simple and customizable photo editor for web applications.",
   "main": "./lib/index.js",
+  "module": "./es/index.js",
   "scripts": {
-    "build": "npm run build:lib && npm run build:umd && npm run build:umd:min",
-    "build:lib": "babel src --out-dir lib --ignore __tests__",
-    "build:umd": "cross-env NODE_ENV=development webpack",
-    "build:umd:min": "cross-env NODE_ENV=production webpack",
+    "build": "yarn build:cjs && yarn build:es",
+    "build:cjs": "cross-env BABEL_ENV=cjs babel src --out-dir lib --ignore \"src/**/__tests__\"",
+    "build:es": "cross-env BABEL_ENV=es babel src --out-dir es --ignore \"src/**/__tests__\"",
+    "test": "yarn lint && yarn test:unit",
     "lint": "eslint src",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "jest",
-    "test:watch": "jest --watchAll",
-    "prepublish": "npm run build"
+    "lint:fix": "yarn lint -- --fix",
+    "test:unit": "jest",
+    "test:unit:watch": "jest --watchAll",
+    "prepublish": "yarn build"
   },
   "repository": {
     "type": "git",
@@ -31,22 +32,24 @@
   },
   "homepage": "https://github.com/vtaits/photo-editor-js#readme",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.0.3",
-    "babel-jest": "^21.2.0",
-    "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-2": "^6.24.1",
-    "cross-env": "^5.1.1",
-    "eslint": "^4.13.1",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-jest": "^21.4.2",
-    "jest": "^21.2.1",
-    "path": "^0.12.7",
-    "webpack": "^3.10.0"
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.2.3",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.2.3",
+    "babel-core": "^7.0.0-bridge",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.12.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jest": "^22.1.2",
+    "jest": "^23.6.0",
+    "path": "^0.12.7"
   },
   "dependencies": {
+    "@babel/runtime": "^7.2.0",
     "fbemitter": "^2.1.1"
   }
 }

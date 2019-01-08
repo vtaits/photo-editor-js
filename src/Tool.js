@@ -2,10 +2,15 @@ import { EventEmitter } from 'fbemitter';
 
 class Tool extends EventEmitter {
   el = null;
+
   enabled = false;
+
   pushState = null;
+
   updateState = null;
+
   touch = null;
+
   disable = null;
 
   constructor(options) {
@@ -20,8 +25,8 @@ class Tool extends EventEmitter {
     }
 
     if (
-      !(options.el instanceof HTMLElement) ||
-      options.el.tagName !== 'CANVAS'
+      !(options.el instanceof HTMLElement)
+      || options.el.tagName !== 'CANVAS'
     ) {
       throw new Error('Element for init Tool should be a canvas');
     }

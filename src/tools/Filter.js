@@ -1,21 +1,22 @@
 import Tool from '../Tool';
 
 class Filter extends Tool {
-  _value = 0;
-  applyed = false;
+  value = 0;
 
-  set value(value) {
-    const newValue = Math.min(Math.max(parseFloat(value), -1), 1);
-    if (newValue === this._value) {
+  applied = false;
+
+  setValue(value) {
+    const newValue = Math.min(Math.max(value, -1), 1);
+    if (newValue === this.value) {
       return;
     }
 
-    this._value = newValue;
+    this.value = newValue;
     this.apply();
   }
 
-  get value() {
-    return this._value;
+  getValue() {
+    return this.value;
   }
 
   newImageData() {
@@ -27,9 +28,9 @@ class Filter extends Tool {
 
     ctx.putImageData(this.newImageData(), 0, 0);
 
-    if (this.applyed === false) {
+    if (this.applied === false) {
       this.pushState(this.el.toDataURL());
-      this.applyed = true;
+      this.applied = true;
     } else {
       this.updateState(this.el.toDataURL());
     }
@@ -46,8 +47,8 @@ class Filter extends Tool {
   }
 
   onBeforeDisable() {
-    this._value = 0;
-    this.applyed = false;
+    this.value = 0;
+    this.applied = false;
     this.originalImageData = null;
   }
 }

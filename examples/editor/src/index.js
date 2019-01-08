@@ -1,5 +1,3 @@
-import 'babel-polyfill';
-
 import { PhotoEditor } from 'photo-editor';
 
 import {
@@ -10,7 +8,7 @@ import {
   Rectangle,
   RotateLeft,
   RotateRight,
-} from 'photo-editor/lib/tools';
+} from 'photo-editor/es/tools';
 
 const canvasEl = document.getElementById('canvas');
 
@@ -149,8 +147,8 @@ photoEditor.addListener('ready', () => {
     }
 
     blurSettings.classList.remove('hide');
-    blurRadius.value = photoEditor.tools.blur.radius;
-    blurSigma.value = photoEditor.tools.blur.sigma;
+    blurRadius.value = photoEditor.tools.blur.getRadius();
+    blurSigma.value = photoEditor.tools.blur.getSigma();
   };
 
   photoEditor.tools.blur.onAfterDisable = () => {
@@ -158,11 +156,11 @@ photoEditor.addListener('ready', () => {
   };
 
   blurRadius.oninput = (e) => {
-    photoEditor.tools.blur.radius = e.target.value;
+    photoEditor.tools.blur.setRadius(Number(e.target.value));
   };
 
   blurSigma.oninput = (e) => {
-    photoEditor.tools.blur.sigma = e.target.value;
+    photoEditor.tools.blur.setSigma(Number(e.target.value));
   };
 
   const afterEnableCrop = photoEditor.tools.crop.onAfterEnable;
@@ -172,8 +170,8 @@ photoEditor.addListener('ready', () => {
     }
 
     cropActions.classList.remove('hide');
-    blurRadius.value = photoEditor.tools.blur.radius;
-    blurSigma.value = photoEditor.tools.blur.sigma;
+    blurRadius.value = photoEditor.tools.blur.getRadius();
+    blurSigma.value = photoEditor.tools.blur.getSigma();
   };
 
   photoEditor.tools.crop.onAfterDisable = () => {
@@ -181,7 +179,7 @@ photoEditor.addListener('ready', () => {
   };
 
   contrastValue.oninput = (e) => {
-    photoEditor.tools.contrast.value = e.target.value;
+    photoEditor.tools.contrast.setValue(Number(e.target.value));
   };
 
   const afterEnableContrast = photoEditor.tools.contrast.onAfterEnable;
@@ -200,7 +198,7 @@ photoEditor.addListener('ready', () => {
 
 
   brightnessValue.oninput = (e) => {
-    photoEditor.tools.brightness.value = e.target.value;
+    photoEditor.tools.brightness.setValue(Number(e.target.value));
   };
 
   const afterEnableBrightness = photoEditor.tools.brightness.onAfterEnable;
@@ -216,5 +214,4 @@ photoEditor.addListener('ready', () => {
   photoEditor.tools.brightness.onAfterDisable = () => {
     brightnessSettings.classList.add('hide');
   };
-
 });

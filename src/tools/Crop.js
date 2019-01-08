@@ -2,14 +2,23 @@ import Tool from '../Tool';
 
 class Crop extends Tool {
   originalImage = null;
+
   darkenImage = null;
+
   cropping = false;
+
   setted = false;
+
   startX = null;
+
   startY = null;
+
   finishX = null;
+
   finishY = null;
+
   mousedownX = null;
+
   mousedownY = null;
 
   resizingBorder = null;

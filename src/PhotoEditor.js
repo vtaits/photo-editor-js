@@ -11,11 +11,15 @@ const defaultOptions = {
 
 class PhotoEditor extends EventEmitter {
   _el = null;
+
   _options = null;
+
   _currentState = -1;
+
   _states = [];
 
   _enabledToolId = null;
+
   _touched = false;
 
   _destroyed = false;
