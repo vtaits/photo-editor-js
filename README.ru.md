@@ -1,3 +1,5 @@
+[![NPM](https://img.shields.io/npm/v/photo-editor.svg)](https://www.npmjs.com/package/photo-editor)
+
 # photo-editor-js
 Простой кастомизируемый редактор фотографий для веб-приложений.
 
