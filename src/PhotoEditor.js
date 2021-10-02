@@ -1,4 +1,4 @@
-import { EventEmitter } from 'fbemitter';
+import { EventEmitter } from 'eventemitter3';
 
 import getInitialState from './getInitialState';
 import validateOptions from './validateOptions';

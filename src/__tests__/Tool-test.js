@@ -1,4 +1,5 @@
-import { EventEmitter } from 'fbemitter';
+/* eslint-disable max-classes-per-file */
+import { EventEmitter } from 'eventemitter3';
 
 import Tool from '../Tool';
 

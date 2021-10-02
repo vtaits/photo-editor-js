@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import PhotoEditor from '../PhotoEditor';
 import Tool from '../Tool';
 

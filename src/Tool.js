@@ -1,4 +1,4 @@
-import { EventEmitter } from 'fbemitter';
+import { EventEmitter } from 'eventemitter3';
 
 class Tool extends EventEmitter {
   el = null;
