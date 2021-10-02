@@ -6,8 +6,9 @@ import type {
 } from './types';
 
 export const validateOptions = <CurrentSource extends SourceType>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options: PhotoEditorOptions<any, CurrentSource>,
-) => {
+): void => {
   if (typeof options !== 'object') {
     throw new Error('PhotoEditor options should be an object');
   }
@@ -25,4 +26,4 @@ export const validateOptions = <CurrentSource extends SourceType>(
   }
 
   validateSource(options);
-}
+};

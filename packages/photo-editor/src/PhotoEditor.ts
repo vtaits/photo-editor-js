@@ -10,6 +10,7 @@ import type {
   PhotoEditorOptions,
 } from './types';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const defaultOptions: Partial<PhotoEditorOptions<any, 'current-canvas'>> = {
   sourceType: 'current-canvas',
 };
@@ -25,7 +26,7 @@ CurrentSource extends SourceType = 'current-canvas',
 
   _currentState = -1;
 
-  _states = [];
+  _states: string[] = [];
 
   _enabledToolId: ToolKey = null;
 
@@ -55,7 +56,7 @@ CurrentSource extends SourceType = 'current-canvas',
     this._init();
   }
 
-  async _init() {
+  async _init(): Promise<void> {
     const initialState = await getInitialState(this._el, this._options);
 
     this._currentState = 0;
@@ -70,7 +71,7 @@ CurrentSource extends SourceType = 'current-canvas',
     this.emit('ready');
   }
 
-  _initTools() {
+  _initTools(): void {
     Object.keys(this._options.tools)
       .forEach((toolIdRaw) => {
         const toolId = toolIdRaw as ToolKey;
@@ -97,20 +98,20 @@ CurrentSource extends SourceType = 'current-canvas',
       });
   }
 
-  _pushState = (state) => {
+  _pushState = (state: string): void => {
     const slicedStates = this._states.slice(0, this._currentState + 1);
     slicedStates.push(state);
 
     ++this._currentState;
     this._states = slicedStates;
-  }
+  };
 
-  _updateState = (state) => {
+  _updateState = (state: string): void => {
     const slicedStates = this._states.slice(0, this._currentState);
     slicedStates.push(state);
 
     this._states = slicedStates;
-  }
+  };
 
   async _drawCurrentState(): Promise<void> {
     // TO DO: test
@@ -133,7 +134,7 @@ CurrentSource extends SourceType = 'current-canvas',
     ctx.drawImage(image, 0, 0);
   }
 
-  destroy() {
+  destroy(): void {
     this._destroyed = true;
 
     Object.keys(this.tools)
@@ -144,11 +145,11 @@ CurrentSource extends SourceType = 'current-canvas',
       });
   }
 
-  getCurrentState() {
+  getCurrentState(): string {
     return this._states[this._currentState];
   }
 
-  enableTool(toolId: ToolKey) {
+  enableTool(toolId: ToolKey): void {
     if (!this.tools[toolId]) {
       throw new Error(`PhotoEditor tool with id "${toolId}" is not defined`);
     }
@@ -162,7 +163,7 @@ CurrentSource extends SourceType = 'current-canvas',
     this.emit('enableTool', toolId);
   }
 
-  disableTool = () => {
+  disableTool(): void {
     if (this._enabledToolId) {
       this.tools[this._enabledToolId].disableFromEditor();
 
@@ -178,7 +179,7 @@ CurrentSource extends SourceType = 'current-canvas',
     }
   }
 
-  toggleTool(toolId: ToolKey) {
+  toggleTool(toolId: ToolKey): void {
     if (this._enabledToolId === toolId) {
       this.disableTool();
     } else {
@@ -186,11 +187,11 @@ CurrentSource extends SourceType = 'current-canvas',
     }
   }
 
-  touch() {
+  touch(): void {
     this._touched = true;
   }
 
-  undo() {
+  undo(): void {
     if (this._currentState > 0) {
       --this._currentState;
 
@@ -200,7 +201,7 @@ CurrentSource extends SourceType = 'current-canvas',
     }
   }
 
-  redo() {
+  redo(): void {
     if (this._currentState < this._states.length - 1) {
       ++this._currentState;
 

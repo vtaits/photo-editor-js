@@ -7,9 +7,10 @@
     "start": "start-storybook",
     "clean": "yarn workspaces foreach -pt run clean",
     "build": "yarn workspaces foreach -pt run build",
+    "test:ts": "yarn workspaces foreach -pt run test:ts",
     "lint": "yarn workspaces foreach run lint",
     "test:unit": "yarn workspaces foreach run test:unit",
-    "test": "yarn lint && yarn test:unit"
+    "test": "yarn lint && yarn test:ts yarn test:unit"
   },
   "repository": {
     "type": "git",
@@ -36,6 +37,7 @@
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-airbnb-typescript": "^14.0.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-jest": "^24.5.0",
     "jest": "^27.2.4",

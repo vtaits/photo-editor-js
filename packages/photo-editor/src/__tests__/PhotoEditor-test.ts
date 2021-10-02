@@ -27,6 +27,7 @@ ToolKey extends keyof Tools,
 /* eslint-disable no-new */
 test('should throw an exception if element is not canvas', () => {
   expect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     new PhotoEditor('test');
   })
@@ -36,6 +37,7 @@ test('should throw an exception if element is not canvas', () => {
 test('should throw an exception if tools is not object', () => {
   expect(() => {
     new PhotoEditor(document.createElement('canvas'), {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       tools: '123',
     });
@@ -45,6 +47,7 @@ test('should throw an exception if tools is not object', () => {
 
 test('should throw an exception if tools is null', () => {
   expect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     new PhotoEditor(document.createElement('canvas'), {
       tools: null,
@@ -57,6 +60,7 @@ test('should throw an exception if sourceType is invalid', () => {
   expect(() => {
     new PhotoEditor(document.createElement('canvas'), {
       tools: {},
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       sourceType: 'test',
     });
@@ -69,6 +73,7 @@ test('should throw an exception if sourceType is "canvas" and source not canvas'
     new PhotoEditor(document.createElement('canvas'), {
       tools: {},
       sourceType: 'canvas',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       source: 'test',
     });
@@ -81,6 +86,7 @@ test('should throw an exception if sourceType is "img" and source not image', ()
     new PhotoEditor(document.createElement('canvas'), {
       tools: {},
       sourceType: 'img',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       source: 'test',
     });
@@ -258,7 +264,7 @@ test('should draw initialState if source-type is not "current-canvas"', async ()
 
 test('should save state on pushState', () => {
   const el = document.createElement('canvas');
-  const options: PhotoEditorOptions<{}, 'base64'> = {
+  const options: PhotoEditorOptions<Record<string, unknown>, 'base64'> = {
     tools: {},
     sourceType: 'base64',
     source: 'data:image/png;base64,test',
@@ -283,7 +289,7 @@ test('should save state on pushState', () => {
 
 test('should save state and slice extra states on pushState', () => {
   const el = document.createElement('canvas');
-  const options: PhotoEditorOptions<{}, 'base64'> = {
+  const options: PhotoEditorOptions<Record<string, unknown>, 'base64'> = {
     tools: {},
     sourceType: 'base64',
     source: 'data:image/png;base64,test',
@@ -315,7 +321,7 @@ test('should save state and slice extra states on pushState', () => {
 
 test('should return correct currentState with getCurrentState', () => {
   const el = document.createElement('canvas');
-  const options: PhotoEditorOptions<{}, 'base64'> = {
+  const options: PhotoEditorOptions<Record<string, unknown>, 'base64'> = {
     tools: {},
     sourceType: 'base64',
     source: 'data:image/png;base64,test',

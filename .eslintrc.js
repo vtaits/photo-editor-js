@@ -23,6 +23,12 @@ module.exports = {
     project: './tsconfig.validate.json',
   },
 
+  settings: {
+    'import/resolver': {
+      typescript: {},
+    },
+  },
+
   rules: {
     'arrow-parens': ['error', 'always'],
     'no-plusplus': 'off',
@@ -45,6 +51,8 @@ module.exports = {
         ],
       },
     ],
+
+    'import/prefer-default-export': 'off',
 
     'import/extensions': [
       'error',

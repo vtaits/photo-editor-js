@@ -12,7 +12,7 @@ import type {
 
 const emptyImageWarning = 'PhotoEditor: source image is loaded with error';
 
-export const imageToBase64 = async (image: HTMLImageElement) => {
+export const imageToBase64 = async (image: HTMLImageElement): Promise<string> => {
   if (image.complete) {
     if (image.naturalWidth === 0) {
       // eslint-disable-next-line no-console
@@ -35,12 +35,15 @@ export const imageToBase64 = async (image: HTMLImageElement) => {
   ctx.drawImage(image, 0, 0);
 
   return fakeCanvasEl.toDataURL();
-}
+};
 
 export const getInitialState = async <
 Tools extends Record<string, typeof Tool>,
 CurrentSource extends SourceType,
->(el: HTMLCanvasElement, options: PhotoEditorOptions<Tools, CurrentSource>) => {
+>(
+  el: HTMLCanvasElement,
+  options: PhotoEditorOptions<Tools, CurrentSource>,
+): Promise<string> => {
   switch (options.sourceType) {
     case 'current-canvas':
       return el.toDataURL();

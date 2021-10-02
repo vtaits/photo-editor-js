@@ -4,8 +4,9 @@ import type {
 } from './types';
 
 export const validateSource = <CurrentSource extends SourceType>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options: PhotoEditorOptions<any, CurrentSource>,
-) => {
+): void => {
   switch (options.sourceType) {
     case 'current-canvas':
       return;
@@ -14,6 +15,7 @@ export const validateSource = <CurrentSource extends SourceType>(
     {
       const {
         source,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } = options as unknown as PhotoEditorOptions<any, 'canvas'>;
 
       if (
@@ -30,6 +32,7 @@ export const validateSource = <CurrentSource extends SourceType>(
     {
       const {
         source,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } = options as unknown as PhotoEditorOptions<any, 'img'>;
 
       if (
@@ -46,6 +49,7 @@ export const validateSource = <CurrentSource extends SourceType>(
     {
       const {
         source,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } = options as unknown as PhotoEditorOptions<any, 'base64'>;
 
       if (typeof source !== 'string') {
@@ -58,4 +62,4 @@ export const validateSource = <CurrentSource extends SourceType>(
     default:
       throw new Error('"sourceType" should be one of: "current-canvas", "canvas", "img", "base64"');
   }
-}
+};

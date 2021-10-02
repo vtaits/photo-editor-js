@@ -63,17 +63,21 @@ export class Tool extends EventEmitter {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  onBeforeDisable() {}
-  // eslint-disable-next-line class-methods-use-this
-  onAfterDisable() {}
-  // eslint-disable-next-line class-methods-use-this
-  onBeforeEnable() {}
-  // eslint-disable-next-line class-methods-use-this
-  onAfterEnable() {}
-  // eslint-disable-next-line class-methods-use-this
-  onBeforeDestroy() {}
+  onBeforeDisable(): void {}
 
-  disableFromEditor() {
+  // eslint-disable-next-line class-methods-use-this
+  onAfterDisable(): void {}
+
+  // eslint-disable-next-line class-methods-use-this
+  onBeforeEnable(): void {}
+
+  // eslint-disable-next-line class-methods-use-this
+  onAfterEnable(): void {}
+
+  // eslint-disable-next-line class-methods-use-this
+  onBeforeDestroy(): void {}
+
+  disableFromEditor(): void {
     if (this.onBeforeDisable) {
       this.onBeforeDisable();
     }
@@ -85,7 +89,7 @@ export class Tool extends EventEmitter {
     }
   }
 
-  enableFromEditor() {
+  enableFromEditor(): void {
     if (this.onBeforeEnable) {
       this.onBeforeEnable();
     }
@@ -97,12 +101,12 @@ export class Tool extends EventEmitter {
     }
   }
 
-  destroy() {
+  destroy(): void {
     if (this.onBeforeDestroy) {
       this.onBeforeDestroy();
     }
   }
 
   // eslint-disable-next-line class-methods-use-this
-  reset() {}
+  reset(): void {}
 }

@@ -14,6 +14,7 @@ const toolOptions = {
 /* eslint-disable no-new */
 test('should throw an exception if options is not object', () => {
   expect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     new Tool('test');
   })
@@ -29,6 +30,7 @@ test('should throw an exception if options is null', () => {
 
 test('should throw an exception if element is not canvas', () => {
   expect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     new Tool({});
   })
@@ -37,6 +39,7 @@ test('should throw an exception if element is not canvas', () => {
 
 test('should throw an exception if pushState is not a function', () => {
   expect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     new Tool({
       el: document.createElement('canvas'),
@@ -48,6 +51,7 @@ test('should throw an exception if pushState is not a function', () => {
 
 test('should throw an exception if updateState is not a function', () => {
   expect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     new Tool({
       el: document.createElement('canvas'),
@@ -59,6 +63,7 @@ test('should throw an exception if updateState is not a function', () => {
 
 test('should throw an exception if disable is not a function', () => {
   expect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     new Tool({
       el: document.createElement('canvas'),
@@ -71,6 +76,7 @@ test('should throw an exception if disable is not a function', () => {
 
 test('should throw an exception if touch is not a function', () => {
   expect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     new Tool({
       el: document.createElement('canvas'),
