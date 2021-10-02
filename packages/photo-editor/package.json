@@ -1,0 +1,49 @@
+{
+  "name": "photo-editor",
+  "version": "0.2.0",
+  "description": "Simple and customizable photo editor for web applications.",
+  "main": "./lib/index.js",
+  "module": "./es/index.js",
+  "scripts": {
+    "clean": "rimraf es lib ts",
+    "build": "yarn build:cjs && yarn build:es",
+    "build:cjs": "cross-env BABEL_ENV=cjs babel --root-mode upward src --out-dir lib --ignore \"src/**/__tests__\"",
+    "build:es": "cross-env BABEL_ENV=es babel --root-mode upward src --out-dir es --ignore \"src/**/__tests__\"",
+    "test": "yarn lint && yarn test:unit",
+    "lint": "eslint src --ignore-path ../../.gitignore",
+    "test:unit": "jest",
+    "prepare": "yarn clean && yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vtaits/photo-editor-js.git"
+  },
+  "keywords": [
+    "editor",
+    "image",
+    "photo",
+    "vanilla"
+  ],
+  "author": "Vadim Taits",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vtaits/photo-editor-js/issues"
+  },
+  "homepage": "https://github.com/vtaits/photo-editor-js#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/eslint-parser": "^7.15.7",
+    "babel-jest": "^27.2.4",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-jest": "^24.5.0",
+    "jest": "^27.2.4",
+    "jest-canvas-mock": "^2.3.1"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.15.4",
+    "eventemitter3": "^4.0.7"
+  }
+}
