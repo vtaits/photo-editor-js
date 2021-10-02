@@ -1,9 +1,17 @@
 /* eslint-disable max-classes-per-file */
-import PhotoEditor from '../PhotoEditor';
-import Tool from '../Tool';
+import { PhotoEditor } from '../PhotoEditor';
+import { Tool } from '../Tool';
+
+import type {
+  SourceType,
+  PhotoEditorOptions,
+} from '../types';
 
 /* eslint-disable no-underscore-dangle */
-class SyncPhotoEditor extends PhotoEditor {
+class SyncPhotoEditor<
+Tools extends Record<string, typeof Tool>,
+ToolKey extends keyof Tools,
+> extends PhotoEditor<Tools, ToolKey, 'base64'> {
   _init() {
     const initialState = this._options.source;
 
@@ -11,12 +19,15 @@ class SyncPhotoEditor extends PhotoEditor {
     this._states = [initialState];
 
     this._initTools();
+
+    return Promise.resolve();
   }
 }
 
 /* eslint-disable no-new */
 test('should throw an exception if element is not canvas', () => {
   expect(() => {
+    // @ts-ignore
     new PhotoEditor('test');
   })
     .toThrowError('Element for init PhotoEditor should be a canvas');
@@ -25,6 +36,7 @@ test('should throw an exception if element is not canvas', () => {
 test('should throw an exception if tools is not object', () => {
   expect(() => {
     new PhotoEditor(document.createElement('canvas'), {
+      // @ts-ignore
       tools: '123',
     });
   })
@@ -33,6 +45,7 @@ test('should throw an exception if tools is not object', () => {
 
 test('should throw an exception if tools is null', () => {
   expect(() => {
+    // @ts-ignore
     new PhotoEditor(document.createElement('canvas'), {
       tools: null,
     });
@@ -40,20 +53,11 @@ test('should throw an exception if tools is null', () => {
     .toThrowError('PhotoEditor tools can\'t be null');
 });
 
-test('should throw an exception if onChangeState defined and not a function', () => {
-  expect(() => {
-    new PhotoEditor(document.createElement('canvas'), {
-      tools: {},
-      onChangeState: 'test',
-    });
-  })
-    .toThrowError('"onChangeState" should be a function');
-});
-
 test('should throw an exception if sourceType is invalid', () => {
   expect(() => {
     new PhotoEditor(document.createElement('canvas'), {
       tools: {},
+      // @ts-ignore
       sourceType: 'test',
     });
   })
@@ -65,6 +69,7 @@ test('should throw an exception if sourceType is "canvas" and source not canvas'
     new PhotoEditor(document.createElement('canvas'), {
       tools: {},
       sourceType: 'canvas',
+      // @ts-ignore
       source: 'test',
     });
   })
@@ -76,6 +81,7 @@ test('should throw an exception if sourceType is "img" and source not image', ()
     new PhotoEditor(document.createElement('canvas'), {
       tools: {},
       sourceType: 'img',
+      // @ts-ignore
       source: 'test',
     });
   })
@@ -115,17 +121,27 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
     }
   }
 
-  class WithSeparatedInit extends PhotoEditor {
+  class WithSeparatedInit<
+  Tools extends Record<string, typeof Tool>,
+  ToolKey extends keyof Tools,
+  CurrentSource extends SourceType = 'current-canvas',
+  > extends PhotoEditor<Tools, ToolKey, CurrentSource> {
     // eslint-disable-next-line class-methods-use-this
     _init() {
       initMock();
+      return Promise.resolve();
     }
 
     // eslint-disable-next-line class-methods-use-this
-    _drawCurrentState() {}
+    _drawCurrentState() {
+      return Promise.resolve();
+    }
   }
   const el = document.createElement('canvas');
-  const options = {
+  const options: PhotoEditorOptions<{
+    tool1: typeof Tool1;
+    tool2: typeof Tool2;
+  }, 'base64'> = {
     tools: {
       tool1: Tool1,
       tool2: Tool2,
@@ -137,7 +153,7 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
   const photoEditor = new WithSeparatedInit(el, options);
   photoEditor.addListener('ready', readyMock);
 
-  expect(initMock.mock.calls.length).toBe(1);
+  expect(initMock).toHaveBeenCalledTimes(1);
 
   expect(photoEditor._el).toEqual(el);
   expect(photoEditor._options).toEqual(options);
@@ -153,7 +169,7 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
   ]);
 
   [tool1Mock, tool2Mock].forEach((toolMock) => {
-    expect(toolMock.mock.calls.length).toBe(1);
+    expect(toolMock).toHaveBeenCalledTimes(1);
 
     expect(tool1Mock.mock.calls[0][0]).toEqual({
       el,
@@ -167,21 +183,30 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
   expect(photoEditor.tools.tool1 instanceof Tool1).toBe(true);
   expect(photoEditor.tools.tool2 instanceof Tool2).toBe(true);
 
-  expect(readyMock.mock.calls.length).toBe(1);
+  expect(readyMock).toHaveBeenCalledTimes(1);
 });
 
 test('should not draw initialState if source-type is "current-canvas"', async () => {
   const drawCurrentStateMock = jest.fn();
 
-  class WithSeparatedInit extends PhotoEditor {
+  class WithSeparatedInit<
+  Tools extends Record<string, typeof Tool>,
+  ToolKey extends keyof Tools,
+  CurrentSource extends SourceType = 'current-canvas',
+  > extends PhotoEditor<Tools, ToolKey, CurrentSource> {
     // eslint-disable-next-line class-methods-use-this
-    _init() {}
+    _init() {
+      return Promise.resolve();
+    }
 
     _drawCurrentState = drawCurrentStateMock;
   }
 
   const el = document.createElement('canvas');
-  const options = {
+  const options: PhotoEditorOptions<{
+    tool1: typeof Tool;
+    tool2: typeof Tool;
+  }, 'current-canvas'> = {
     tools: {
       tool1: Tool,
       tool2: Tool,
@@ -192,22 +217,31 @@ test('should not draw initialState if source-type is "current-canvas"', async ()
   const photoEditor = new WithSeparatedInit(el, options);
   await PhotoEditor.prototype._init.call(photoEditor);
 
-  expect(drawCurrentStateMock.mock.calls.length).toBe(0);
+  expect(drawCurrentStateMock).toHaveBeenCalledTimes(0);
 });
 
 // TO DO: check all source types
 test('should draw initialState if source-type is not "current-canvas"', async () => {
   const drawCurrentStateMock = jest.fn();
 
-  class WithSeparatedInit extends PhotoEditor {
+  class WithSeparatedInit<
+  Tools extends Record<string, typeof Tool>,
+  ToolKey extends keyof Tools,
+  CurrentSource extends SourceType = 'current-canvas',
+  > extends PhotoEditor<Tools, ToolKey, CurrentSource> {
     // eslint-disable-next-line class-methods-use-this
-    _init() {}
+    _init() {
+      return Promise.resolve();
+    }
 
     _drawCurrentState = drawCurrentStateMock;
   }
 
   const el = document.createElement('canvas');
-  const options = {
+  const options: PhotoEditorOptions<{
+    tool1: typeof Tool;
+    tool2: typeof Tool;
+  }, 'base64'> = {
     tools: {
       tool1: Tool,
       tool2: Tool,
@@ -219,12 +253,12 @@ test('should draw initialState if source-type is not "current-canvas"', async ()
   const photoEditor = new WithSeparatedInit(el, options);
   await PhotoEditor.prototype._init.call(photoEditor);
 
-  expect(drawCurrentStateMock.mock.calls.length).toBe(1);
+  expect(drawCurrentStateMock).toHaveBeenCalledTimes(1);
 });
 
 test('should save state on pushState', () => {
   const el = document.createElement('canvas');
-  const options = {
+  const options: PhotoEditorOptions<{}, 'base64'> = {
     tools: {},
     sourceType: 'base64',
     source: 'data:image/png;base64,test',
@@ -249,7 +283,7 @@ test('should save state on pushState', () => {
 
 test('should save state and slice extra states on pushState', () => {
   const el = document.createElement('canvas');
-  const options = {
+  const options: PhotoEditorOptions<{}, 'base64'> = {
     tools: {},
     sourceType: 'base64',
     source: 'data:image/png;base64,test',
@@ -281,7 +315,7 @@ test('should save state and slice extra states on pushState', () => {
 
 test('should return correct currentState with getCurrentState', () => {
   const el = document.createElement('canvas');
-  const options = {
+  const options: PhotoEditorOptions<{}, 'base64'> = {
     tools: {},
     sourceType: 'base64',
     source: 'data:image/png;base64,test',
@@ -301,7 +335,10 @@ test('should enable tool', () => {
   const onEnableToolMock = jest.fn();
 
   const el = document.createElement('canvas');
-  const options = {
+  const options: PhotoEditorOptions<{
+    tool1: typeof Tool;
+    tool2: typeof Tool;
+  }, 'base64'> = {
     tools: {
       tool1: Tool,
       tool2: Tool,
@@ -319,7 +356,7 @@ test('should enable tool', () => {
   expect(photoEditor.tools.tool1.enabled).toBe(true);
   expect(photoEditor.tools.tool2.enabled).toBe(false);
 
-  expect(onEnableToolMock.mock.calls.length).toBe(1);
+  expect(onEnableToolMock).toHaveBeenCalledTimes(1);
   expect(onEnableToolMock.mock.calls[0][0]).toBe('tool1');
 
   photoEditor.enableTool('tool2');
@@ -327,7 +364,7 @@ test('should enable tool', () => {
   expect(photoEditor.tools.tool1.enabled).toBe(false);
   expect(photoEditor.tools.tool2.enabled).toBe(true);
 
-  expect(onEnableToolMock.mock.calls.length).toBe(2);
+  expect(onEnableToolMock).toHaveBeenCalledTimes(2);
   expect(onEnableToolMock.mock.calls[1][0]).toBe('tool2');
 });
 
@@ -335,7 +372,10 @@ test('should disable enabled tool', () => {
   const onDisableToolMock = jest.fn();
 
   const el = document.createElement('canvas');
-  const options = {
+  const options: PhotoEditorOptions<{
+    tool1: typeof Tool;
+    tool2: typeof Tool;
+  }, 'base64'> = {
     tools: {
       tool1: Tool,
       tool2: Tool,
@@ -354,7 +394,7 @@ test('should disable enabled tool', () => {
   expect(photoEditor.tools.tool1.enabled).toBe(false);
   expect(photoEditor.tools.tool2.enabled).toBe(false);
 
-  expect(onDisableToolMock.mock.calls.length).toBe(1);
+  expect(onDisableToolMock).toHaveBeenCalledTimes(1);
   expect(onDisableToolMock.mock.calls[0][0]).toBe('tool1');
 });
 
@@ -363,7 +403,9 @@ test('should toggle tool', () => {
   const onDisableToolMock = jest.fn();
 
   const el = document.createElement('canvas');
-  const options = {
+  const options: PhotoEditorOptions<{
+    tool1: typeof Tool;
+  }, 'base64'> = {
     tools: {
       tool1: Tool,
     },
@@ -380,21 +422,24 @@ test('should toggle tool', () => {
   expect(photoEditor._enabledToolId).toBe('tool1');
   expect(photoEditor.tools.tool1.enabled).toBe(true);
 
-  expect(onEnableToolMock.mock.calls.length).toBe(1);
+  expect(onEnableToolMock).toHaveBeenCalledTimes(1);
   expect(onEnableToolMock.mock.calls[0][0]).toBe('tool1');
-  expect(onDisableToolMock.mock.calls.length).toBe(0);
+  expect(onDisableToolMock).toHaveBeenCalledTimes(0);
 
   photoEditor.toggleTool('tool1');
   expect(photoEditor._enabledToolId).toBe(null);
   expect(photoEditor.tools.tool1.enabled).toBe(false);
 
-  expect(onEnableToolMock.mock.calls.length).toBe(1);
-  expect(onDisableToolMock.mock.calls.length).toBe(1);
+  expect(onEnableToolMock).toHaveBeenCalledTimes(1);
+  expect(onDisableToolMock).toHaveBeenCalledTimes(1);
 });
 
 test('should set touched state', () => {
   const el = document.createElement('canvas');
-  const options = {
+  const options: PhotoEditorOptions<{
+    tool1: typeof Tool;
+    tool2: typeof Tool;
+  }, 'base64'> = {
     tools: {
       tool1: Tool,
       tool2: Tool,
@@ -415,12 +460,15 @@ test('should set touched state', () => {
   photoEditor.disableTool();
 
   expect(photoEditor._touched).toBe(false);
-  expect(photoEditor._drawCurrentState.mock.calls.length).toBe(1);
+  expect(photoEditor._drawCurrentState).toHaveBeenCalledTimes(1);
 });
 
 test('should set previous state on undo call', () => {
   const el = document.createElement('canvas');
-  const options = {
+  const options: PhotoEditorOptions<{
+    tool1: typeof Tool;
+    tool2: typeof Tool;
+  }, 'base64'> = {
     tools: {
       tool1: Tool,
       tool2: Tool,
@@ -443,12 +491,15 @@ test('should set previous state on undo call', () => {
 
   expect(photoEditor._enabledToolId).toBe(null);
   expect(photoEditor._currentState).toBe(3);
-  expect(photoEditor._drawCurrentState.mock.calls.length).toBe(1);
+  expect(photoEditor._drawCurrentState).toHaveBeenCalledTimes(1);
 });
 
 test('should set next state on undo call', () => {
   const el = document.createElement('canvas');
-  const options = {
+  const options: PhotoEditorOptions<{
+    tool1: typeof Tool;
+    tool2: typeof Tool;
+  }, 'base64'> = {
     tools: {
       tool1: Tool,
       tool2: Tool,
@@ -473,7 +524,7 @@ test('should set next state on undo call', () => {
 
   expect(photoEditor._enabledToolId).toBe(null);
   expect(photoEditor._currentState).toBe(2);
-  expect(photoEditor._drawCurrentState.mock.calls.length).toBe(1);
+  expect(photoEditor._drawCurrentState).toHaveBeenCalledTimes(1);
 });
 
 test('should set destroyed state and destroy all tools', async () => {
@@ -489,7 +540,10 @@ test('should set destroyed state and destroy all tools', async () => {
   }
 
   const el = document.createElement('canvas');
-  const options = {
+  const options: PhotoEditorOptions<{
+    tool1: typeof Tool;
+    tool2: typeof Tool;
+  }, 'base64'> = {
     tools: {
       tool1: Tool1,
       tool2: Tool2,
@@ -500,11 +554,11 @@ test('should set destroyed state and destroy all tools', async () => {
 
   const photoEditor = new SyncPhotoEditor(el, options);
 
-  expect(tool1DestroyMock.mock.calls.length).toBe(0);
-  expect(tool2DestroyMock.mock.calls.length).toBe(0);
+  expect(tool1DestroyMock).toHaveBeenCalledTimes(0);
+  expect(tool2DestroyMock).toHaveBeenCalledTimes(0);
 
   photoEditor.destroy();
 
-  expect(tool1DestroyMock.mock.calls.length).toBe(1);
-  expect(tool2DestroyMock.mock.calls.length).toBe(1);
+  expect(tool1DestroyMock).toHaveBeenCalledTimes(1);
+  expect(tool2DestroyMock).toHaveBeenCalledTimes(1);
 });

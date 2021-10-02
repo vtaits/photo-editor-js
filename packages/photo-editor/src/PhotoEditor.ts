@@ -1,35 +1,44 @@
 import { EventEmitter } from 'eventemitter3';
 
-import getInitialState from './getInitialState';
-import validateOptions from './validateOptions';
-import Tool from './Tool';
-import waitForImageComplete from './waitForImageComplete';
+import { getInitialState } from './getInitialState';
+import { validateOptions } from './validateOptions';
+import { Tool } from './Tool';
+import { waitForImageComplete } from './waitForImageComplete';
 
-const defaultOptions = {
+import type {
+  SourceType,
+  PhotoEditorOptions,
+} from './types';
+
+const defaultOptions: Partial<PhotoEditorOptions<any, 'current-canvas'>> = {
   sourceType: 'current-canvas',
 };
 
-class PhotoEditor extends EventEmitter {
-  _el = null;
+export class PhotoEditor<
+Tools extends Record<string, typeof Tool>,
+ToolKey extends keyof Tools,
+CurrentSource extends SourceType = 'current-canvas',
+> extends EventEmitter {
+  _el: HTMLCanvasElement = null;
 
-  _options = null;
+  _options: PhotoEditorOptions<Tools, CurrentSource> = null;
 
   _currentState = -1;
 
   _states = [];
 
-  _enabledToolId = null;
+  _enabledToolId: ToolKey = null;
 
   _touched = false;
 
   _destroyed = false;
 
-  tools = {};
+  tools: Record<ToolKey, Tool> = {} as Record<ToolKey, Tool>;
 
-  constructor(el, editorOptions) {
+  constructor(el: HTMLCanvasElement, editorOptions: PhotoEditorOptions<Tools, CurrentSource>) {
     super();
 
-    const options = {
+    const options: PhotoEditorOptions<Tools, CurrentSource> = {
       ...defaultOptions,
       ...editorOptions,
     };
@@ -63,7 +72,9 @@ class PhotoEditor extends EventEmitter {
 
   _initTools() {
     Object.keys(this._options.tools)
-      .forEach((toolId) => {
+      .forEach((toolIdRaw) => {
+        const toolId = toolIdRaw as ToolKey;
+
         const ToolConstructor = this._options.tools[toolId];
 
         if (typeof ToolConstructor !== 'function') {
@@ -101,7 +112,7 @@ class PhotoEditor extends EventEmitter {
     this._states = slicedStates;
   }
 
-  async _drawCurrentState() {
+  async _drawCurrentState(): Promise<void> {
     // TO DO: test
     const base64 = this.getCurrentState();
 
@@ -137,7 +148,7 @@ class PhotoEditor extends EventEmitter {
     return this._states[this._currentState];
   }
 
-  enableTool(toolId) {
+  enableTool(toolId: ToolKey) {
     if (!this.tools[toolId]) {
       throw new Error(`PhotoEditor tool with id "${toolId}" is not defined`);
     }
@@ -167,7 +178,7 @@ class PhotoEditor extends EventEmitter {
     }
   }
 
-  toggleTool(toolId) {
+  toggleTool(toolId: ToolKey) {
     if (this._enabledToolId === toolId) {
       this.disableTool();
     } else {
@@ -175,7 +186,7 @@ class PhotoEditor extends EventEmitter {
     }
   }
 
-  touch = () => {
+  touch() {
     this._touched = true;
   }
 

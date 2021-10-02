@@ -1,4 +1,4 @@
-import Tool from '../Tool';
+import { Tool } from '../Tool';
 
 class Filter extends Tool {
   value = 0;

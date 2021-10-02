@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { EventEmitter } from 'eventemitter3';
 
-import Tool from '../Tool';
+import { Tool } from '../Tool';
 
 const toolOptions = {
   el: document.createElement('canvas'),
@@ -14,6 +14,7 @@ const toolOptions = {
 /* eslint-disable no-new */
 test('should throw an exception if options is not object', () => {
   expect(() => {
+    // @ts-ignore
     new Tool('test');
   })
     .toThrowError('Tool options should be an object');
@@ -28,6 +29,7 @@ test('should throw an exception if options is null', () => {
 
 test('should throw an exception if element is not canvas', () => {
   expect(() => {
+    // @ts-ignore
     new Tool({});
   })
     .toThrowError('Element for init Tool should be a canvas');
@@ -35,6 +37,7 @@ test('should throw an exception if element is not canvas', () => {
 
 test('should throw an exception if pushState is not a function', () => {
   expect(() => {
+    // @ts-ignore
     new Tool({
       el: document.createElement('canvas'),
       updateState: () => {},
@@ -45,6 +48,7 @@ test('should throw an exception if pushState is not a function', () => {
 
 test('should throw an exception if updateState is not a function', () => {
   expect(() => {
+    // @ts-ignore
     new Tool({
       el: document.createElement('canvas'),
       pushState: () => {},
@@ -55,6 +59,7 @@ test('should throw an exception if updateState is not a function', () => {
 
 test('should throw an exception if disable is not a function', () => {
   expect(() => {
+    // @ts-ignore
     new Tool({
       el: document.createElement('canvas'),
       pushState: () => {},
@@ -66,6 +71,7 @@ test('should throw an exception if disable is not a function', () => {
 
 test('should throw an exception if touch is not a function', () => {
   expect(() => {
+    // @ts-ignore
     new Tool({
       el: document.createElement('canvas'),
       pushState: () => {},

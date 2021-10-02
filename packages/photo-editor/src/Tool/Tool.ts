@@ -1,6 +1,10 @@
 import { EventEmitter } from 'eventemitter3';
 
-class Tool extends EventEmitter {
+import type {
+  ToolOptions,
+} from './types';
+
+export class Tool extends EventEmitter {
   el = null;
 
   enabled = false;
@@ -13,7 +17,7 @@ class Tool extends EventEmitter {
 
   disable = null;
 
-  constructor(options) {
+  constructor(options: ToolOptions) {
     super();
 
     if (typeof options !== 'object') {
@@ -58,6 +62,17 @@ class Tool extends EventEmitter {
     this.touch = options.touch;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  onBeforeDisable() {}
+  // eslint-disable-next-line class-methods-use-this
+  onAfterDisable() {}
+  // eslint-disable-next-line class-methods-use-this
+  onBeforeEnable() {}
+  // eslint-disable-next-line class-methods-use-this
+  onAfterEnable() {}
+  // eslint-disable-next-line class-methods-use-this
+  onBeforeDestroy() {}
+
   disableFromEditor() {
     if (this.onBeforeDisable) {
       this.onBeforeDisable();
@@ -89,9 +104,5 @@ class Tool extends EventEmitter {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  reset() {
-
-  }
+  reset() {}
 }
-
-export default Tool;

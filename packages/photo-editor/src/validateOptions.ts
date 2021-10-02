@@ -1,6 +1,13 @@
-import validateSource from './validateSource';
+import { validateSource } from './validateSource';
 
-export default function validateOptions(options) {
+import type {
+  PhotoEditorOptions,
+  SourceType,
+} from './types';
+
+export const validateOptions = <CurrentSource extends SourceType>(
+  options: PhotoEditorOptions<any, CurrentSource>,
+) => {
   if (typeof options !== 'object') {
     throw new Error('PhotoEditor options should be an object');
   }
@@ -15,10 +22,6 @@ export default function validateOptions(options) {
 
   if (options.tools === null) {
     throw new Error('PhotoEditor tools can\'t be null');
-  }
-
-  if (options.onChangeState && typeof options.onChangeState !== 'function') {
-    throw new Error('"onChangeState" should be a function');
   }
 
   validateSource(options);

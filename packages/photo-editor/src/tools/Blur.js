@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import Tool from '../Tool';
+import { Tool } from '../Tool';
 
 class Pixel {
   constructor(r, g, b) {

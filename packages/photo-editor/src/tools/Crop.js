@@ -1,4 +1,4 @@
-import Tool from '../Tool';
+import { Tool } from '../Tool';
 
 class Crop extends Tool {
   originalImage = null;
