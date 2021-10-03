@@ -34,7 +34,11 @@ CurrentSource extends SourceType = 'current-canvas',
 
   _destroyed = false;
 
-  tools: Record<ToolKey, Tool> = {} as Record<ToolKey, Tool>;
+  tools: {
+    [key in ToolKey]: InstanceType<Tools[key]>;
+  } = {} as {
+    [key in ToolKey]: InstanceType<Tools[key]>;
+  };
 
   constructor(el: HTMLCanvasElement, editorOptions: PhotoEditorOptions<Tools, CurrentSource>) {
     super();
@@ -88,7 +92,7 @@ CurrentSource extends SourceType = 'current-canvas',
           updateState: this._updateState,
           disable: this.disableTool,
           touch: this.touch,
-        });
+        }) as InstanceType<Tools[ToolKey]>;
 
         if (!(tool instanceof Tool)) {
           throw new Error(`PhotoEditor tool "${toolId}": should be an instance of Tool `);
@@ -211,5 +215,3 @@ CurrentSource extends SourceType = 'current-canvas',
     }
   }
 }
-
-export default PhotoEditor;

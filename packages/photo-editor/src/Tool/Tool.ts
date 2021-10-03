@@ -5,17 +5,17 @@ import type {
 } from './types';
 
 export class Tool extends EventEmitter {
-  el = null;
+  el: HTMLCanvasElement = null;
 
   enabled = false;
 
-  pushState = null;
+  pushState: (nextState: string) => void = null;
 
-  updateState = null;
+  updateState: (nextState: string) => void = null;
 
-  touch = null;
+  touch: () => void = null;
 
-  disable = null;
+  disable: () => void = null;
 
   constructor(options: ToolOptions) {
     super();

@@ -24,7 +24,7 @@ Tools extends Record<string, typeof Tool>,
 CurrentSource extends SourceType,
 > =
   & {
-    sourceType: CurrentSource;
+    sourceType?: CurrentSource;
     tools: Tools;
   }
   & SourceParams<CurrentSource>;
