@@ -1,7 +1,0 @@
-examples
-node_modules
-src
-.babelrc
-.eslintrc.js
-.gitignore
-package-lock.json

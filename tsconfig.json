@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "lib": ["es2020", "DOM"],
+    "target": "es5",
+    "outDir": "ts",
+    "jsx": "react-jsx",
+    "esModuleInterop": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "src/**/__tests__"
+  ]
+}
