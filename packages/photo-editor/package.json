@@ -13,7 +13,7 @@
     "build:ts": "tsc --declaration --emitDeclarationOnly",
     "test": "yarn lint && yarn test:unit",
     "lint": "eslint src --ext .ts,.tsx --ignore-path ../../.gitignore",
-    "test:ts": "tsc -p ./tsconfig.validate.json --noEmit",
+    "test:ts": "tsc -p ./tsconfig.validate.json",
     "test:unit": "jest",
     "prepare": "yarn clean && yarn build"
   },

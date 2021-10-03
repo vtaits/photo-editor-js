@@ -264,7 +264,8 @@ test('should draw initialState if source-type is not "current-canvas"', async ()
 
 test('should save state on pushState', () => {
   const el = document.createElement('canvas');
-  const options: PhotoEditorOptions<Record<string, unknown>, 'base64'> = {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  const options: PhotoEditorOptions<{}, 'base64'> = {
     tools: {},
     sourceType: 'base64',
     source: 'data:image/png;base64,test',
@@ -289,7 +290,8 @@ test('should save state on pushState', () => {
 
 test('should save state and slice extra states on pushState', () => {
   const el = document.createElement('canvas');
-  const options: PhotoEditorOptions<Record<string, unknown>, 'base64'> = {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  const options: PhotoEditorOptions<{}, 'base64'> = {
     tools: {},
     sourceType: 'base64',
     source: 'data:image/png;base64,test',
@@ -321,7 +323,8 @@ test('should save state and slice extra states on pushState', () => {
 
 test('should return correct currentState with getCurrentState', () => {
   const el = document.createElement('canvas');
-  const options: PhotoEditorOptions<Record<string, unknown>, 'base64'> = {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  const options: PhotoEditorOptions<{}, 'base64'> = {
     tools: {},
     sourceType: 'base64',
     source: 'data:image/png;base64,test',

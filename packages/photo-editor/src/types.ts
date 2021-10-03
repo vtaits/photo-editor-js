@@ -16,7 +16,8 @@ export type SourceParams<CurrentSource extends SourceType> = CurrentSource exten
       ? {
         source: HTMLImageElement;
       }
-      : Record<string, unknown>;
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      : {};
 
 export type PhotoEditorOptions<
 Tools extends Record<string, typeof Tool>,

@@ -7,10 +7,10 @@
     "start": "start-storybook",
     "clean": "yarn workspaces foreach -pt run clean",
     "build": "yarn workspaces foreach -pt run build",
-    "test:ts": "yarn workspaces foreach -pt run test:ts",
+    "test:ts": "yarn workspaces foreach run test:ts",
     "lint": "yarn workspaces foreach run lint",
     "test:unit": "yarn workspaces foreach run test:unit",
-    "test": "yarn lint && yarn test:ts yarn test:unit"
+    "test": "yarn lint & yarn test:ts & yarn test:unit"
   },
   "repository": {
     "type": "git",
