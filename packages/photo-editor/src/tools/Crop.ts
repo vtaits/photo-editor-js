@@ -1,29 +1,35 @@
 import { Tool } from '../Tool';
 
-class Crop extends Tool {
-  originalImage = null;
+type BorderType =
+  | 'top'
+  | 'bottom'
+  | 'left'
+  | 'right';
 
-  darkenImage = null;
+export class Crop extends Tool {
+  originalImage: HTMLCanvasElement = null;
+
+  darkenImage: HTMLCanvasElement = null;
 
   cropping = false;
 
   setted = false;
 
-  startX = null;
+  startX: number = null;
 
-  startY = null;
+  startY: number = null;
 
-  finishX = null;
+  finishX: number = null;
 
-  finishY = null;
+  finishY: number = null;
 
-  mousedownX = null;
+  mousedownX: number = null;
 
-  mousedownY = null;
+  mousedownY: number = null;
 
-  resizingBorder = null;
+  resizingBorder: BorderType = null;
 
-  showCropState() {
+  showCropState(): void {
     const ctx = this.el.getContext('2d');
 
     const x = Math.min(this.startX, this.finishX);
@@ -47,7 +53,7 @@ class Crop extends Tool {
     );
   }
 
-  applyCrop() {
+  applyCrop(): void {
     const x = Math.min(this.startX, this.finishX);
     const y = Math.min(this.startY, this.finishY);
 
@@ -73,7 +79,7 @@ class Crop extends Tool {
     this.disable();
   }
 
-  cancelCrop() {
+  cancelCrop(): void {
     this.startX = null;
     this.startY = null;
     this.finishX = null;
@@ -89,7 +95,7 @@ class Crop extends Tool {
     this.disable();
   }
 
-  sortCoords() {
+  sortCoords(): void {
     if (this.startX > this.finishX) {
       [this.startX, this.finishX] = [this.finishX, this.startX];
     }
@@ -99,7 +105,7 @@ class Crop extends Tool {
     }
   }
 
-  getResizingBorder(x, y) {
+  getResizingBorder(x: number, y: number): BorderType {
     if (x > this.startX && x < this.finishX) {
       if (y > this.startY - 5 && y < this.startY + 5) {
         return 'top';
@@ -123,7 +129,7 @@ class Crop extends Tool {
     return null;
   }
 
-  setCursorForResizingBorder(resizingBorder) {
+  setCursorForResizingBorder(resizingBorder: BorderType): void {
     switch (resizingBorder) {
       case 'top':
       case 'bottom':
@@ -140,7 +146,7 @@ class Crop extends Tool {
     }
   }
 
-  onStartDraw = (event) => {
+  onStartDraw = (event: MouseEvent): void => {
     const x = Math.min(Math.max(event.offsetX, 0), this.el.clientWidth)
       / (this.el.clientWidth / this.el.width);
     const y = Math.min(Math.max(event.offsetY, 0), this.el.clientHeight)
@@ -160,9 +166,9 @@ class Crop extends Tool {
     this.cropping = true;
     this.mousedownX = x;
     this.mousedownY = y;
-  }
+  };
 
-  onProcessDraw = (event) => {
+  onProcessDraw = (event: MouseEvent): void => {
     const x = Math.min(Math.max(event.offsetX, 0), this.el.clientWidth)
       / (this.el.clientWidth / this.el.width);
     const y = Math.min(Math.max(event.offsetY, 0), this.el.clientHeight)
@@ -220,9 +226,9 @@ class Crop extends Tool {
         this.el.style.removeProperty('cursor');
       }
     }
-  }
+  };
 
-  onStopDraw = () => {
+  onStopDraw = (): void => {
     this.mousedownX = null;
     this.mousedownY = null;
 
@@ -243,9 +249,9 @@ class Crop extends Tool {
 
       this.emit('set');
     }
-  }
+  };
 
-  onAfterEnable() {
+  onAfterEnable(): void {
     const {
       width,
       height,
@@ -271,7 +277,7 @@ class Crop extends Tool {
     this.el.addEventListener('mouseup', this.onStopDraw);
   }
 
-  onBeforeDisable() {
+  onBeforeDisable(): void {
     this.cropping = false;
     this.setted = false;
     this.resizingBorder = null;
@@ -290,5 +296,3 @@ class Crop extends Tool {
     this.el.removeEventListener('mouseup', this.onStopDraw);
   }
 }
-
-export default Crop;

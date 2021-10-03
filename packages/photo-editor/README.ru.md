@@ -101,7 +101,7 @@ class MyTool extends Tool {
 
 ```
 import { PhotoEditor } from 'photo-editor';
-import { Crop } from 'photo-editor/es/tools';
+import { Crop } from 'photo-editor/tools';
 
 const photoEditor = new PhotoEditor(canvasEl, {
   tools: {
@@ -124,7 +124,7 @@ import {
   Rectangle,
   RotateLeft,
   RotateRight,
-} from 'photo-editor/es/tools';
+} from 'photo-editor/tools';
 
 // commonjs
 import {
@@ -135,7 +135,7 @@ import {
   Rectangle,
   RotateLeft,
   RotateRight,
-} from 'photo-editor/lib/tools';
+} from 'photo-editor/tools';
 ```
 
 ### Blur

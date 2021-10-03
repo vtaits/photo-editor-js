@@ -2,26 +2,32 @@
 import { Tool } from '../Tool';
 
 class Pixel {
-  constructor(r, g, b) {
+  r: number;
+
+  g: number;
+
+  b: number;
+
+  constructor(r: number, g: number, b: number) {
     this.r = r;
     this.g = g;
     this.b = b;
   }
 
-  add(pixel) {
+  add(pixel: Pixel) {
     return new Pixel(this.r + pixel.r, this.g + pixel.g, this.b + pixel.b);
   }
 
-  sub(pixel) {
+  sub(pixel: Pixel) {
     return new Pixel(this.r - pixel.r, this.g - pixel.g, this.b - pixel.b);
   }
 
-  mul(number) {
-    return new Pixel(this.r * number, this.g * number, this.b * number);
+  mul(value: number) {
+    return new Pixel(this.r * value, this.g * value, this.b * value);
   }
 
-  div(number) {
-    return new Pixel(this.r / number, this.g / number, this.b / number);
+  div(value: number) {
+    return new Pixel(this.r / value, this.g / value, this.b / value);
   }
 
   clone() {
@@ -30,7 +36,7 @@ class Pixel {
 }
 
 // standard deviation, number of boxes
-function boxesForGauss(sigma, n) {
+function boxesForGauss(sigma: number, n: number) {
   // Ideal averaging filter width
   const wIdeal = Math.sqrt(((12 * sigma * sigma) / n) + 1);
 
@@ -61,7 +67,13 @@ function boxesForGauss(sigma, n) {
 }
 
 /* eslint-disable no-param-reassign */
-function boxBlurH(scl, tcl, w, h, r) {
+function boxBlurH(
+  scl: Pixel[],
+  tcl: Pixel[],
+  w: number,
+  h: number,
+  r: number,
+): void {
   const iarr = 1 / (r + r + 1);
 
   for (let i = 0; i < h; ++i) {
@@ -106,7 +118,13 @@ function boxBlurH(scl, tcl, w, h, r) {
 /* eslint-enable no-param-reassign */
 
 /* eslint-disable no-param-reassign */
-function boxBlurT(scl, tcl, w, h, r) {
+function boxBlurT(
+  scl: Pixel[],
+  tcl: Pixel[],
+  w: number,
+  h: number,
+  r: number,
+): void {
   const iarr = 1 / (r + r + 1);
 
   for (let i = 0; i < w; ++i) {
@@ -151,7 +169,13 @@ function boxBlurT(scl, tcl, w, h, r) {
 /* eslint-enable no-param-reassign */
 
 /* eslint-disable no-param-reassign */
-function boxBlur(scl, tcl, w, h, r) {
+function boxBlur(
+  scl: Pixel[],
+  tcl: Pixel[],
+  w: number,
+  h: number,
+  r: number,
+): void {
   for (let i = 0; i < scl.length; ++i) {
     tcl[i] = scl[i].clone();
   }
@@ -161,7 +185,13 @@ function boxBlur(scl, tcl, w, h, r) {
 }
 /* eslint-enable no-param-reassign */
 
-function gaussBlur(scl, tcl, w, h, r) {
+function gaussBlur(
+  scl: Pixel[],
+  tcl: Pixel[],
+  w: number,
+  h: number,
+  r: number,
+): void {
   const bxs = boxesForGauss(r, 3);
 
   boxBlur(scl, tcl, w, h, (bxs[0] - 1) / 2);
@@ -169,7 +199,7 @@ function gaussBlur(scl, tcl, w, h, r) {
   boxBlur(scl, tcl, w, h, (bxs[2] - 1) / 2);
 }
 
-class Blur extends Tool {
+export class Blur extends Tool {
   bluring = false;
 
   lastX = null;
@@ -180,27 +210,23 @@ class Blur extends Tool {
 
   radius = 10;
 
-  setRadius(value) {
+  setRadius(value: number): void {
     this.radius = Math.max(value, 1);
   }
 
-  getRadius() {
+  getRadius(): number {
     return this.radius;
   }
 
-  setSigma(value) {
-    this.sigma = Math.max(parseFloat(value), 0.1);
+  setSigma(value: number): void {
+    this.sigma = Math.max(value, 0.1);
   }
 
-  getSigma() {
+  getSigma(): number {
     return this.sigma;
   }
 
-  onStartDraw = (event) => {
-    if (event.which !== 1) {
-      return;
-    }
-
+  onStartDraw = (event: MouseEvent): void => {
     this.bluring = true;
 
     const newLastX = (event.offsetX) / (this.el.clientWidth / this.el.width);
@@ -210,10 +236,10 @@ class Blur extends Tool {
 
     this.lastX = newLastX;
     this.lastY = newLastY;
-  }
+  };
 
-  onProcessDraw = (event) => {
-    if (!this.bluring || event.which !== 1) {
+  onProcessDraw = (event: MouseEvent): void => {
+    if (!this.bluring) {
       return;
     }
 
@@ -224,10 +250,10 @@ class Blur extends Tool {
 
     this.lastX = newLastX;
     this.lastY = newLastY;
-  }
+  };
 
-  onStopDraw = (event) => {
-    if (!this.bluring || event.which !== 1) {
+  onStopDraw = (): void => {
+    if (!this.bluring) {
       return;
     }
 
@@ -237,9 +263,9 @@ class Blur extends Tool {
     this.lastY = null;
 
     this.pushState(this.el.toDataURL());
-  }
+  };
 
-  blurAtPoint(_x, _y) {
+  blurAtPoint(_x: number, _y: number): void {
     const ctx = this.el.getContext('2d');
     const radius = this.getRadius();
     const sigma = this.getSigma();
@@ -308,13 +334,13 @@ class Blur extends Tool {
     ctx.restore();
   }
 
-  onAfterEnable() {
+  onAfterEnable(): void {
     this.el.addEventListener('mousedown', this.onStartDraw);
     this.el.addEventListener('mousemove', this.onProcessDraw);
     this.el.addEventListener('mouseup', this.onStopDraw);
   }
 
-  onBeforeDisable() {
+  onBeforeDisable(): void {
     this.bluring = false;
 
     this.el.removeEventListener('mousedown', this.onStartDraw);
@@ -322,5 +348,3 @@ class Blur extends Tool {
     this.el.removeEventListener('mouseup', this.onStopDraw);
   }
 }
-
-export default Blur;

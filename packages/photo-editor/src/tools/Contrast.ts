@@ -1,7 +1,7 @@
-import Filter from './Filter';
+import { Filter } from './Filter';
 
-class Contrast extends Filter {
-  newImageData = () => {
+export class Contrast extends Filter {
+  newImageData = (): ImageData => {
     const value = this.getValue();
     const { originalImageData } = this;
 
@@ -21,7 +21,5 @@ class Contrast extends Filter {
     }
 
     return imageData;
-  }
+  };
 }
-
-export default Contrast;

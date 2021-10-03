@@ -1,19 +1,19 @@
 import { Tool } from '../Tool';
 
-class Rectangle extends Tool {
-  originalImage = null;
+export class Rectangle extends Tool {
+  originalImage: HTMLCanvasElement = null;
 
   drawing = false;
 
-  startX = null;
+  startX: number = null;
 
-  startY = null;
+  startY: number = null;
 
-  finishX = null;
+  finishX: number = null;
 
-  finishY = null;
+  finishY: number = null;
 
-  showRectangle() {
+  showRectangle(): void {
     const ctx = this.el.getContext('2d');
 
     const x = Math.min(this.startX, this.finishX);
@@ -26,13 +26,13 @@ class Rectangle extends Tool {
     ctx.drawImage(this.originalImage, 0, 0, this.el.width, this.el.height);
 
     ctx.beginPath();
-    ctx.lineWidth = '4';
+    ctx.lineWidth = 4;
     ctx.strokeStyle = '#CB0000';
     ctx.rect(x, y, width, height);
     ctx.stroke();
   }
 
-  onStartDraw = (event) => {
+  onStartDraw = (event: MouseEvent): void => {
     const x = (event.offsetX) / (this.el.clientWidth / this.el.width);
     const y = (event.offsetY) / (this.el.clientHeight / this.el.height);
 
@@ -40,9 +40,9 @@ class Rectangle extends Tool {
 
     this.startX = x;
     this.startY = y;
-  }
+  };
 
-  onProcessDraw = (event) => {
+  onProcessDraw = (event: MouseEvent): void => {
     const x = (event.offsetX) / (this.el.clientWidth / this.el.width);
     const y = (event.offsetY) / (this.el.clientHeight / this.el.height);
 
@@ -52,9 +52,9 @@ class Rectangle extends Tool {
 
       this.showRectangle();
     }
-  }
+  };
 
-  onStopDraw = () => {
+  onStopDraw = (): void => {
     if (!this.drawing) {
       return;
     }
@@ -62,9 +62,9 @@ class Rectangle extends Tool {
     this.drawing = false;
     this.originalImage.getContext('2d').drawImage(this.el, 0, 0);
     this.pushState(this.el.toDataURL());
-  }
+  };
 
-  onAfterEnable() {
+  onAfterEnable(): void {
     const {
       width,
       height,
@@ -80,7 +80,7 @@ class Rectangle extends Tool {
     this.el.addEventListener('mouseup', this.onStopDraw);
   }
 
-  onBeforeDisable() {
+  onBeforeDisable(): void {
     this.drawing = false;
 
     this.originalImage = null;
@@ -90,5 +90,3 @@ class Rectangle extends Tool {
     this.el.removeEventListener('mouseup', this.onStopDraw);
   }
 }
-
-export default Rectangle;

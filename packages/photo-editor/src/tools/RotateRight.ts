@@ -1,7 +1,7 @@
 import { Tool } from '../Tool';
 
-class RotateLeft extends Tool {
-  onAfterEnable() {
+export class RotateRight extends Tool {
+  onAfterEnable(): void {
     const ctx = this.el.getContext('2d');
 
     const {
@@ -17,7 +17,7 @@ class RotateLeft extends Tool {
 
     otherCtx.clearRect(0, 0, width, height);
     otherCtx.translate(height / 2, width / 2);
-    otherCtx.rotate(-Math.PI / 2);
+    otherCtx.rotate(Math.PI / 2);
     otherCtx.translate(-width / 2, -height / 2);
     otherCtx.drawImage(this.el, 0, 0);
 
@@ -31,5 +31,3 @@ class RotateLeft extends Tool {
     this.disable();
   }
 }
-
-export default RotateLeft;

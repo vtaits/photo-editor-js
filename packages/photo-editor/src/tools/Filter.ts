@@ -1,11 +1,13 @@
 import { Tool } from '../Tool';
 
-class Filter extends Tool {
+export class Filter extends Tool {
   value = 0;
 
   applied = false;
 
-  setValue(value) {
+  originalImageData: ImageData;
+
+  setValue(value: number): void {
     const newValue = Math.min(Math.max(value, -1), 1);
     if (newValue === this.value) {
       return;
@@ -15,15 +17,15 @@ class Filter extends Tool {
     this.apply();
   }
 
-  getValue() {
+  getValue(): number {
     return this.value;
   }
 
-  newImageData() {
+  newImageData(): ImageData {
     return this.originalImageData;
   }
 
-  apply = () => {
+  apply(): void {
     const ctx = this.el.getContext('2d');
 
     ctx.putImageData(this.newImageData(), 0, 0);
@@ -36,7 +38,7 @@ class Filter extends Tool {
     }
   }
 
-  onAfterEnable() {
+  onAfterEnable(): void {
     const ctx = this.el.getContext('2d');
     const {
       width,
@@ -46,11 +48,9 @@ class Filter extends Tool {
     this.originalImageData = ctx.getImageData(0, 0, width, height);
   }
 
-  onBeforeDisable() {
+  onBeforeDisable(): void {
     this.value = 0;
     this.applied = false;
     this.originalImageData = null;
   }
 }
-
-export default Filter;

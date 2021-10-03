@@ -1,0 +1,5 @@
+{
+  "main": "../lib/tools/index.js",
+  "module": "../es/tools/index.js",
+  "typings": "../ts/tools/index.d.ts"
+}

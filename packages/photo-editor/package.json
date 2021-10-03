@@ -5,6 +5,12 @@
   "main": "./lib/index.js",
   "module": "./es/index.js",
   "typings": "ts/index.d.ts",
+  "files": [
+    "/es",
+    "/lib",
+    "/tools",
+    "/ts"
+  ],
   "scripts": {
     "clean": "rimraf es lib ts",
     "build": "yarn build:cjs && yarn build:es && yarn build:ts",
