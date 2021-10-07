@@ -19,7 +19,7 @@ yarn add photo-editor
 
 ### Инициализация редактора
 
-```
+```typescript
 import { PhotoEditor } from 'photo-editor';
 
 const photoEditor = new PhotoEditor(canvasEl, options);
@@ -37,7 +37,7 @@ const photoEditor = new PhotoEditor(canvasEl, options);
 
 ### Создание инструмента
 
-```
+```typescript
 import { Tool } from 'photo-editor';
 
 class MyTool extends Tool {
@@ -70,7 +70,7 @@ class MyTool extends Tool {
 | onAfterEnable | Вызывается после включения инструмента. |
 | onBeforeDestroy | Вызывается перед удалением инструмента. |
 
-Также `Tool` унаследован от [EventEmitter](https://github.com/facebook/emitter).
+Также `Tool` унаследован от [EventEmitter](https://github.com/primus/eventemitter3).
 
 ### Использование редактора
 
@@ -81,13 +81,13 @@ class MyTool extends Tool {
 | getCurrentState | - | Получить base64 последнего сохранённого состояния (если нет, инициализационного). |
 | enableTool | id инструмента | Включить определённый инструмент. Если включен какой-то другой инструмент, он будет выключен. |
 | disableTool | - | Выключить включенный инструмент. |
-| toggleTool | id инструмента | Если включен определённый инстумент, выключить его, если выключен - кключить. Если включен какой-то другой инструмент, он будет выключен. |
+| toggleTool | id инструмента | Если включен определённый инстумент, выключить его, если выключен - включить. Если включен какой-то другой инструмент, он будет выключен. |
 | undo | - | Вернуть редактор к предыдущему сохранённому состоянию. |
 | redo | - | Вернуть редактор к следующему сохранённому состоянию. |
 
 #### События
 
-`PhotoEditor` унаследован от [EventEmitter](https://github.com/facebook/emitter).
+`PhotoEditor` унаследован от [EventEmitter](https://github.com/primus/eventemitter3).
 
 | Название события | Аргументы | Когда вызывается |
 | ---------------- | --------- | -------- |
@@ -99,9 +99,9 @@ class MyTool extends Tool {
 
 Все инструменты редактора доступны по ключу в поле `tools`, например,
 
-```
+```typescript
 import { PhotoEditor } from 'photo-editor';
-import { Crop } from 'photo-editor/es/tools';
+import { Crop } from 'photo-editor/tools';
 
 const photoEditor = new PhotoEditor(canvasEl, {
   tools: {
@@ -114,8 +114,7 @@ photoEditor.tools.crop.applyCrop();
 
 ## Встроенные инструменты
 
-```
-// es modules
+```typescript
 import {
   Blur,
   Brightness,
@@ -124,23 +123,12 @@ import {
   Rectangle,
   RotateLeft,
   RotateRight,
-} from 'photo-editor/es/tools';
-
-// commonjs
-import {
-  Blur,
-  Brightness,
-  Crop,
-  Contrast,
-  Rectangle,
-  RotateLeft,
-  RotateRight,
-} from 'photo-editor/lib/tools';
+} from 'photo-editor/tools';
 ```
 
 ### Blur
 
-Размытие изображения.
+Размытие части изображения с помощью кисти.
 
 ### Brightness
 
