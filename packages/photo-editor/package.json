@@ -38,7 +38,7 @@
   "bugs": {
     "url": "https://github.com/vtaits/photo-editor-js/issues"
   },
-  "homepage": "https://github.com/vtaits/photo-editor-js#readme",
+  "homepage": "https://github.com/vtaits/photo-editor-js/tree/master/packages/photo-editor#readme",
   "devDependencies": {
     "@babel/cli": "^7.15.7",
     "@babel/eslint-parser": "^7.15.7",
