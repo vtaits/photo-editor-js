@@ -1,4 +1,6 @@
 [![NPM](https://img.shields.io/npm/v/photo-editor.svg)](https://www.npmjs.com/package/photo-editor)
+[![dependencies status](https://david-dm.org/vtaits/photo-editor-js/status.svg?path=packages/photo-editor)](https://david-dm.org/vtaits/photo-editor-js?path=packages/photo-editor)
+[![devDependencies status](https://david-dm.org/vtaits/photo-editor-js/dev-status.svg?path=packages/photo-editor)](https://david-dm.org/vtaits/photo-editor-js?path=packages/photo-editor&type=dev)
 
 # photo-editor-js
 Simple and customizable photo editor for web applications.
