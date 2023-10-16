@@ -1,56 +1,53 @@
-import { Tool } from '../Tool';
+import { Tool } from "../Tool";
 
 export class Filter extends Tool {
-  value = 0;
+	value = 0;
 
-  applied = false;
+	applied = false;
 
-  originalImageData: ImageData;
+	originalImageData: ImageData;
 
-  setValue(value: number): void {
-    const newValue = Math.min(Math.max(value, -1), 1);
-    if (newValue === this.value) {
-      return;
-    }
+	setValue(value: number): void {
+		const newValue = Math.min(Math.max(value, -1), 1);
+		if (newValue === this.value) {
+			return;
+		}
 
-    this.value = newValue;
-    this.apply();
-  }
+		this.value = newValue;
+		this.apply();
+	}
 
-  getValue(): number {
-    return this.value;
-  }
+	getValue(): number {
+		return this.value;
+	}
 
-  newImageData(): ImageData {
-    return this.originalImageData;
-  }
+	newImageData(): ImageData {
+		return this.originalImageData;
+	}
 
-  apply(): void {
-    const ctx = this.el.getContext('2d');
+	apply(): void {
+		const ctx = this.el.getContext("2d");
 
-    ctx.putImageData(this.newImageData(), 0, 0);
+		ctx.putImageData(this.newImageData(), 0, 0);
 
-    if (this.applied === false) {
-      this.pushState(this.el.toDataURL());
-      this.applied = true;
-    } else {
-      this.updateState(this.el.toDataURL());
-    }
-  }
+		if (this.applied === false) {
+			this.pushState(this.el.toDataURL());
+			this.applied = true;
+		} else {
+			this.updateState(this.el.toDataURL());
+		}
+	}
 
-  onAfterEnable(): void {
-    const ctx = this.el.getContext('2d');
-    const {
-      width,
-      height,
-    } = this.el;
+	onAfterEnable(): void {
+		const ctx = this.el.getContext("2d");
+		const { width, height } = this.el;
 
-    this.originalImageData = ctx.getImageData(0, 0, width, height);
-  }
+		this.originalImageData = ctx.getImageData(0, 0, width, height);
+	}
 
-  onBeforeDisable(): void {
-    this.value = 0;
-    this.applied = false;
-    this.originalImageData = null;
-  }
+	onBeforeDisable(): void {
+		this.value = 0;
+		this.applied = false;
+		this.originalImageData = null;
+	}
 }

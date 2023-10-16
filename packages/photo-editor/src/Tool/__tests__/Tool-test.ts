@@ -1,182 +1,167 @@
-/* eslint-disable max-classes-per-file */
-import { EventEmitter } from 'eventemitter3';
+import { test, expect, vi } from "vitest";
+import { EventEmitter } from "eventemitter3";
 
-import { Tool } from '../Tool';
+import { Tool } from "../Tool";
 
 const toolOptions = {
-  el: document.createElement('canvas'),
-  pushState: () => {},
-  updateState: () => {},
-  disable: () => {},
-  touch: () => {},
+	el: document.createElement("canvas"),
+	pushState: () => {},
+	updateState: () => {},
+	disable: () => {},
+	touch: () => {},
 };
 
-/* eslint-disable no-new */
-test('should throw an exception if options is not object', () => {
-  expect(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    new Tool('test');
-  })
-    .toThrowError('Tool options should be an object');
+test("should throw an exception if options is not object", () => {
+	expect(() => {
+		// @ts-ignore
+		new Tool("test");
+	}).toThrowError("Tool options should be an object");
 });
 
-test('should throw an exception if options is null', () => {
-  expect(() => {
-    new Tool(null);
-  })
-    .toThrowError('Tool options can\'t be null');
+test("should throw an exception if options is null", () => {
+	expect(() => {
+		new Tool(null);
+	}).toThrowError("Tool options can't be null");
 });
 
-test('should throw an exception if element is not canvas', () => {
-  expect(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    new Tool({});
-  })
-    .toThrowError('Element for init Tool should be a canvas');
+test("should throw an exception if element is not canvas", () => {
+	expect(() => {
+		// @ts-ignore
+		new Tool({});
+	}).toThrowError("Element for init Tool should be a canvas");
 });
 
-test('should throw an exception if pushState is not a function', () => {
-  expect(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    new Tool({
-      el: document.createElement('canvas'),
-      updateState: () => {},
-    });
-  })
-    .toThrowError('Tool option "pushState" should be a function');
+test("should throw an exception if pushState is not a function", () => {
+	expect(() => {
+		// @ts-ignore
+		new Tool({
+			el: document.createElement("canvas"),
+			updateState: () => {},
+		});
+	}).toThrowError('Tool option "pushState" should be a function');
 });
 
-test('should throw an exception if updateState is not a function', () => {
-  expect(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    new Tool({
-      el: document.createElement('canvas'),
-      pushState: () => {},
-    });
-  })
-    .toThrowError('Tool option "updateState" should be a function');
+test("should throw an exception if updateState is not a function", () => {
+	expect(() => {
+		// @ts-ignore
+		new Tool({
+			el: document.createElement("canvas"),
+			pushState: () => {},
+		});
+	}).toThrowError('Tool option "updateState" should be a function');
 });
 
-test('should throw an exception if disable is not a function', () => {
-  expect(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    new Tool({
-      el: document.createElement('canvas'),
-      pushState: () => {},
-      updateState: () => {},
-    });
-  })
-    .toThrowError('Tool option "disable" should be a function');
+test("should throw an exception if disable is not a function", () => {
+	expect(() => {
+		// @ts-ignore
+		new Tool({
+			el: document.createElement("canvas"),
+			pushState: () => {},
+			updateState: () => {},
+		});
+	}).toThrowError('Tool option "disable" should be a function');
 });
 
-test('should throw an exception if touch is not a function', () => {
-  expect(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    new Tool({
-      el: document.createElement('canvas'),
-      pushState: () => {},
-      updateState: () => {},
-      disable: () => {},
-    });
-  })
-    .toThrowError('Tool option "touch" should be a function');
+test("should throw an exception if touch is not a function", () => {
+	expect(() => {
+		// @ts-ignore
+		new Tool({
+			el: document.createElement("canvas"),
+			pushState: () => {},
+			updateState: () => {},
+			disable: () => {},
+		});
+	}).toThrowError('Tool option "touch" should be a function');
 });
 
-test('should be disabled after init', () => {
-  const tool = new Tool(toolOptions);
+test("should be disabled after init", () => {
+	const tool = new Tool(toolOptions);
 
-  expect(tool.enabled).toEqual(false);
+	expect(tool.enabled).toEqual(false);
 });
 
-test('should extend EventEmitter', () => {
-  const tool = new Tool(toolOptions);
+test("should extend EventEmitter", () => {
+	const tool = new Tool(toolOptions);
 
-  expect(tool instanceof EventEmitter).toEqual(true);
+	expect(tool instanceof EventEmitter).toEqual(true);
 });
 
-test('should enable tool', () => {
-  const tool = new Tool(toolOptions);
+test("should enable tool", () => {
+	const tool = new Tool(toolOptions);
 
-  tool.enableFromEditor();
+	tool.enableFromEditor();
 
-  expect(tool.enabled).toEqual(true);
+	expect(tool.enabled).toEqual(true);
 });
 
-test('should call hooks on enable tool', () => {
-  const mockFnBefore = jest.fn();
-  const mockFnAfter = jest.fn();
+test("should call hooks on enable tool", () => {
+	const mockFnBefore = vi.fn();
+	const mockFnAfter = vi.fn();
 
-  class CustomTool extends Tool {
-    onBeforeEnable() {
-      expect(this.enabled).toEqual(false);
-      mockFnBefore();
-    }
+	class CustomTool extends Tool {
+		onBeforeEnable() {
+			expect(this.enabled).toEqual(false);
+			mockFnBefore();
+		}
 
-    onAfterEnable() {
-      expect(this.enabled).toEqual(true);
-      mockFnAfter();
-    }
-  }
+		onAfterEnable() {
+			expect(this.enabled).toEqual(true);
+			mockFnAfter();
+		}
+	}
 
-  const tool = new CustomTool(toolOptions);
+	const tool = new CustomTool(toolOptions);
 
-  tool.enableFromEditor();
+	tool.enableFromEditor();
 
-  expect(mockFnBefore.mock.calls.length).toEqual(1);
-  expect(mockFnAfter.mock.calls.length).toEqual(1);
+	expect(mockFnBefore.mock.calls.length).toEqual(1);
+	expect(mockFnAfter.mock.calls.length).toEqual(1);
 });
 
-test('should disable tool', () => {
-  const tool = new Tool(toolOptions);
+test("should disable tool", () => {
+	const tool = new Tool(toolOptions);
 
-  tool.enableFromEditor();
-  tool.disableFromEditor();
+	tool.enableFromEditor();
+	tool.disableFromEditor();
 
-  expect(tool.enabled).toEqual(false);
+	expect(tool.enabled).toEqual(false);
 });
 
-test('should call hooks on disableFromEditor tool', () => {
-  const mockFnBefore = jest.fn();
-  const mockFnAfter = jest.fn();
+test("should call hooks on disableFromEditor tool", () => {
+	const mockFnBefore = vi.fn();
+	const mockFnAfter = vi.fn();
 
-  class CustomTool extends Tool {
-    onBeforeDisable() {
-      expect(this.enabled).toEqual(true);
-      mockFnBefore();
-    }
+	class CustomTool extends Tool {
+		onBeforeDisable() {
+			expect(this.enabled).toEqual(true);
+			mockFnBefore();
+		}
 
-    onAfterDisable() {
-      expect(this.enabled).toEqual(false);
-      mockFnAfter();
-    }
-  }
+		onAfterDisable() {
+			expect(this.enabled).toEqual(false);
+			mockFnAfter();
+		}
+	}
 
-  const tool = new CustomTool(toolOptions);
+	const tool = new CustomTool(toolOptions);
 
-  tool.enableFromEditor();
-  tool.disableFromEditor();
+	tool.enableFromEditor();
+	tool.disableFromEditor();
 
-  expect(mockFnBefore.mock.calls.length).toEqual(1);
-  expect(mockFnAfter.mock.calls.length).toEqual(1);
+	expect(mockFnBefore.mock.calls.length).toEqual(1);
+	expect(mockFnAfter.mock.calls.length).toEqual(1);
 });
 
-test('should call hook on destroy tool', () => {
-  const mockFnDestroy = jest.fn();
+test("should call hook on destroy tool", () => {
+	const mockFnDestroy = vi.fn();
 
-  class CustomTool extends Tool {
-    onBeforeDestroy = mockFnDestroy;
-  }
+	class CustomTool extends Tool {
+		onBeforeDestroy = mockFnDestroy;
+	}
 
-  const tool = new CustomTool(toolOptions);
+	const tool = new CustomTool(toolOptions);
 
-  tool.destroy();
+	tool.destroy();
 
-  expect(mockFnDestroy.mock.calls.length).toEqual(1);
+	expect(mockFnDestroy.mock.calls.length).toEqual(1);
 });
-/* eslint-enable no-new */
