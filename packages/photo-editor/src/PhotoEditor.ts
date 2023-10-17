@@ -1,217 +1,248 @@
-import { EventEmitter } from 'eventemitter3';
+import { EventEmitter } from "eventemitter3";
 
-import { getInitialState } from './getInitialState';
-import { validateOptions } from './validateOptions';
-import { Tool } from './Tool';
-import { waitForImageComplete } from './waitForImageComplete';
+import { Tool } from "./Tool";
+import { getInitialState } from "./getInitialState";
+import { validateOptions } from "./validateOptions";
+import { waitForImageComplete } from "./waitForImageComplete";
 
-import type {
-  SourceType,
-  PhotoEditorOptions,
-} from './types';
+import type { PhotoEditorOptions, SourceType } from "./types";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const defaultOptions: Partial<PhotoEditorOptions<any, 'current-canvas'>> = {
-  sourceType: 'current-canvas',
+// biome-ignore lint/suspicious/noExplicitAny: options for any type of tools
+const defaultOptions: Partial<PhotoEditorOptions<any, "current-canvas">> = {
+	sourceType: "current-canvas",
 };
 
 export class PhotoEditor<
-Tools extends Record<string, typeof Tool>,
-ToolKey extends keyof Tools,
-CurrentSource extends SourceType = 'current-canvas',
+	Tools extends Record<string, typeof Tool>,
+	ToolKey extends string & keyof Tools,
+	CurrentSource extends SourceType = "current-canvas",
 > extends EventEmitter {
-  _el: HTMLCanvasElement = null;
+	_el: HTMLCanvasElement | null = null;
 
-  _options: PhotoEditorOptions<Tools, CurrentSource> = null;
+	_options: PhotoEditorOptions<Tools, CurrentSource> | null = null;
 
-  _currentState = -1;
+	_currentState = -1;
 
-  _states: string[] = [];
+	_states: string[] = [];
 
-  _enabledToolId: ToolKey = null;
+	_enabledToolId: ToolKey | null = null;
 
-  _touched = false;
+	_touched = false;
 
-  _destroyed = false;
+	_destroyed = false;
 
-  tools: {
-    [key in ToolKey]: InstanceType<Tools[key]>;
-  } = {} as {
-    [key in ToolKey]: InstanceType<Tools[key]>;
-  };
+	tools: {
+		[key in ToolKey]: InstanceType<Tools[key]>;
+	} = {} as {
+		[key in ToolKey]: InstanceType<Tools[key]>;
+	};
 
-  constructor(el: HTMLCanvasElement, editorOptions: PhotoEditorOptions<Tools, CurrentSource>) {
-    super();
+	constructor(
+		el: HTMLCanvasElement,
+		editorOptions: PhotoEditorOptions<Tools, CurrentSource>,
+	) {
+		super();
 
-    const options: PhotoEditorOptions<Tools, CurrentSource> = {
-      ...defaultOptions,
-      ...editorOptions,
-    };
+		const options: PhotoEditorOptions<Tools, CurrentSource> = {
+			...defaultOptions,
+			...editorOptions,
+		};
 
-    if (!(el instanceof HTMLElement) || el.tagName !== 'CANVAS') {
-      throw new Error('Element for init PhotoEditor should be a canvas');
-    }
+		if (!(el instanceof HTMLElement) || el.tagName !== "CANVAS") {
+			throw new Error("Element for init PhotoEditor should be a canvas");
+		}
 
-    validateOptions(options);
+		validateOptions(options);
 
-    this._el = el;
-    this._options = options;
+		this._el = el;
+		this._options = options;
 
-    this._init();
-  }
+		this._init();
+	}
 
-  async _init(): Promise<void> {
-    const initialState = await getInitialState(this._el, this._options);
+	async _init(): Promise<void> {
+		if (!this._el) {
+			throw new Error("Canvas is not provided");
+		}
 
-    this._currentState = 0;
-    this._states = [initialState];
+		if (!this._options) {
+			throw new Error("Options are not provided");
+		}
 
-    if (this._options.sourceType !== 'current-canvas') {
-      await this._drawCurrentState();
-    }
+		const initialState = await getInitialState(this._el, this._options);
 
-    this._initTools();
+		this._currentState = 0;
+		this._states = [initialState];
 
-    this.emit('ready');
-  }
+		if (this._options.sourceType !== "current-canvas") {
+			await this._drawCurrentState();
+		}
 
-  _initTools(): void {
-    Object.keys(this._options.tools)
-      .forEach((toolIdRaw) => {
-        const toolId = toolIdRaw as ToolKey;
+		this._initTools();
 
-        const ToolConstructor = this._options.tools[toolId];
+		this.emit("ready");
+	}
 
-        if (typeof ToolConstructor !== 'function') {
-          throw new Error(`PhotoEditor tool "${toolId}": should be a class that extends Tool`);
-        }
+	_initTools(): void {
+		if (!this._el) {
+			throw new Error("Canvas is not provided");
+		}
 
-        const tool = new ToolConstructor({
-          el: this._el,
-          pushState: this._pushState,
-          updateState: this._updateState,
-          disable: this.disableTool,
-          touch: this.touch,
-        }) as InstanceType<Tools[ToolKey]>;
+		if (!this._options) {
+			throw new Error("Options are not provided");
+		}
 
-        if (!(tool instanceof Tool)) {
-          throw new Error(`PhotoEditor tool "${toolId}": should be an instance of Tool `);
-        }
+		const { tools } = this._options;
 
-        this.tools[toolId] = tool;
-      });
-  }
+		const el = this._el;
 
-  _pushState = (state: string): void => {
-    const slicedStates = this._states.slice(0, this._currentState + 1);
-    slicedStates.push(state);
+		Object.keys(tools).forEach((toolIdRaw) => {
+			const toolId = toolIdRaw as ToolKey;
 
-    ++this._currentState;
-    this._states = slicedStates;
-  };
+			const ToolConstructor = tools[toolId];
 
-  _updateState = (state: string): void => {
-    const slicedStates = this._states.slice(0, this._currentState);
-    slicedStates.push(state);
+			if (typeof ToolConstructor !== "function") {
+				throw new Error(
+					`PhotoEditor tool "${toolId}": should be a class that extends Tool`,
+				);
+			}
 
-    this._states = slicedStates;
-  };
+			const tool = new ToolConstructor({
+				el,
+				pushState: this._pushState,
+				updateState: this._updateState,
+				disable: this.disableTool,
+				touch: this.touch,
+			}) as InstanceType<Tools[ToolKey]>;
 
-  async _drawCurrentState(): Promise<void> {
-    // TO DO: test
-    const base64 = this.getCurrentState();
+			if (!(tool instanceof Tool)) {
+				throw new Error(
+					`PhotoEditor tool "${toolId}": should be an instance of Tool `,
+				);
+			}
 
-    const image = new Image();
+			this.tools[toolId] = tool;
+		});
+	}
 
-    image.src = base64;
+	_pushState = (state: string): void => {
+		const slicedStates = this._states.slice(0, this._currentState + 1);
+		slicedStates.push(state);
 
-    await waitForImageComplete(image);
+		++this._currentState;
+		this._states = slicedStates;
+	};
 
-    if (this._destroyed) {
-      return;
-    }
+	_updateState = (state: string): void => {
+		const slicedStates = this._states.slice(0, this._currentState);
+		slicedStates.push(state);
 
-    this._el.width = image.naturalWidth;
-    this._el.height = image.naturalHeight;
+		this._states = slicedStates;
+	};
 
-    const ctx = this._el.getContext('2d');
-    ctx.drawImage(image, 0, 0);
-  }
+	async _drawCurrentState(): Promise<void> {
+		// TO DO: test
+		const base64 = this.getCurrentState();
 
-  destroy(): void {
-    this._destroyed = true;
+		const image = new Image();
 
-    Object.keys(this.tools)
-      .forEach((toolId) => {
-        const tool = this.tools[toolId];
+		image.src = base64;
 
-        tool.destroy();
-      });
-  }
+		await waitForImageComplete(image);
 
-  getCurrentState(): string {
-    return this._states[this._currentState];
-  }
+		if (this._destroyed) {
+			return;
+		}
 
-  enableTool(toolId: ToolKey): void {
-    if (!this.tools[toolId]) {
-      throw new Error(`PhotoEditor tool with id "${toolId}" is not defined`);
-    }
+		if (!this._el) {
+			throw new Error("Canvas is not provided");
+		}
 
-    this.disableTool();
+		this._el.width = image.naturalWidth;
+		this._el.height = image.naturalHeight;
 
-    this._enabledToolId = toolId;
+		const ctx = this._el.getContext("2d");
 
-    this.tools[toolId].enableFromEditor();
+		if (!ctx) {
+			throw new Error("Context is not found");
+		}
 
-    this.emit('enableTool', toolId);
-  }
+		ctx.drawImage(image, 0, 0);
+	}
 
-  disableTool(): void {
-    if (this._enabledToolId) {
-      this.tools[this._enabledToolId].disableFromEditor();
+	destroy(): void {
+		this._destroyed = true;
 
-      this.emit('disableTool', this._enabledToolId);
+		Object.keys(this.tools).forEach((toolId) => {
+			const tool = this.tools[toolId as ToolKey];
 
-      if (this._touched) {
-        this._drawCurrentState();
-      }
+			tool.destroy();
+		});
+	}
 
-      this._touched = false;
+	getCurrentState(): string {
+		return this._states[this._currentState];
+	}
 
-      this._enabledToolId = null;
-    }
-  }
+	enableTool(toolId: ToolKey): void {
+		if (!this.tools[toolId]) {
+			throw new Error(`PhotoEditor tool with id "${toolId}" is not defined`);
+		}
 
-  toggleTool(toolId: ToolKey): void {
-    if (this._enabledToolId === toolId) {
-      this.disableTool();
-    } else {
-      this.enableTool(toolId);
-    }
-  }
+		this.disableTool();
 
-  touch(): void {
-    this._touched = true;
-  }
+		this._enabledToolId = toolId;
 
-  undo(): void {
-    if (this._currentState > 0) {
-      --this._currentState;
+		this.tools[toolId].enableFromEditor();
 
-      this.disableTool();
+		this.emit("enableTool", toolId);
+	}
 
-      this._drawCurrentState();
-    }
-  }
+	disableTool(): void {
+		if (this._enabledToolId) {
+			this.tools[this._enabledToolId].disableFromEditor();
 
-  redo(): void {
-    if (this._currentState < this._states.length - 1) {
-      ++this._currentState;
+			this.emit("disableTool", this._enabledToolId);
 
-      this.disableTool();
+			if (this._touched) {
+				this._drawCurrentState();
+			}
 
-      this._drawCurrentState();
-    }
-  }
+			this._touched = false;
+
+			this._enabledToolId = null;
+		}
+	}
+
+	toggleTool(toolId: ToolKey): void {
+		if (this._enabledToolId === toolId) {
+			this.disableTool();
+		} else {
+			this.enableTool(toolId);
+		}
+	}
+
+	touch(): void {
+		this._touched = true;
+	}
+
+	undo(): void {
+		if (this._currentState > 0) {
+			--this._currentState;
+
+			this.disableTool();
+
+			this._drawCurrentState();
+		}
+	}
+
+	redo(): void {
+		if (this._currentState < this._states.length - 1) {
+			++this._currentState;
+
+			this.disableTool();
+
+			this._drawCurrentState();
+		}
+	}
 }

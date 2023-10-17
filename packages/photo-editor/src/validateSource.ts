@@ -1,65 +1,61 @@
-import type {
-  PhotoEditorOptions,
-  SourceType,
-} from './types';
+import type { Tool } from "./Tool";
+import type { PhotoEditorOptions, SourceType } from "./types";
 
-export const validateSource = <CurrentSource extends SourceType>(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  options: PhotoEditorOptions<any, CurrentSource>,
+export const validateSource = <
+	Tools extends Record<string, typeof Tool>,
+	CurrentSource extends SourceType,
+>(
+	options: PhotoEditorOptions<Tools, CurrentSource>,
 ): void => {
-  switch (options.sourceType) {
-    case 'current-canvas':
-      return;
+	switch (options.sourceType) {
+		case "current-canvas":
+			return;
 
-    case 'canvas':
-    {
-      const {
-        source,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } = options as unknown as PhotoEditorOptions<any, 'canvas'>;
+		case "canvas": {
+			const { source } = options as unknown as PhotoEditorOptions<
+				Tools,
+				"canvas"
+			>;
 
-      if (
-        !(source instanceof HTMLElement)
-        || source.tagName !== 'CANVAS'
-      ) {
-        throw new Error('PhotoEditor source for sourceType "canvas" should be a canvas');
-      }
+			if (!(source instanceof HTMLElement) || source.tagName !== "CANVAS") {
+				throw new Error(
+					'PhotoEditor source for sourceType "canvas" should be a canvas',
+				);
+			}
 
-      return;
-    }
+			return;
+		}
 
-    case 'img':
-    {
-      const {
-        source,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } = options as unknown as PhotoEditorOptions<any, 'img'>;
+		case "img": {
+			const { source } = options as unknown as PhotoEditorOptions<Tools, "img">;
 
-      if (
-        !(source instanceof HTMLElement)
-        || source.tagName !== 'IMG'
-      ) {
-        throw new Error('PhotoEditor source for sourceType "img" should be an image');
-      }
+			if (!(source instanceof HTMLElement) || source.tagName !== "IMG") {
+				throw new Error(
+					'PhotoEditor source for sourceType "img" should be an image',
+				);
+			}
 
-      return;
-    }
+			return;
+		}
 
-    case 'base64':
-    {
-      const {
-        source,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } = options as unknown as PhotoEditorOptions<any, 'base64'>;
+		case "base64": {
+			const { source } = options as unknown as PhotoEditorOptions<
+				Tools,
+				"base64"
+			>;
 
-      if (typeof source !== 'string') {
-        throw new Error('PhotoEditor source for sourceType "base64" should be a string');
-      }
+			if (typeof source !== "string") {
+				throw new Error(
+					'PhotoEditor source for sourceType "base64" should be a string',
+				);
+			}
 
-      return;
-    }
+			return;
+		}
 
-    default:
-      throw new Error('"sourceType" should be one of: "current-canvas", "canvas", "img", "base64"');
-  }
+		default:
+			throw new Error(
+				'"sourceType" should be one of: "current-canvas", "canvas", "img", "base64"',
+			);
+	}
 };

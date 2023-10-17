@@ -1,0 +1,19 @@
+import { defineConfig } from 'tsup';
+
+export default defineConfig({
+  dts: true,
+
+  entry: [
+    'src/index.ts',
+    'src/tools/index.ts',
+  ],
+
+  format: [
+    'cjs',
+    'esm',
+  ],
+  legacyOutput: true,
+
+  sourcemap: true,
+  splitting: true,
+});

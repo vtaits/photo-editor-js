@@ -1,56 +1,73 @@
-import { Tool } from '../Tool';
+import { Tool } from "../Tool";
 
 export class Filter extends Tool {
-  value = 0;
+	value = 0;
 
-  applied = false;
+	applied = false;
 
-  originalImageData: ImageData;
+	originalImageData: ImageData | null = null;
 
-  setValue(value: number): void {
-    const newValue = Math.min(Math.max(value, -1), 1);
-    if (newValue === this.value) {
-      return;
-    }
+	setValue(value: number): void {
+		const newValue = Math.min(Math.max(value, -1), 1);
+		if (newValue === this.value) {
+			return;
+		}
 
-    this.value = newValue;
-    this.apply();
-  }
+		this.value = newValue;
+		this.apply();
+	}
 
-  getValue(): number {
-    return this.value;
-  }
+	getValue(): number {
+		return this.value;
+	}
 
-  newImageData(): ImageData {
-    return this.originalImageData;
-  }
+	newImageData(): ImageData {
+		if (!this.originalImageData) {
+			throw new Error("Image data is not provided");
+		}
 
-  apply(): void {
-    const ctx = this.el.getContext('2d');
+		return this.originalImageData;
+	}
 
-    ctx.putImageData(this.newImageData(), 0, 0);
+	apply(): void {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
 
-    if (this.applied === false) {
-      this.pushState(this.el.toDataURL());
-      this.applied = true;
-    } else {
-      this.updateState(this.el.toDataURL());
-    }
-  }
+		const ctx = this.el.getContext("2d");
 
-  onAfterEnable(): void {
-    const ctx = this.el.getContext('2d');
-    const {
-      width,
-      height,
-    } = this.el;
+		if (!ctx) {
+			throw new Error("Context is not found");
+		}
 
-    this.originalImageData = ctx.getImageData(0, 0, width, height);
-  }
+		ctx.putImageData(this.newImageData(), 0, 0);
 
-  onBeforeDisable(): void {
-    this.value = 0;
-    this.applied = false;
-    this.originalImageData = null;
-  }
+		if (this.applied === false) {
+			this.pushState(this.el.toDataURL());
+			this.applied = true;
+		} else {
+			this.updateState(this.el.toDataURL());
+		}
+	}
+
+	onAfterEnable(): void {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
+		const ctx = this.el.getContext("2d");
+		const { width, height } = this.el;
+
+		if (!ctx) {
+			throw new Error("Context is not found");
+		}
+
+		this.originalImageData = ctx.getImageData(0, 0, width, height);
+	}
+
+	onBeforeDisable(): void {
+		this.value = 0;
+		this.applied = false;
+		this.originalImageData = null;
+	}
 }
