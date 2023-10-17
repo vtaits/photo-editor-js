@@ -1,14 +1,12 @@
 import {
+  type ReactElement,
   useCallback,
   useEffect,
   useState,
   useRef,
 } from 'react';
-import type {
-  FC,
-} from 'react';
 
-import { PhotoEditor } from '../../../packages/photo-editor/src';
+import { PhotoEditor } from '/home/vadim/projects/photo-editor-js/packages/photo-editor/src';
 
 import { Pencil } from './Pencil';
 
@@ -16,15 +14,21 @@ type Tools = {
   pencil: typeof Pencil;
 };
 
-export const Draw: FC = () => {
+export function Draw(): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [currentTool, setCurrentTool] = useState<keyof Tools>(null);
+  const [currentTool, setCurrentTool] = useState<keyof Tools | null>(null);
   const photoEditorRef = useRef<PhotoEditor<{
     pencil: typeof Pencil;
-  }, 'pencil'>>(null);
+  }, 'pencil', 'current-canvas'> | null>();
 
   useEffect(() => {
-    const photoEditor = new PhotoEditor(canvasRef.current, {
+    const canvas = canvasRef.current;
+
+    if (!canvas) {
+      return;
+    }
+
+    const photoEditor = new PhotoEditor(canvas, {
       tools: {
         pencil: Pencil,
       },
@@ -106,4 +110,4 @@ export const Draw: FC = () => {
       </div>
     </>
   );
-};
+}

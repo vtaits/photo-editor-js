@@ -4,6 +4,7 @@
     "packages/*"
   ],
   "scripts": {
+    "start": "yarn storybook",
     "storybook": "storybook dev -p 6006",
     "clean": "yarn workspaces foreach -pt run clean",
     "build": "yarn workspaces foreach -pt run build",

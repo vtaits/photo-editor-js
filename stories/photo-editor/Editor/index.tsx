@@ -1,18 +1,16 @@
 import {
+  type ChangeEventHandler,
+  type ReactElement,
   useCallback,
   useEffect,
   useState,
   useRef,
 } from 'react';
-import type {
-  ChangeEventHandler,
-  FC,
-} from 'react';
 import styled from 'styled-components';
 
 import Image from '../../assets/image.jpeg';
 
-import { PhotoEditor } from '../../../packages/photo-editor/src';
+import { PhotoEditor } from '/home/vadim/projects/photo-editor-js/packages/photo-editor/src';
 import {
   Blur,
   Crop,
@@ -21,7 +19,7 @@ import {
   Rectangle,
   RotateLeft,
   RotateRight,
-} from '../../../packages/photo-editor/src/tools';
+} from '/home/vadim/projects/photo-editor-js/packages/photo-editor/src/tools';
 
 const StyledSource = styled.img({
   display: 'none',
@@ -37,10 +35,10 @@ type Tools = {
   brightness: typeof Brightness;
 };
 
-export const Editor: FC = () => {
+export function Editor(): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [currentTool, setCurrentTool] = useState<keyof Tools>(null);
-  const photoEditorRef = useRef<PhotoEditor<Tools, keyof Tools, 'img'>>(null);
+  const [currentTool, setCurrentTool] = useState<keyof Tools | null>(null);
+  const photoEditorRef = useRef<PhotoEditor<Tools, keyof Tools, 'img'> | null>();
   const sourceRef = useRef<HTMLImageElement>(null);
 
   const [radius, setRadius] = useState(10);
@@ -49,7 +47,14 @@ export const Editor: FC = () => {
   const [brightness, setBrightness] = useState(0);
 
   useEffect(() => {
-    const photoEditor = new PhotoEditor(canvasRef.current, {
+    const canvas = canvasRef.current;
+    const source = sourceRef.current;
+
+    if (!canvas || !source) {
+      return;
+    }
+
+    const photoEditor = new PhotoEditor(canvas, {
       tools: {
         blur: Blur,
         crop: Crop,
@@ -60,7 +65,7 @@ export const Editor: FC = () => {
         brightness: Brightness,
       },
       sourceType: 'img',
-      source: sourceRef.current,
+      source,
     });
 
     photoEditorRef.current = photoEditor;
@@ -86,11 +91,17 @@ export const Editor: FC = () => {
   }, []);
 
   const onChangeRadius = useCallback<ChangeEventHandler<HTMLInputElement>>((event) => {
-    setRadius(Number(event.target.value));
+    const nextValue = Number(event.target.value);
+
+    photoEditorRef.current?.tools.blur.setRadius(nextValue);
+    setRadius(nextValue);
   }, []);
 
   const onChangeSigma = useCallback<ChangeEventHandler<HTMLInputElement>>((event) => {
-    setSigma(Number(event.target.value));
+    const nextValue = Number(event.target.value);
+
+    photoEditorRef.current?.tools.blur.setSigma(nextValue);
+    setSigma(nextValue);
   }, []);
 
   const toggleRectangle = useCallback(() => {
@@ -125,7 +136,10 @@ export const Editor: FC = () => {
   }, []);
 
   const onChangeContrast = useCallback<ChangeEventHandler<HTMLInputElement>>((event) => {
-    setContrast(Number(event.target.value));
+    const nextValue = Number(event.target.value);
+
+    photoEditorRef.current?.tools.contrast.setValue(nextValue);
+    setContrast(nextValue);
   }, []);
 
   const toggleBrightness = useCallback(() => {
@@ -136,7 +150,10 @@ export const Editor: FC = () => {
   }, []);
 
   const onChangeBrightness = useCallback<ChangeEventHandler<HTMLInputElement>>((event) => {
-    setBrightness(Number(event.target.value));
+    const nextValue = Number(event.target.value);
+
+    photoEditorRef.current?.tools.brightness.setValue(nextValue);
+    setBrightness(nextValue);
   }, []);
 
   const rotateLeft = useCallback(() => {

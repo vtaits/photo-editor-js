@@ -373,10 +373,6 @@ export class Crop extends Tool {
 			throw new Error("Canvas is not provided");
 		}
 
-		if (!this.originalImage) {
-			throw new Error("Original image is not provided");
-		}
-
 		this.cropping = false;
 		this.setted = false;
 		this.resizingBorder = null;
@@ -384,6 +380,10 @@ export class Crop extends Tool {
 		this.el.style.removeProperty("cursor");
 
 		if (this.darkenImage) {
+			if (!this.originalImage) {
+				throw new Error("Original image is not provided");
+			}
+
 			const ctx = this.el.getContext("2d");
 
 			if (!ctx) {

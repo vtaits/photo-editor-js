@@ -1,8 +1,8 @@
 import { EventEmitter } from "eventemitter3";
 import { expect, test, vi } from "vitest";
 
-import { Tool } from "../Tool";
-import type { ToolOptions } from "../types";
+import { Tool } from "./Tool";
+import type { ToolOptions } from "./types";
 
 const toolOptions = {
 	el: document.createElement("canvas"),
