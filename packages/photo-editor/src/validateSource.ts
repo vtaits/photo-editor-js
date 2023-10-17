@@ -1,7 +1,11 @@
+import type { Tool } from "./Tool";
 import type { PhotoEditorOptions, SourceType } from "./types";
 
-export const validateSource = <CurrentSource extends SourceType>(
-	options: PhotoEditorOptions<any, CurrentSource>,
+export const validateSource = <
+	Tools extends Record<string, typeof Tool>,
+	CurrentSource extends SourceType,
+>(
+	options: PhotoEditorOptions<Tools, CurrentSource>,
 ): void => {
 	switch (options.sourceType) {
 		case "current-canvas":
@@ -9,7 +13,7 @@ export const validateSource = <CurrentSource extends SourceType>(
 
 		case "canvas": {
 			const { source } = options as unknown as PhotoEditorOptions<
-				any,
+				Tools,
 				"canvas"
 			>;
 
@@ -23,7 +27,7 @@ export const validateSource = <CurrentSource extends SourceType>(
 		}
 
 		case "img": {
-			const { source } = options as unknown as PhotoEditorOptions<any, "img">;
+			const { source } = options as unknown as PhotoEditorOptions<Tools, "img">;
 
 			if (!(source instanceof HTMLElement) || source.tagName !== "IMG") {
 				throw new Error(
@@ -36,7 +40,7 @@ export const validateSource = <CurrentSource extends SourceType>(
 
 		case "base64": {
 			const { source } = options as unknown as PhotoEditorOptions<
-				any,
+				Tools,
 				"base64"
 			>;
 

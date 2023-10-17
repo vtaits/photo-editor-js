@@ -1,20 +1,41 @@
 import { Tool } from "../Tool";
 
 export class Rectangle extends Tool {
-	originalImage: HTMLCanvasElement = null;
+	originalImage: HTMLCanvasElement | null = null;
 
 	drawing = false;
 
-	startX: number = null;
+	startX: number | null = null;
 
-	startY: number = null;
+	startY: number | null = null;
 
-	finishX: number = null;
+	finishX: number | null = null;
 
-	finishY: number = null;
+	finishY: number | null = null;
 
 	showRectangle(): void {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
 		const ctx = this.el.getContext("2d");
+
+		if (!ctx) {
+			throw new Error("Context is not found");
+		}
+
+		if (!this.originalImage) {
+			throw new Error("Original image is not setted");
+		}
+
+		if (
+			this.startX === null ||
+			this.startY === null ||
+			this.finishX === null ||
+			this.finishY === null
+		) {
+			throw new Error("Coordinates are not setted");
+		}
 
 		const x = Math.min(this.startX, this.finishX);
 		const y = Math.min(this.startY, this.finishY);
@@ -33,6 +54,10 @@ export class Rectangle extends Tool {
 	}
 
 	onStartDraw = (event: MouseEvent): void => {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
 		const x = event.offsetX / (this.el.clientWidth / this.el.width);
 		const y = event.offsetY / (this.el.clientHeight / this.el.height);
 
@@ -43,6 +68,10 @@ export class Rectangle extends Tool {
 	};
 
 	onProcessDraw = (event: MouseEvent): void => {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
 		const x = event.offsetX / (this.el.clientWidth / this.el.width);
 		const y = event.offsetY / (this.el.clientHeight / this.el.height);
 
@@ -59,18 +88,46 @@ export class Rectangle extends Tool {
 			return;
 		}
 
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
+		if (!this.originalImage) {
+			throw new Error("Original image is not setted");
+		}
+
 		this.drawing = false;
-		this.originalImage.getContext("2d").drawImage(this.el, 0, 0);
+
+		const originalCtx = this.originalImage.getContext("2d");
+
+		if (!originalCtx) {
+			throw new Error("Context of original image is not found");
+		}
+
+		originalCtx.drawImage(this.el, 0, 0);
+
+		originalCtx.drawImage(this.el, 0, 0);
 		this.pushState(this.el.toDataURL());
 	};
 
 	onAfterEnable(): void {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
 		const { width, height } = this.el;
 
 		this.originalImage = document.createElement("canvas");
 		this.originalImage.width = width;
 		this.originalImage.height = height;
-		this.originalImage.getContext("2d").drawImage(this.el, 0, 0);
+
+		const originalCtx = this.originalImage.getContext("2d");
+
+		if (!originalCtx) {
+			throw new Error("Context of original image is not found");
+		}
+
+		originalCtx.drawImage(this.el, 0, 0);
 
 		this.el.addEventListener("mousedown", this.onStartDraw);
 		this.el.addEventListener("mousemove", this.onProcessDraw);
@@ -78,6 +135,10 @@ export class Rectangle extends Tool {
 	}
 
 	onBeforeDisable(): void {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
 		this.drawing = false;
 
 		this.originalImage = null;

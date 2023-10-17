@@ -26,7 +26,28 @@ export class Crop extends Tool {
 	resizingBorder: BorderType | null = null;
 
 	showCropState(): void {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
+		if (
+			this.startX === null ||
+			this.startY === null ||
+			this.finishX === null ||
+			this.finishY === null
+		) {
+			throw new Error("Coordinates are not setted");
+		}
+
+		if (!this.darkenImage || !this.originalImage) {
+			throw new Error("Images are not setted");
+		}
+
 		const ctx = this.el.getContext("2d");
+
+		if (!ctx) {
+			throw new Error("Context is not found");
+		}
 
 		const x = Math.min(this.startX, this.finishX);
 		const y = Math.min(this.startY, this.finishY);
@@ -46,6 +67,19 @@ export class Crop extends Tool {
 	}
 
 	applyCrop(): void {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
+		if (
+			this.startX === null ||
+			this.startY === null ||
+			this.finishX === null ||
+			this.finishY === null
+		) {
+			throw new Error("Coordinates are not setted");
+		}
+
 		const x = Math.min(this.startX, this.finishX);
 		const y = Math.min(this.startY, this.finishY);
 
@@ -56,6 +90,14 @@ export class Crop extends Tool {
 		this.el.height = height;
 
 		const ctx = this.el.getContext("2d");
+
+		if (!ctx) {
+			throw new Error("Context is not found");
+		}
+
+		if (!this.originalImage) {
+			throw new Error("Original image is not setted");
+		}
 
 		ctx.drawImage(this.originalImage, x, y, width, height, 0, 0, width, height);
 
@@ -68,6 +110,10 @@ export class Crop extends Tool {
 	}
 
 	cancelCrop(): void {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
 		this.startX = null;
 		this.startY = null;
 		this.finishX = null;
@@ -76,6 +122,15 @@ export class Crop extends Tool {
 		this.setted = false;
 
 		const ctx = this.el.getContext("2d");
+
+		if (!ctx) {
+			throw new Error("Context is not found");
+		}
+
+		if (!this.darkenImage) {
+			throw new Error("Darken image is not setted");
+		}
+
 		ctx.drawImage(this.darkenImage, 0, 0, this.el.width, this.el.height);
 
 		this.emit("unset");
@@ -84,6 +139,15 @@ export class Crop extends Tool {
 	}
 
 	sortCoords(): void {
+		if (
+			this.startX === null ||
+			this.startY === null ||
+			this.finishX === null ||
+			this.finishY === null
+		) {
+			throw new Error("Coordinates are not setted");
+		}
+
 		if (this.startX > this.finishX) {
 			[this.startX, this.finishX] = [this.finishX, this.startX];
 		}
@@ -93,7 +157,16 @@ export class Crop extends Tool {
 		}
 	}
 
-	getResizingBorder(x: number, y: number): BorderType {
+	getResizingBorder(x: number, y: number): BorderType | null {
+		if (
+			this.startX === null ||
+			this.startY === null ||
+			this.finishX === null ||
+			this.finishY === null
+		) {
+			throw new Error("Coordinates are not setted");
+		}
+
 		if (x > this.startX && x < this.finishX) {
 			if (y > this.startY - 5 && y < this.startY + 5) {
 				return "top";
@@ -118,6 +191,10 @@ export class Crop extends Tool {
 	}
 
 	setCursorForResizingBorder(resizingBorder: BorderType): void {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
 		switch (resizingBorder) {
 			case "top":
 			case "bottom":
@@ -135,6 +212,10 @@ export class Crop extends Tool {
 	}
 
 	onStartDraw = (event: MouseEvent): void => {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
 		const x =
 			Math.min(Math.max(event.offsetX, 0), this.el.clientWidth) /
 			(this.el.clientWidth / this.el.width);
@@ -159,6 +240,10 @@ export class Crop extends Tool {
 	};
 
 	onProcessDraw = (event: MouseEvent): void => {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
 		const x =
 			Math.min(Math.max(event.offsetX, 0), this.el.clientWidth) /
 			(this.el.clientWidth / this.el.width);
@@ -221,6 +306,10 @@ export class Crop extends Tool {
 	};
 
 	onStopDraw = (): void => {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
 		this.mousedownX = null;
 		this.mousedownY = null;
 
@@ -244,20 +333,33 @@ export class Crop extends Tool {
 	};
 
 	onAfterEnable(): void {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
 		const { width, height } = this.el;
 
 		this.originalImage = document.createElement("canvas");
 		this.originalImage.width = width;
 		this.originalImage.height = height;
-		this.originalImage.getContext("2d").drawImage(this.el, 0, 0);
+		const originalContext = this.originalImage.getContext("2d");
+
+		if (!originalContext) {
+			throw new Error("Context of original image is not found");
+		}
+
+		originalContext.drawImage(this.el, 0, 0);
 
 		this.darkenImage = document.createElement("canvas");
 		this.darkenImage.width = width;
 		this.darkenImage.height = height;
-		this.darkenImage.getContext("2d").drawImage(this.el, 0, 0);
-
 		const darkenCtx = this.darkenImage.getContext("2d");
 
+		if (!darkenCtx) {
+			throw new Error("Context of darken image is not found");
+		}
+
+		darkenCtx.drawImage(this.el, 0, 0);
 		darkenCtx.fillStyle = "rgba(0, 0, 0, 0.4)";
 		darkenCtx.fillRect(0, 0, width, height);
 
@@ -267,6 +369,14 @@ export class Crop extends Tool {
 	}
 
 	onBeforeDisable(): void {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
+		if (!this.originalImage) {
+			throw new Error("Original image is not provided");
+		}
+
 		this.cropping = false;
 		this.setted = false;
 		this.resizingBorder = null;
@@ -274,7 +384,13 @@ export class Crop extends Tool {
 		this.el.style.removeProperty("cursor");
 
 		if (this.darkenImage) {
-			this.el.getContext("2d").drawImage(this.originalImage, 0, 0);
+			const ctx = this.el.getContext("2d");
+
+			if (!ctx) {
+				throw new Error("Context is not found");
+			}
+
+			ctx.drawImage(this.originalImage, 0, 0);
 
 			this.originalImage = null;
 			this.darkenImage = null;

@@ -1,15 +1,19 @@
 import { expect, test, vi } from "vitest";
 
-import { PhotoEditor } from "../PhotoEditor";
-import { Tool } from "../Tool";
+import { PhotoEditor } from "./PhotoEditor";
+import { Tool, type ToolOptions } from "./Tool";
 
-import type { SourceType, PhotoEditorOptions } from "../types";
+import type { PhotoEditorOptions, SourceType } from "./types";
 
 class SyncPhotoEditor<
 	Tools extends Record<string, typeof Tool>,
-	ToolKey extends keyof Tools,
+	ToolKey extends string & keyof Tools,
 > extends PhotoEditor<Tools, ToolKey, "base64"> {
 	_init() {
+		if (!this._options) {
+			throw new Error("Options are not provided");
+		}
+
 		const initialState = this._options.source;
 
 		this._currentState = 0;
@@ -39,9 +43,8 @@ test("should throw an exception if tools is not object", () => {
 
 test("should throw an exception if tools is null", () => {
 	expect(() => {
-		// @ts-ignore
 		new PhotoEditor(document.createElement("canvas"), {
-			tools: null,
+			tools: null as unknown as Record<string, typeof Tool>,
 		});
 	}).toThrowError("PhotoEditor tools can't be null");
 });
@@ -87,7 +90,7 @@ test('should throw an exception if sourceType is "base64" and source not string'
 		new PhotoEditor(document.createElement("canvas"), {
 			tools: {},
 			sourceType: "base64",
-			source: null,
+			source: null as unknown as string,
 		});
 	}).toThrowError(
 		'PhotoEditor source for sourceType "base64" should be a string',
@@ -102,14 +105,14 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
 	const tool2Mock = vi.fn();
 
 	class Tool1 extends Tool {
-		constructor(options) {
+		constructor(options: ToolOptions) {
 			super(options);
 			tool1Mock(options);
 		}
 	}
 
 	class Tool2 extends Tool {
-		constructor(options) {
+		constructor(options: ToolOptions) {
 			super(options);
 			tool2Mock(options);
 		}
@@ -117,7 +120,7 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
 
 	class WithSeparatedInit<
 		Tools extends Record<string, typeof Tool>,
-		ToolKey extends keyof Tools,
+		ToolKey extends string & keyof Tools,
 		CurrentSource extends SourceType = "current-canvas",
 	> extends PhotoEditor<Tools, ToolKey, CurrentSource> {
 		_init() {
@@ -184,7 +187,7 @@ test('should not draw initialState if source-type is "current-canvas"', async ()
 
 	class WithSeparatedInit<
 		Tools extends Record<string, typeof Tool>,
-		ToolKey extends keyof Tools,
+		ToolKey extends string & keyof Tools,
 		CurrentSource extends SourceType = "current-canvas",
 	> extends PhotoEditor<Tools, ToolKey, CurrentSource> {
 		_init() {
@@ -195,6 +198,9 @@ test('should not draw initialState if source-type is "current-canvas"', async ()
 	}
 
 	const el = document.createElement("canvas");
+	// Fix missing method
+	el.toDataURL = vi.fn();
+
 	const options: PhotoEditorOptions<
 		{
 			tool1: typeof Tool;
@@ -223,7 +229,7 @@ test('should draw initialState if source-type is not "current-canvas"', async ()
 		Tools extends Record<string, typeof Tool>,
 		ToolKey extends keyof Tools,
 		CurrentSource extends SourceType = "current-canvas",
-	> extends PhotoEditor<Tools, ToolKey, CurrentSource> {
+	> extends PhotoEditor<Tools, string & ToolKey, CurrentSource> {
 		_init() {
 			return Promise.resolve();
 		}
@@ -255,7 +261,7 @@ test('should draw initialState if source-type is not "current-canvas"', async ()
 
 test("should save state on pushState", () => {
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<{}, "base64"> = {
+	const options: PhotoEditorOptions<Record<string, typeof Tool>, "base64"> = {
 		tools: {},
 		sourceType: "base64",
 		source: "data:image/png;base64,test",
@@ -280,7 +286,7 @@ test("should save state on pushState", () => {
 
 test("should save state and slice extra states on pushState", () => {
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<{}, "base64"> = {
+	const options: PhotoEditorOptions<Record<string, typeof Tool>, "base64"> = {
 		tools: {},
 		sourceType: "base64",
 		source: "data:image/png;base64,test",
@@ -312,7 +318,7 @@ test("should save state and slice extra states on pushState", () => {
 
 test("should return correct currentState with getCurrentState", () => {
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<{}, "base64"> = {
+	const options: PhotoEditorOptions<Record<string, typeof Tool>, "base64"> = {
 		tools: {},
 		sourceType: "base64",
 		source: "data:image/png;base64,test",

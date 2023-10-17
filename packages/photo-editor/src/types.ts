@@ -15,7 +15,8 @@ export type SourceParams<CurrentSource extends SourceType> =
 		? {
 				source: HTMLImageElement;
 		  }
-		: {};
+		: // biome-ignore lint/complexity/noBannedTypes: TO DO
+		  {};
 
 export type PhotoEditorOptions<
 	Tools extends Record<string, typeof Tool>,

@@ -2,7 +2,15 @@ import { Tool } from "../Tool";
 
 export class RotateRight extends Tool {
 	onAfterEnable(): void {
+		if (!this.el) {
+			throw new Error("Canvas is not provided");
+		}
+
 		const ctx = this.el.getContext("2d");
+
+		if (!ctx) {
+			throw new Error("Context is not found");
+		}
 
 		const { width, height } = this.el;
 
@@ -11,6 +19,10 @@ export class RotateRight extends Tool {
 		otherCanvas.height = width;
 
 		const otherCtx = otherCanvas.getContext("2d");
+
+		if (!otherCtx) {
+			throw new Error("Context of other canvas is not found");
+		}
 
 		otherCtx.clearRect(0, 0, width, height);
 		otherCtx.translate(height / 2, width / 2);

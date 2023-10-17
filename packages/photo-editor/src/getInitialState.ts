@@ -27,6 +27,11 @@ export const imageToBase64 = async (
 
 	fakeCanvasEl.height = image.naturalHeight;
 	fakeCanvasEl.width = image.naturalWidth;
+
+	if (!ctx) {
+		throw new Error("Context is not found");
+	}
+
 	ctx.drawImage(image, 0, 0);
 
 	return fakeCanvasEl.toDataURL();

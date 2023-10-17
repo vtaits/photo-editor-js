@@ -1,9 +1,12 @@
+import type { Tool } from "./Tool";
+import type { PhotoEditorOptions, SourceType } from "./types";
 import { validateSource } from "./validateSource";
 
-import type { PhotoEditorOptions, SourceType } from "./types";
-
-export const validateOptions = <CurrentSource extends SourceType>(
-	options: PhotoEditorOptions<any, CurrentSource>,
+export const validateOptions = <
+	Tools extends Record<string, typeof Tool>,
+	CurrentSource extends SourceType,
+>(
+	options: PhotoEditorOptions<Tools, CurrentSource>,
 ): void => {
 	if (typeof options !== "object") {
 		throw new Error("PhotoEditor options should be an object");

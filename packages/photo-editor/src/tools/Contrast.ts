@@ -3,9 +3,12 @@ import { Filter } from "./Filter";
 export class Contrast extends Filter {
 	newImageData = (): ImageData => {
 		const value = this.getValue();
-		const { originalImageData } = this;
 
-		const { width, height, data } = originalImageData;
+		if (!this.originalImageData) {
+			throw new Error("Image data is not provided");
+		}
+
+		const { width, height, data } = this.originalImageData;
 		const imageData = new ImageData(width, height);
 		const newData = imageData.data;
 

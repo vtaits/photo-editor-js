@@ -1,7 +1,8 @@
-import { test, expect, vi } from "vitest";
 import { EventEmitter } from "eventemitter3";
+import { expect, test, vi } from "vitest";
 
 import { Tool } from "../Tool";
+import type { ToolOptions } from "../types";
 
 const toolOptions = {
 	el: document.createElement("canvas"),
@@ -20,7 +21,7 @@ test("should throw an exception if options is not object", () => {
 
 test("should throw an exception if options is null", () => {
 	expect(() => {
-		new Tool(null);
+		new Tool(null as unknown as ToolOptions);
 	}).toThrowError("Tool options can't be null");
 });
 
