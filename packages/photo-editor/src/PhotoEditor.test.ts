@@ -164,7 +164,7 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
 	expect(photoEditor._currentState).toEqual(0);
 	expect(photoEditor._states).toEqual(["data:image/png;base64,test"]);
 
-	[tool1Mock, tool2Mock].forEach((toolMock) => {
+	for (const toolMock of [tool1Mock, tool2Mock]) {
 		expect(toolMock).toHaveBeenCalledTimes(1);
 
 		expect(tool1Mock.mock.calls[0][0]).toEqual({
@@ -174,7 +174,7 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
 			disable: photoEditor.disableTool,
 			touch: photoEditor.touch,
 		});
-	});
+	}
 
 	expect(photoEditor.tools.tool1 instanceof Tool1).toBe(true);
 	expect(photoEditor.tools.tool2 instanceof Tool2).toBe(true);

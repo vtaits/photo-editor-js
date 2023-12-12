@@ -96,7 +96,7 @@ export class PhotoEditor<
 
 		const el = this._el;
 
-		Object.keys(tools).forEach((toolIdRaw) => {
+		for (const toolIdRaw of Object.keys(tools)) {
 			const toolId = toolIdRaw as ToolKey;
 
 			const ToolConstructor = tools[toolId];
@@ -122,7 +122,7 @@ export class PhotoEditor<
 			}
 
 			this.tools[toolId] = tool;
-		});
+		}
 	}
 
 	_pushState = (state: string): void => {
@@ -173,11 +173,11 @@ export class PhotoEditor<
 	destroy(): void {
 		this._destroyed = true;
 
-		Object.keys(this.tools).forEach((toolId) => {
+		for (const toolId of Object.keys(this.tools)) {
 			const tool = this.tools[toolId as ToolKey];
 
 			tool.destroy();
-		});
+		}
 	}
 
 	getCurrentState(): string {

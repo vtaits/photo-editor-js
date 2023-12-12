@@ -8,15 +8,15 @@ export type SourceParams<CurrentSource extends SourceType> =
 				source: string;
 		  }
 		: CurrentSource extends "canvas"
-		? {
-				source: HTMLCanvasElement;
-		  }
-		: CurrentSource extends "img"
-		? {
-				source: HTMLImageElement;
-		  }
-		: // biome-ignore lint/complexity/noBannedTypes: TO DO
-		  {};
+		  ? {
+					source: HTMLCanvasElement;
+			  }
+		  : CurrentSource extends "img"
+			  ? {
+						source: HTMLImageElement;
+				  }
+			  : // biome-ignore lint/complexity/noBannedTypes: TO DO
+				  {};
 
 export type PhotoEditorOptions<
 	Tools extends Record<string, typeof Tool>,
