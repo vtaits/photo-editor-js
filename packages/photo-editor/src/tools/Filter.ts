@@ -1,3 +1,4 @@
+import { unwrap } from "krustykrab";
 import { Tool } from "../Tool";
 
 export class Filter extends Tool {
@@ -22,45 +23,27 @@ export class Filter extends Tool {
 	}
 
 	newImageData(): ImageData {
-		if (!this.originalImageData) {
-			throw new Error("Image data is not provided");
-		}
-
-		return this.originalImageData;
+		return unwrap(this.originalImageData);
 	}
 
 	apply(): void {
-		if (!this.el) {
-			throw new Error("Canvas is not provided");
-		}
-
-		const ctx = this.el.getContext("2d");
-
-		if (!ctx) {
-			throw new Error("Context is not found");
-		}
+		const canvas = unwrap(this.el);
+		const ctx = unwrap(canvas.getContext("2d"));
 
 		ctx.putImageData(this.newImageData(), 0, 0);
 
 		if (this.applied === false) {
-			this.pushState(this.el.toDataURL());
+			this.pushState(canvas.toDataURL());
 			this.applied = true;
 		} else {
-			this.updateState(this.el.toDataURL());
+			this.updateState(canvas.toDataURL());
 		}
 	}
 
 	onAfterEnable(): void {
-		if (!this.el) {
-			throw new Error("Canvas is not provided");
-		}
-
-		const ctx = this.el.getContext("2d");
-		const { width, height } = this.el;
-
-		if (!ctx) {
-			throw new Error("Context is not found");
-		}
+		const canvas = unwrap(this.el);
+		const ctx = unwrap(canvas.getContext("2d"));
+		const { width, height } = canvas;
 
 		this.originalImageData = ctx.getImageData(0, 0, width, height);
 	}

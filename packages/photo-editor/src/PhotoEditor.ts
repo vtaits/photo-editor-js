@@ -198,7 +198,7 @@ export class PhotoEditor<
 		this.emit("enableTool", toolId);
 	}
 
-	disableTool(): void {
+	disableTool = () => {
 		if (this._enabledToolId) {
 			this.tools[this._enabledToolId].disableFromEditor();
 
@@ -212,7 +212,7 @@ export class PhotoEditor<
 
 			this._enabledToolId = null;
 		}
-	}
+	};
 
 	toggleTool(toolId: ToolKey): void {
 		if (this._enabledToolId === toolId) {
@@ -222,9 +222,9 @@ export class PhotoEditor<
 		}
 	}
 
-	touch(): void {
+	touch = () => {
 		this._touched = true;
-	}
+	};
 
 	undo(): void {
 		if (this._currentState > 0) {

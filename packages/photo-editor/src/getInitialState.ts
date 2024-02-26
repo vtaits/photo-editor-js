@@ -1,4 +1,5 @@
 // TO DO: tests
+import { unwrap } from "krustykrab";
 
 import { waitForImageComplete } from "./waitForImageComplete";
 
@@ -23,14 +24,10 @@ export const imageToBase64 = async (
 	}
 
 	const fakeCanvasEl = document.createElement("canvas");
-	const ctx = fakeCanvasEl.getContext("2d");
+	const ctx = unwrap(fakeCanvasEl.getContext("2d"));
 
 	fakeCanvasEl.height = image.naturalHeight;
 	fakeCanvasEl.width = image.naturalWidth;
-
-	if (!ctx) {
-		throw new Error("Context is not found");
-	}
 
 	ctx.drawImage(image, 0, 0);
 

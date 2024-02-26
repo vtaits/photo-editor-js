@@ -1,17 +1,20 @@
+import { unwrap } from 'krustykrab';
 import { Tool } from '../../../packages/photo-editor/src';
 
 export class Pencil extends Tool {
   drawing = false;
 
-  lastX = null;
+  lastX: number | null = null;
 
-  lastY = null;
+  lastY: number | null = null;
 
   onStartDraw = (event: MouseEvent) => {
+    const canvas = unwrap(this.el);
+
     this.drawing = true;
 
-    this.lastX = event.pageX - this.el.offsetLeft;
-    this.lastY = event.pageY - this.el.offsetTop;
+    this.lastX = event.offsetX / (canvas.clientWidth / canvas.width);
+    this.lastY = event.offsetY / (canvas.clientHeight / canvas.height);
   }
 
   onProcessDraw = (event: MouseEvent) => {
@@ -19,12 +22,19 @@ export class Pencil extends Tool {
       return;
     }
 
-    const newLastX = event.pageX - this.el.offsetLeft;
-    const newLastY = event.pageY - this.el.offsetTop;
+    const canvas = unwrap(this.el);
 
-    const ctx = this.el.getContext('2d');
+    const newLastX = event.offsetX / (canvas.clientWidth / canvas.width);
+    const newLastY = event.offsetY / (canvas.clientHeight / canvas.height);
+
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) {
+			throw new Error("Context is not found");
+		}
+
     ctx.beginPath();
-    ctx.moveTo(this.lastX, this.lastY);
+    ctx.moveTo(unwrap(this.lastX), unwrap(this.lastY));
     ctx.lineTo(newLastX, newLastY);
     ctx.stroke();
 
@@ -42,20 +52,24 @@ export class Pencil extends Tool {
     this.lastX = null;
     this.lastY = null;
 
-    this.pushState(this.el.toDataURL());
+    this.pushState(unwrap(this.el).toDataURL());
   }
 
   onAfterEnable() {
-    this.el.addEventListener('mousedown', this.onStartDraw);
-    this.el.addEventListener('mousemove', this.onProcessDraw);
-    this.el.addEventListener('mouseup', this.onStopDraw);
+    const canvas = unwrap(this.el);
+
+    canvas.addEventListener('mousedown', this.onStartDraw);
+    canvas.addEventListener('mousemove', this.onProcessDraw);
+    canvas.addEventListener('mouseup', this.onStopDraw);
   }
 
   onBeforeDisable() {
+    const canvas = unwrap(this.el);
+
     this.drawing = false;
 
-    this.el.removeEventListener('mousedown', this.onStartDraw);
-    this.el.removeEventListener('mousemove', this.onProcessDraw);
-    this.el.removeEventListener('mouseup', this.onStopDraw);
+    canvas.removeEventListener('mousedown', this.onStartDraw);
+    canvas.removeEventListener('mousemove', this.onProcessDraw);
+    canvas.removeEventListener('mouseup', this.onStopDraw);
   }
 }

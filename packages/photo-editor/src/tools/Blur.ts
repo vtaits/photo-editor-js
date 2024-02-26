@@ -1,3 +1,4 @@
+import { unwrap } from "krustykrab";
 import { Tool } from "../Tool";
 
 class Pixel {
@@ -214,14 +215,12 @@ export class Blur extends Tool {
 	}
 
 	onStartDraw = (event: MouseEvent): void => {
-		if (!this.el) {
-			throw new Error("canvas is not inited");
-		}
+		const canvas = unwrap(this.el);
 
 		this.bluring = true;
 
-		const newLastX = event.offsetX / (this.el.clientWidth / this.el.width);
-		const newLastY = event.offsetY / (this.el.clientHeight / this.el.height);
+		const newLastX = event.offsetX / (canvas.clientWidth / canvas.width);
+		const newLastY = event.offsetY / (canvas.clientHeight / canvas.height);
 
 		this.blurAtPoint(newLastX, newLastY);
 
@@ -234,12 +233,10 @@ export class Blur extends Tool {
 			return;
 		}
 
-		if (!this.el) {
-			throw new Error("canvas is not inited");
-		}
+		const canvas = unwrap(this.el);
 
-		const newLastX = event.offsetX / (this.el.clientWidth / this.el.width);
-		const newLastY = event.offsetY / (this.el.clientHeight / this.el.height);
+		const newLastX = event.offsetX / (canvas.clientWidth / canvas.width);
+		const newLastY = event.offsetY / (canvas.clientHeight / canvas.height);
 
 		this.blurAtPoint(newLastX, newLastY);
 
@@ -252,35 +249,26 @@ export class Blur extends Tool {
 			return;
 		}
 
-		if (!this.el) {
-			throw new Error("canvas is not inited");
-		}
+		const canvas = unwrap(this.el);
 
 		this.bluring = false;
 
 		this.lastX = null;
 		this.lastY = null;
 
-		this.pushState(this.el.toDataURL());
+		this.pushState(canvas.toDataURL());
 	};
 
 	blurAtPoint(_x: number, _y: number): void {
-		if (!this.el) {
-			throw new Error("canvas is not inited");
-		}
-
-		const ctx = this.el.getContext("2d");
-
-		if (!ctx) {
-			throw new Error("canvas context is not defined");
-		}
+		const canvas = unwrap(this.el);
+		const ctx = unwrap(canvas.getContext("2d"));
 
 		const radius = this.getRadius();
 		const sigma = this.getSigma();
 		const x = Math.round(_x);
 		const y = Math.round(_y);
 
-		const { width, height } = this.el;
+		const { width, height } = canvas;
 
 		const startX = Math.max(x - radius, 0);
 		const finishX = Math.max(Math.min(x + radius, width), 0);
@@ -332,11 +320,7 @@ export class Blur extends Tool {
 		bluredPiece.height = newImgData.height;
 		bluredPiece.width = newImgData.width;
 
-		const bluredPieceCtx = bluredPiece.getContext("2d");
-
-		if (!bluredPieceCtx) {
-			throw new Error("blured piece context is not defined");
-		}
+		const bluredPieceCtx = unwrap(bluredPiece.getContext("2d"));
 
 		bluredPieceCtx.putImageData(newImgData, 0, 0);
 
@@ -356,24 +340,20 @@ export class Blur extends Tool {
 	}
 
 	onAfterEnable(): void {
-		if (!this.el) {
-			throw new Error("canvas is not inited");
-		}
+		const canvas = unwrap(this.el);
 
-		this.el.addEventListener("mousedown", this.onStartDraw);
-		this.el.addEventListener("mousemove", this.onProcessDraw);
-		this.el.addEventListener("mouseup", this.onStopDraw);
+		canvas.addEventListener("mousedown", this.onStartDraw);
+		canvas.addEventListener("mousemove", this.onProcessDraw);
+		canvas.addEventListener("mouseup", this.onStopDraw);
 	}
 
 	onBeforeDisable(): void {
-		if (!this.el) {
-			throw new Error("canvas is not inited");
-		}
+		const canvas = unwrap(this.el);
 
 		this.bluring = false;
 
-		this.el.removeEventListener("mousedown", this.onStartDraw);
-		this.el.removeEventListener("mousemove", this.onProcessDraw);
-		this.el.removeEventListener("mouseup", this.onStopDraw);
+		canvas.removeEventListener("mousedown", this.onStartDraw);
+		canvas.removeEventListener("mousemove", this.onProcessDraw);
+		canvas.removeEventListener("mouseup", this.onStopDraw);
 	}
 }

@@ -1,3 +1,4 @@
+import { unwrap } from "krustykrab";
 import { Tool } from "../Tool";
 
 export class Rectangle extends Tool {
@@ -14,19 +15,8 @@ export class Rectangle extends Tool {
 	finishY: number | null = null;
 
 	showRectangle(): void {
-		if (!this.el) {
-			throw new Error("Canvas is not provided");
-		}
-
-		const ctx = this.el.getContext("2d");
-
-		if (!ctx) {
-			throw new Error("Context is not found");
-		}
-
-		if (!this.originalImage) {
-			throw new Error("Original image is not setted");
-		}
+		const canvas = unwrap(this.el);
+		const ctx = unwrap(canvas.getContext("2d"));
 
 		if (
 			this.startX === null ||
@@ -43,8 +33,14 @@ export class Rectangle extends Tool {
 		const width = Math.abs(this.startX - this.finishX);
 		const height = Math.abs(this.startY - this.finishY);
 
-		ctx.clearRect(0, 0, this.el.width, this.el.height);
-		ctx.drawImage(this.originalImage, 0, 0, this.el.width, this.el.height);
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.drawImage(
+			unwrap(this.originalImage),
+			0,
+			0,
+			canvas.width,
+			canvas.height,
+		);
 
 		ctx.beginPath();
 		ctx.lineWidth = 4;
@@ -54,12 +50,10 @@ export class Rectangle extends Tool {
 	}
 
 	onStartDraw = (event: MouseEvent): void => {
-		if (!this.el) {
-			throw new Error("Canvas is not provided");
-		}
+		const canvas = unwrap(this.el);
 
-		const x = event.offsetX / (this.el.clientWidth / this.el.width);
-		const y = event.offsetY / (this.el.clientHeight / this.el.height);
+		const x = event.offsetX / (canvas.clientWidth / canvas.width);
+		const y = event.offsetY / (canvas.clientHeight / canvas.height);
 
 		this.drawing = true;
 
@@ -68,12 +62,10 @@ export class Rectangle extends Tool {
 	};
 
 	onProcessDraw = (event: MouseEvent): void => {
-		if (!this.el) {
-			throw new Error("Canvas is not provided");
-		}
+		const canvas = unwrap(this.el);
 
-		const x = event.offsetX / (this.el.clientWidth / this.el.width);
-		const y = event.offsetY / (this.el.clientHeight / this.el.height);
+		const x = event.offsetX / (canvas.clientWidth / canvas.width);
+		const y = event.offsetY / (canvas.clientHeight / canvas.height);
 
 		if (this.drawing) {
 			this.finishX = x;
@@ -88,63 +80,45 @@ export class Rectangle extends Tool {
 			return;
 		}
 
-		if (!this.el) {
-			throw new Error("Canvas is not provided");
-		}
-
-		if (!this.originalImage) {
-			throw new Error("Original image is not setted");
-		}
+		const canvas = unwrap(this.el);
 
 		this.drawing = false;
 
-		const originalCtx = this.originalImage.getContext("2d");
+		const originalCtx = unwrap(unwrap(this.originalImage).getContext("2d"));
 
-		if (!originalCtx) {
-			throw new Error("Context of original image is not found");
-		}
+		originalCtx.drawImage(canvas, 0, 0);
 
-		originalCtx.drawImage(this.el, 0, 0);
-
-		originalCtx.drawImage(this.el, 0, 0);
-		this.pushState(this.el.toDataURL());
+		originalCtx.drawImage(canvas, 0, 0);
+		this.pushState(canvas.toDataURL());
 	};
 
 	onAfterEnable(): void {
-		if (!this.el) {
-			throw new Error("Canvas is not provided");
-		}
+		const canvas = unwrap(this.el);
 
-		const { width, height } = this.el;
+		const { width, height } = canvas;
 
 		this.originalImage = document.createElement("canvas");
 		this.originalImage.width = width;
 		this.originalImage.height = height;
 
-		const originalCtx = this.originalImage.getContext("2d");
+		const originalCtx = unwrap(this.originalImage.getContext("2d"));
 
-		if (!originalCtx) {
-			throw new Error("Context of original image is not found");
-		}
+		originalCtx.drawImage(canvas, 0, 0);
 
-		originalCtx.drawImage(this.el, 0, 0);
-
-		this.el.addEventListener("mousedown", this.onStartDraw);
-		this.el.addEventListener("mousemove", this.onProcessDraw);
-		this.el.addEventListener("mouseup", this.onStopDraw);
+		canvas.addEventListener("mousedown", this.onStartDraw);
+		canvas.addEventListener("mousemove", this.onProcessDraw);
+		canvas.addEventListener("mouseup", this.onStopDraw);
 	}
 
 	onBeforeDisable(): void {
-		if (!this.el) {
-			throw new Error("Canvas is not provided");
-		}
+		const canvas = unwrap(this.el);
 
 		this.drawing = false;
 
 		this.originalImage = null;
 
-		this.el.removeEventListener("mousedown", this.onStartDraw);
-		this.el.removeEventListener("mousemove", this.onProcessDraw);
-		this.el.removeEventListener("mouseup", this.onStopDraw);
+		canvas.removeEventListener("mousedown", this.onStartDraw);
+		canvas.removeEventListener("mousemove", this.onProcessDraw);
+		canvas.removeEventListener("mouseup", this.onStopDraw);
 	}
 }
