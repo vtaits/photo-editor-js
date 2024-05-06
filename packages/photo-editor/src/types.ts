@@ -6,17 +6,17 @@ export type SourceParams<CurrentSource extends SourceType> =
 	CurrentSource extends "base64"
 		? {
 				source: string;
-		  }
+			}
 		: CurrentSource extends "canvas"
-		  ? {
+			? {
 					source: HTMLCanvasElement;
-			  }
-		  : CurrentSource extends "img"
-			  ? {
+				}
+			: CurrentSource extends "img"
+				? {
 						source: HTMLImageElement;
-				  }
-			  : // biome-ignore lint/complexity/noBannedTypes: TO DO
-				  {};
+					}
+				: // biome-ignore lint/complexity/noBannedTypes: TO DO
+					{};
 
 export type PhotoEditorOptions<
 	Tools extends Record<string, typeof Tool>,
