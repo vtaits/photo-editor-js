@@ -12,7 +12,6 @@ export default defineConfig({
     'cjs',
     'esm',
   ],
-  legacyOutput: true,
 
   sourcemap: true,
   splitting: true,

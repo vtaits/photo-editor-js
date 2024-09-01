@@ -7,20 +7,21 @@
     "tools"
   ],
   "main": "./dist/index.js",
-  "module": "./dist/esm/index.js",
+  "module": "./dist/index.mjs",
+  "types": "dist/index.d.mts",
   "exports": {
+    "./package.json": "./package.json",
     ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.js"
     },
     "./tools": {
-      "require": "./dist/tools/index.js",
-      "import": "./dist/esm/tools/index.js",
-      "types": "./dist/tools/index.d.ts"
+      "types": "./dist/tools/index.d.mts",
+      "import": "./dist/tools/index.mjs",
+      "default": "./dist/tools/index.js"
     }
   },
-  "typings": "dist/index.d.ts",
   "scripts": {
     "clean": "rimraf dist",
     "build:js": "tsup",
@@ -28,7 +29,7 @@
     "build": "yarn build:js && yarn build:proxy_directories",
     "test": "yarn lint && yarn test:unit",
     "lint": "biome check src",
-    "lint:fix": "biome check src --apply-unsafe",
+    "lint:fix": "biome check src --write --unsafe",
     "format": "biome format src --write",
     "test:ts": "tsc",
     "test:unit": "vitest run --coverage.enabled --coverage.all --coverage.include=src",
@@ -52,17 +53,17 @@
   },
   "homepage": "https://github.com/vtaits/photo-editor-js/tree/master/packages/photo-editor#readme",
   "devDependencies": {
-    "@biomejs/biome": "^1.7.2",
-    "@vitest/coverage-v8": "^1.6.0",
-    "exports-fallback": "^1.0.1",
-    "happy-dom": "^14.7.1",
-    "rimraf": "^5.0.5",
-    "tsup": "^8.0.2",
-    "typescript": "^5.4.5",
-    "vitest": "^1.6.0"
+    "@biomejs/biome": "^1.8.3",
+    "@vitest/coverage-v8": "^2.0.5",
+    "exports-fallback": "^1.0.2",
+    "happy-dom": "^15.7.2",
+    "rimraf": "^6.0.1",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
   },
   "dependencies": {
     "eventemitter3": "^5.0.1",
-    "krustykrab": "^1.0.0"
+    "krustykrab": "^1.0.1"
   }
 }
