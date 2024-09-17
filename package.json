@@ -45,7 +45,7 @@
     "storybook": "^8.2.9",
     "styled-components": "^6.1.13",
     "typescript": "^5.5.4",
-    "vite": "^5.4.2"
+    "vite": "^5.4.6"
   },
   "packageManager": "yarn@4.4.1"
 }
