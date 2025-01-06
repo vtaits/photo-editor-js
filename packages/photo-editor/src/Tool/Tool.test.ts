@@ -1,5 +1,5 @@
+import { expect, mock, test } from "bun:test";
 import { EventEmitter } from "eventemitter3";
-import { expect, test, vi } from "vitest";
 
 import { Tool } from "./Tool";
 import type { ToolOptions } from "./types";
@@ -96,8 +96,8 @@ test("should enable tool", () => {
 });
 
 test("should call hooks on enable tool", () => {
-	const mockFnBefore = vi.fn();
-	const mockFnAfter = vi.fn();
+	const mockFnBefore = mock();
+	const mockFnAfter = mock();
 
 	class CustomTool extends Tool {
 		onBeforeEnable() {
@@ -129,8 +129,8 @@ test("should disable tool", () => {
 });
 
 test("should call hooks on disableFromEditor tool", () => {
-	const mockFnBefore = vi.fn();
-	const mockFnAfter = vi.fn();
+	const mockFnBefore = mock();
+	const mockFnAfter = mock();
 
 	class CustomTool extends Tool {
 		onBeforeDisable() {
@@ -154,7 +154,7 @@ test("should call hooks on disableFromEditor tool", () => {
 });
 
 test("should call hook on destroy tool", () => {
-	const mockFnDestroy = vi.fn();
+	const mockFnDestroy = mock();
 
 	class CustomTool extends Tool {
 		onBeforeDestroy = mockFnDestroy;

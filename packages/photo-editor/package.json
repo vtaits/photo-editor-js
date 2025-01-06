@@ -26,15 +26,15 @@
     "clean": "rimraf dist",
     "build:js": "tsup",
     "build:proxy_directories": "exports-fallback -gf",
-    "build": "yarn build:js && yarn build:proxy_directories",
-    "test": "yarn lint && yarn test:unit",
+    "build": "bun run build:js && bun run build:proxy_directories",
+    "test": "bun run lint && bun run test:unit",
     "lint": "biome check src",
     "lint:fix": "biome check src --write --unsafe",
     "format": "biome format src --write",
     "test:ts": "tsc",
-    "test:unit": "vitest run --coverage.enabled --coverage.all --coverage.include=src",
-    "test:unit:watch": "vitest",
-    "prepare": "yarn clean && yarn build"
+    "test:unit": "bun test --coverage",
+    "test:unit:watch": "bun test --wathc",
+    "prepare": "bun run clean && bun run build"
   },
   "repository": {
     "type": "git",
@@ -54,13 +54,12 @@
   "homepage": "https://github.com/vtaits/photo-editor-js/tree/master/packages/photo-editor#readme",
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
-    "@vitest/coverage-v8": "^2.0.5",
+    "@happy-dom/global-registrator": "^16.3.0",
     "exports-fallback": "^1.0.2",
     "happy-dom": "^15.10.2",
     "rimraf": "^6.0.1",
     "tsup": "^8.2.4",
-    "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
+    "typescript": "^5.5.4"
   },
   "dependencies": {
     "eventemitter3": "^5.0.1",

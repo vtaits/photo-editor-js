@@ -14,6 +14,7 @@
 ```
 npm install photo-editor --save
 yarn add photo-editor
+bun add photo-editor
 ```
 
 ## Использование

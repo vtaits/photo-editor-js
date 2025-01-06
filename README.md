@@ -14,6 +14,7 @@ Simple and customizable photo editor for web applications.
 ```
 npm install photo-editor --save
 yarn add photo-editor
+bun add photo-editor
 ```
 
 ## Usage

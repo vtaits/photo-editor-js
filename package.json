@@ -5,15 +5,15 @@
     "packages/*"
   ],
   "scripts": {
-    "start": "yarn storybook",
+    "start": "bun run storybook",
     "storybook": "storybook dev -p 6006",
-    "clean": "yarn workspaces foreach --all -pt run clean",
-    "build": "yarn workspaces foreach --all -pt run build",
-    "test:ts": "yarn workspaces foreach --all run test:ts",
-    "lint": "yarn workspaces foreach --all run lint",
-    "lint:fix": "yarn workspaces foreach --all run lint:fix",
-    "test:unit": "yarn workspaces foreach --all run test:unit",
-    "test": "yarn lint & yarn test:ts & yarn test:unit"
+    "clean": "bun --filter '*' clean",
+    "build": "bun --filter '*' build",
+    "test:ts": "bun --filter '*' test:ts",
+    "lint": "bun --filter '*' lint",
+    "lint:fix": "bun --filter '*' lint:fix",
+    "test:unit": "bun --filter '*' test:unit",
+    "test": "bun run lint && bun run test:ts && bun run test:unit"
   },
   "repository": {
     "type": "git",
@@ -45,7 +45,9 @@
     "storybook": "^8.2.9",
     "styled-components": "^6.1.13",
     "typescript": "^5.5.4",
-    "vite": "^5.4.6"
+    "vite": "^5.4.6",
+    "@types/bun": "latest"
   },
-  "packageManager": "yarn@4.4.1"
+  "name": "photo-editor-js",
+  "module": "index.ts"
 }

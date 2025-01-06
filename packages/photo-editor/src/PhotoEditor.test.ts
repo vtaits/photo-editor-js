@@ -1,4 +1,4 @@
-import { expect, test, vi } from "vitest";
+import { expect, mock, test } from "bun:test";
 
 import { PhotoEditor } from "./PhotoEditor";
 import { Tool, type ToolOptions } from "./Tool";
@@ -98,11 +98,11 @@ test('should throw an exception if sourceType is "base64" and source not string'
 });
 
 test('should set correct initial state, init tools and emit "ready" event', async () => {
-	const initMock = vi.fn();
-	const readyMock = vi.fn();
+	const initMock = mock();
+	const readyMock = mock();
 
-	const tool1Mock = vi.fn();
-	const tool2Mock = vi.fn();
+	const tool1Mock = mock();
+	const tool2Mock = mock();
 
 	class Tool1 extends Tool {
 		constructor(options: ToolOptions) {
@@ -183,7 +183,7 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
 });
 
 test('should not draw initialState if source-type is "current-canvas"', async () => {
-	const drawCurrentStateMock = vi.fn();
+	const drawCurrentStateMock = mock();
 
 	class WithSeparatedInit<
 		Tools extends Record<string, typeof Tool>,
@@ -199,7 +199,7 @@ test('should not draw initialState if source-type is "current-canvas"', async ()
 
 	const el = document.createElement("canvas");
 	// Fix missing method
-	el.toDataURL = vi.fn();
+	el.toDataURL = mock();
 
 	const options: PhotoEditorOptions<
 		{
@@ -223,7 +223,7 @@ test('should not draw initialState if source-type is "current-canvas"', async ()
 
 // TO DO: check all source types
 test('should draw initialState if source-type is not "current-canvas"', async () => {
-	const drawCurrentStateMock = vi.fn();
+	const drawCurrentStateMock = mock();
 
 	class WithSeparatedInit<
 		Tools extends Record<string, typeof Tool>,
@@ -335,7 +335,7 @@ test("should return correct currentState with getCurrentState", () => {
 });
 
 test("should enable tool", () => {
-	const onEnableToolMock = vi.fn();
+	const onEnableToolMock = mock();
 
 	const el = document.createElement("canvas");
 	const options: PhotoEditorOptions<
@@ -375,7 +375,7 @@ test("should enable tool", () => {
 });
 
 test("should disable enabled tool", () => {
-	const onDisableToolMock = vi.fn();
+	const onDisableToolMock = mock();
 
 	const el = document.createElement("canvas");
 	const options: PhotoEditorOptions<
@@ -408,8 +408,8 @@ test("should disable enabled tool", () => {
 });
 
 test("should toggle tool", () => {
-	const onEnableToolMock = vi.fn();
-	const onDisableToolMock = vi.fn();
+	const onEnableToolMock = mock();
+	const onDisableToolMock = mock();
 
 	const el = document.createElement("canvas");
 	const options: PhotoEditorOptions<
@@ -465,7 +465,7 @@ test("should set touched state", () => {
 
 	const photoEditor = new SyncPhotoEditor(el, options);
 
-	photoEditor._drawCurrentState = vi.fn();
+	photoEditor._drawCurrentState = mock();
 
 	photoEditor.enableTool("tool1");
 	photoEditor.touch();
@@ -496,7 +496,7 @@ test("should set previous state on undo call", () => {
 	};
 
 	const photoEditor = new SyncPhotoEditor(el, options);
-	photoEditor._drawCurrentState = vi.fn();
+	photoEditor._drawCurrentState = mock();
 
 	photoEditor.enableTool("tool1");
 
@@ -530,7 +530,7 @@ test("should set next state on undo call", () => {
 	};
 
 	const photoEditor = new SyncPhotoEditor(el, options);
-	photoEditor._drawCurrentState = vi.fn();
+	photoEditor._drawCurrentState = mock();
 
 	photoEditor.enableTool("tool1");
 
@@ -549,8 +549,8 @@ test("should set next state on undo call", () => {
 });
 
 test("should set destroyed state and destroy all tools", async () => {
-	const tool1DestroyMock = vi.fn();
-	const tool2DestroyMock = vi.fn();
+	const tool1DestroyMock = mock();
+	const tool2DestroyMock = mock();
 
 	class Tool1 extends Tool {
 		onBeforeDestroy = tool1DestroyMock;
