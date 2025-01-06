@@ -53,16 +53,16 @@
   },
   "homepage": "https://github.com/vtaits/photo-editor-js/tree/master/packages/photo-editor#readme",
   "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
+    "@biomejs/biome": "^1.9.4",
     "@happy-dom/global-registrator": "^16.3.0",
     "exports-fallback": "^1.0.2",
-    "happy-dom": "^15.10.2",
+    "happy-dom": "^16.3.0",
     "rimraf": "^6.0.1",
-    "tsup": "^8.2.4",
-    "typescript": "^5.5.4"
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
   },
   "dependencies": {
     "eventemitter3": "^5.0.1",
-    "krustykrab": "^1.0.1"
+    "krustykrab": "^1.1.0"
   }
 }
