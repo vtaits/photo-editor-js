@@ -1,113 +1,109 @@
 import {
-  type ReactElement,
-  useCallback,
-  useEffect,
-  useState,
-  useRef,
-} from 'react';
+	type ReactElement,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 
-import { PhotoEditor } from '/home/vadim/projects/photo-editor-js/packages/photo-editor/src';
+import { PhotoEditor } from "/home/vadim/projects/photo-editor-js/packages/photo-editor/src";
 
-import { Pencil } from './Pencil';
+import { Pencil } from "./Pencil";
 
 type Tools = {
-  pencil: typeof Pencil;
+	pencil: typeof Pencil;
 };
 
 export function Draw(): ReactElement {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [currentTool, setCurrentTool] = useState<keyof Tools | null>(null);
-  const photoEditorRef = useRef<PhotoEditor<{
-    pencil: typeof Pencil;
-  }, 'pencil', 'current-canvas'> | null>();
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const [currentTool, setCurrentTool] = useState<keyof Tools | null>(null);
+	const photoEditorRef = useRef<PhotoEditor<
+		{
+			pencil: typeof Pencil;
+		},
+		"pencil",
+		"current-canvas"
+	> | null>(null);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
+	useEffect(() => {
+		const canvas = canvasRef.current;
 
-    if (!canvas) {
-      return;
-    }
+		if (!canvas) {
+			return;
+		}
 
-    const photoEditor = new PhotoEditor(canvas, {
-      tools: {
-        pencil: Pencil,
-      },
-    });
+		const photoEditor = new PhotoEditor(canvas, {
+			tools: {
+				pencil: Pencil,
+			},
+		});
 
-    photoEditorRef.current = photoEditor;
+		photoEditorRef.current = photoEditor;
 
-    photoEditor.addListener('enableTool', (tool: keyof Tools) => {
-      setCurrentTool(tool);
-    });
-    
-    photoEditor.addListener('disableTool', () => {
-      setCurrentTool(null);
-    });
+		photoEditor.addListener("enableTool", (tool: keyof Tools) => {
+			setCurrentTool(tool);
+		});
 
-    return () => {
-      photoEditor.removeAllListeners();
-      photoEditorRef.current = null;
-    };
-  }, []);
+		photoEditor.addListener("disableTool", () => {
+			setCurrentTool(null);
+		});
 
-  const togglePencil = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.toggleTool('pencil');
-    }
-  }, []);
+		return () => {
+			photoEditor.removeAllListeners();
+			photoEditorRef.current = null;
+		};
+	}, []);
 
-  const undo = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.undo();
-    }
-  }, []);
+	const togglePencil = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.toggleTool("pencil");
+		}
+	}, []);
 
-  const redo = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.redo();
-    }
-  }, []);
-  
-  return (
-    <>
-      <div>
-        <button
-          type="button"
-          style={{
-            border: currentTool === 'pencil'
-              ? '2px solid #aa0000'
-              : undefined,
-          }}
-          onClick={togglePencil}
-        >
-          Pencil
-        </button>
+	const undo = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.undo();
+		}
+	}, []);
 
-        <button
-          type="button"
-          onClick={undo}
-        >
-          Undo
-        </button>
+	const redo = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.redo();
+		}
+	}, []);
 
-        <button
-          type="button"
-          onClick={redo}
-        >
-          Redo
-        </button>
-      </div>
+	return (
+		<>
+			<div>
+				<button
+					type="button"
+					style={{
+						border: currentTool === "pencil" ? "2px solid #aa0000" : undefined,
+					}}
+					onClick={togglePencil}
+				>
+					Pencil
+				</button>
 
-      <div>
-        <canvas
-          width="640"
-          height="480"
-          style={{
-            border: '2px solid #999',
-          }}
-          ref={canvasRef}
-        />
-      </div>
-    </>
-  );
+				<button type="button" onClick={undo}>
+					Undo
+				</button>
+
+				<button type="button" onClick={redo}>
+					Redo
+				</button>
+			</div>
+
+			<div>
+				<canvas
+					width="640"
+					height="480"
+					style={{
+						border: "2px solid #999",
+					}}
+					ref={canvasRef}
+				/>
+			</div>
+		</>
+	);
 }

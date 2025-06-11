@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
+    "target": "es2023",
     "outDir": "dist/ts",
     "jsx": "react-jsx",
     "lib": [
@@ -14,11 +14,12 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ESnext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true
   },
   "include": [
+    "stories/**/*",
     "packages/**/*"
   ],
   "exclude": [

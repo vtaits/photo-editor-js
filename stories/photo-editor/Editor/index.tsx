@@ -1,370 +1,345 @@
 import {
-  type ChangeEventHandler,
-  type ReactElement,
-  useCallback,
-  useEffect,
-  useState,
-  useRef,
-} from 'react';
-import styled from 'styled-components';
-
-import Image from '../../assets/image.jpeg';
-
-import { PhotoEditor } from '/home/vadim/projects/photo-editor-js/packages/photo-editor/src';
+	type ChangeEventHandler,
+	type ReactElement,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
+import { PhotoEditor } from "/home/vadim/projects/photo-editor-js/packages/photo-editor/src";
 import {
-  Blur,
-  Crop,
-  Contrast,
-  Brightness,
-  Rectangle,
-  RotateLeft,
-  RotateRight,
-} from '/home/vadim/projects/photo-editor-js/packages/photo-editor/src/tools';
-
-const StyledSource = styled.img({
-  display: 'none',
-});
+	Blur,
+	Brightness,
+	Contrast,
+	Crop,
+	Rectangle,
+	RotateLeft,
+	RotateRight,
+} from "/home/vadim/projects/photo-editor-js/packages/photo-editor/src/tools";
+import Image from "../../assets/image.jpeg";
 
 type Tools = {
-  blur: typeof Blur;
-  crop: typeof Crop;
-  rectangle: typeof Rectangle;
-  rotateLeft: typeof RotateLeft;
-  rotateRight: typeof RotateRight;
-  contrast: typeof Contrast;
-  brightness: typeof Brightness;
+	blur: typeof Blur;
+	crop: typeof Crop;
+	rectangle: typeof Rectangle;
+	rotateLeft: typeof RotateLeft;
+	rotateRight: typeof RotateRight;
+	contrast: typeof Contrast;
+	brightness: typeof Brightness;
 };
 
 export function Editor(): ReactElement {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [currentTool, setCurrentTool] = useState<keyof Tools | null>(null);
-  const photoEditorRef = useRef<PhotoEditor<Tools, keyof Tools, 'img'> | null>();
-  const sourceRef = useRef<HTMLImageElement>(null);
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const [currentTool, setCurrentTool] = useState<keyof Tools | null>(null);
+	const photoEditorRef = useRef<PhotoEditor<Tools, keyof Tools, "img"> | null>(
+		null,
+	);
+	const sourceRef = useRef<HTMLImageElement>(null);
 
-  const [radius, setRadius] = useState(10);
-  const [sigma, setSigma] = useState(3);
-  const [contrast, setContrast] = useState(0);
-  const [brightness, setBrightness] = useState(0);
+	const [radius, setRadius] = useState(10);
+	const [sigma, setSigma] = useState(3);
+	const [contrast, setContrast] = useState(0);
+	const [brightness, setBrightness] = useState(0);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const source = sourceRef.current;
+	useEffect(() => {
+		const canvas = canvasRef.current;
+		const source = sourceRef.current;
 
-    if (!canvas || !source) {
-      return;
-    }
+		if (!canvas || !source) {
+			return;
+		}
 
-    const photoEditor = new PhotoEditor(canvas, {
-      tools: {
-        blur: Blur,
-        crop: Crop,
-        rectangle: Rectangle,
-        rotateLeft: RotateLeft,
-        rotateRight: RotateRight,
-        contrast: Contrast,
-        brightness: Brightness,
-      },
-      sourceType: 'img',
-      source,
-    });
+		const photoEditor = new PhotoEditor(canvas, {
+			tools: {
+				blur: Blur,
+				crop: Crop,
+				rectangle: Rectangle,
+				rotateLeft: RotateLeft,
+				rotateRight: RotateRight,
+				contrast: Contrast,
+				brightness: Brightness,
+			},
+			sourceType: "img",
+			source,
+		});
 
-    photoEditorRef.current = photoEditor;
+		photoEditorRef.current = photoEditor;
 
-    photoEditor.addListener('enableTool', (tool: keyof Tools) => {
-      setCurrentTool(tool);
-    });
-    
-    photoEditor.addListener('disableTool', () => {
-      setCurrentTool(null);
-    });
+		photoEditor.addListener("enableTool", (tool: keyof Tools) => {
+			setCurrentTool(tool);
+		});
 
-    return () => {
-      photoEditor.removeAllListeners();
-      photoEditorRef.current = null;
-    };
-  }, []);
+		photoEditor.addListener("disableTool", () => {
+			setCurrentTool(null);
+		});
 
-  const toggleBlur = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.toggleTool('blur');
-    }
-  }, []);
+		return () => {
+			photoEditor.removeAllListeners();
+			photoEditorRef.current = null;
+		};
+	}, []);
 
-  const onChangeRadius = useCallback<ChangeEventHandler<HTMLInputElement>>((event) => {
-    const nextValue = Number(event.target.value);
+	const toggleBlur = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.toggleTool("blur");
+		}
+	}, []);
 
-    photoEditorRef.current?.tools.blur.setRadius(nextValue);
-    setRadius(nextValue);
-  }, []);
+	const onChangeRadius = useCallback<ChangeEventHandler<HTMLInputElement>>(
+		(event) => {
+			const nextValue = Number(event.target.value);
 
-  const onChangeSigma = useCallback<ChangeEventHandler<HTMLInputElement>>((event) => {
-    const nextValue = Number(event.target.value);
+			photoEditorRef.current?.tools.blur.setRadius(nextValue);
+			setRadius(nextValue);
+		},
+		[],
+	);
 
-    photoEditorRef.current?.tools.blur.setSigma(nextValue);
-    setSigma(nextValue);
-  }, []);
+	const onChangeSigma = useCallback<ChangeEventHandler<HTMLInputElement>>(
+		(event) => {
+			const nextValue = Number(event.target.value);
 
-  const toggleRectangle = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.toggleTool('rectangle');
-    }
-  }, []);
+			photoEditorRef.current?.tools.blur.setSigma(nextValue);
+			setSigma(nextValue);
+		},
+		[],
+	);
 
-  const toggleCrop = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.toggleTool('crop');
-    }
-  }, []);
+	const toggleRectangle = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.toggleTool("rectangle");
+		}
+	}, []);
 
-  const applyCrop = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.tools.crop.applyCrop();
-    }
-  }, []);
+	const toggleCrop = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.toggleTool("crop");
+		}
+	}, []);
 
-  const cancelCrop = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.tools.crop.cancelCrop();
-    }
-  }, []);
+	const applyCrop = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.tools.crop.applyCrop();
+		}
+	}, []);
 
-  const toggleContrast = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.toggleTool('contrast');
-      setContrast(0);
-    }
-  }, []);
+	const cancelCrop = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.tools.crop.cancelCrop();
+		}
+	}, []);
 
-  const onChangeContrast = useCallback<ChangeEventHandler<HTMLInputElement>>((event) => {
-    const nextValue = Number(event.target.value);
+	const toggleContrast = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.toggleTool("contrast");
+			setContrast(0);
+		}
+	}, []);
 
-    photoEditorRef.current?.tools.contrast.setValue(nextValue);
-    setContrast(nextValue);
-  }, []);
+	const onChangeContrast = useCallback<ChangeEventHandler<HTMLInputElement>>(
+		(event) => {
+			const nextValue = Number(event.target.value);
 
-  const toggleBrightness = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.toggleTool('brightness');
-      setBrightness(0);
-    }
-  }, []);
+			photoEditorRef.current?.tools.contrast.setValue(nextValue);
+			setContrast(nextValue);
+		},
+		[],
+	);
 
-  const onChangeBrightness = useCallback<ChangeEventHandler<HTMLInputElement>>((event) => {
-    const nextValue = Number(event.target.value);
+	const toggleBrightness = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.toggleTool("brightness");
+			setBrightness(0);
+		}
+	}, []);
 
-    photoEditorRef.current?.tools.brightness.setValue(nextValue);
-    setBrightness(nextValue);
-  }, []);
+	const onChangeBrightness = useCallback<ChangeEventHandler<HTMLInputElement>>(
+		(event) => {
+			const nextValue = Number(event.target.value);
 
-  const rotateLeft = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.enableTool('rotateLeft');
-    }
-  }, []);
+			photoEditorRef.current?.tools.brightness.setValue(nextValue);
+			setBrightness(nextValue);
+		},
+		[],
+	);
 
-  const rotateRight = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.enableTool('rotateRight');
-    }
-  }, []);
+	const rotateLeft = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.enableTool("rotateLeft");
+		}
+	}, []);
 
-  const undo = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.undo();
-    }
-  }, []);
+	const rotateRight = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.enableTool("rotateRight");
+		}
+	}, []);
 
-  const redo = useCallback(() => {
-    if (photoEditorRef.current) {
-      photoEditorRef.current.redo();
-    }
-  }, []);
-  
-  return (
-    <>
-      <div>
-        <button
-          type="button"
-          style={{
-            border: currentTool === 'blur'
-              ? '2px solid #aa0000'
-              : undefined,
-          }}
-          onClick={toggleBlur}
-        >
-          Blur
-        </button>
+	const undo = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.undo();
+		}
+	}, []);
 
-        {
-          currentTool === 'blur' && (
-            <>
-              Blur radius:
-              {' '}
-              <input
-                type="number"
-                min="10"
-                max="100"
-                step="1"
-                value={radius}
-                onChange={onChangeRadius}
-              />
-              Blur sigma:
-              {' '}
-              <input
-                type="number"
-                min="1"
-                max="10"
-                step="0.1"
-                value={sigma}
-                onChange={onChangeSigma}
-              />
-            </>
-          )
-        }
+	const redo = useCallback(() => {
+		if (photoEditorRef.current) {
+			photoEditorRef.current.redo();
+		}
+	}, []);
 
-        <button
-          type="button"
-          style={{
-            border: currentTool === 'rectangle'
-              ? '2px solid #aa0000'
-              : undefined,
-          }}
-          onClick={toggleRectangle}
-        >
-          Rectangle
-        </button>
+	return (
+		<>
+			<div>
+				<button
+					type="button"
+					style={{
+						border: currentTool === "blur" ? "2px solid #aa0000" : undefined,
+					}}
+					onClick={toggleBlur}
+				>
+					Blur
+				</button>
 
-        <button
-          type="button"
-          style={{
-            border: currentTool === 'crop'
-              ? '2px solid #aa0000'
-              : undefined,
-          }}
-          onClick={toggleCrop}
-        >
-          Crop
-        </button>
+				{currentTool === "blur" && (
+					<>
+						Blur radius:{" "}
+						<input
+							type="number"
+							min="10"
+							max="100"
+							step="1"
+							value={radius}
+							onChange={onChangeRadius}
+						/>
+						Blur sigma:{" "}
+						<input
+							type="number"
+							min="1"
+							max="10"
+							step="0.1"
+							value={sigma}
+							onChange={onChangeSigma}
+						/>
+					</>
+				)}
 
-        {
-          currentTool === 'crop' && (
-            <>
-              <button
-                type="button"
-                onClick={applyCrop}
-              >
-                Apply crop
-              </button>
+				<button
+					type="button"
+					style={{
+						border:
+							currentTool === "rectangle" ? "2px solid #aa0000" : undefined,
+					}}
+					onClick={toggleRectangle}
+				>
+					Rectangle
+				</button>
 
-              <button
-                type="button"
-                onClick={cancelCrop}
-              >
-                Cancel crop
-              </button>
-            </>
-          )
-        }
+				<button
+					type="button"
+					style={{
+						border: currentTool === "crop" ? "2px solid #aa0000" : undefined,
+					}}
+					onClick={toggleCrop}
+				>
+					Crop
+				</button>
 
-        <button
-          type="button"
-          onClick={rotateLeft}
-        >
-          Rotate left
-        </button>
+				{currentTool === "crop" && (
+					<>
+						<button type="button" onClick={applyCrop}>
+							Apply crop
+						</button>
 
-        <button
-          type="button"
-          onClick={rotateRight}
-        >
-          Rotate right
-        </button>
+						<button type="button" onClick={cancelCrop}>
+							Cancel crop
+						</button>
+					</>
+				)}
 
-        <button
-          type="button"
-          style={{
-            border: currentTool === 'contrast'
-              ? '2px solid #aa0000'
-              : undefined,
-          }}
-          onClick={toggleContrast}
-        >
-          Contrast
-        </button>
+				<button type="button" onClick={rotateLeft}>
+					Rotate left
+				</button>
 
-        {
-          currentTool === 'contrast' && (
-            <span>
-              <input
-                value={contrast}
-                type="range"
-                min="-1"
-                max="1"
-                step="0.01"
-                onChange={onChangeContrast}
-              />
-            </span>
-          )
-        }
+				<button type="button" onClick={rotateRight}>
+					Rotate right
+				</button>
 
-        <button
-          type="button"
-          style={{
-            border: currentTool === 'brightness'
-              ? '2px solid #aa0000'
-              : undefined,
-          }}
-          onClick={toggleBrightness}
-        >
-          Brightness
-        </button>
+				<button
+					type="button"
+					style={{
+						border:
+							currentTool === "contrast" ? "2px solid #aa0000" : undefined,
+					}}
+					onClick={toggleContrast}
+				>
+					Contrast
+				</button>
 
-        {
-          currentTool === 'brightness' && (
-            <span>
-              <input
-                value={brightness}
-                type="range"
-                min="-1"
-                max="1"
-                step="0.01"
-                onChange={onChangeBrightness}
-              />
-            </span>
-          )
-        }
+				{currentTool === "contrast" && (
+					<span>
+						<input
+							value={contrast}
+							type="range"
+							min="-1"
+							max="1"
+							step="0.01"
+							onChange={onChangeContrast}
+						/>
+					</span>
+				)}
 
-        <button
-          type="button"
-          onClick={undo}
-        >
-          Undo
-        </button>
+				<button
+					type="button"
+					style={{
+						border:
+							currentTool === "brightness" ? "2px solid #aa0000" : undefined,
+					}}
+					onClick={toggleBrightness}
+				>
+					Brightness
+				</button>
 
-        <button
-          type="button"
-          onClick={redo}
-        >
-          Redo
-        </button>
-      </div>
+				{currentTool === "brightness" && (
+					<span>
+						<input
+							value={brightness}
+							type="range"
+							min="-1"
+							max="1"
+							step="0.01"
+							onChange={onChangeBrightness}
+						/>
+					</span>
+				)}
 
-      <div>
-        <canvas
-          width="640"
-          height="480"
-          style={{
-            border: '2px solid #999',
-          }}
-          ref={canvasRef}
-        />
-      </div>
+				<button type="button" onClick={undo}>
+					Undo
+				</button>
 
-      <StyledSource
-        ref={sourceRef}
-        src={Image}
-        alt=""
-      />
-    </>
-  );
-};
+				<button type="button" onClick={redo}>
+					Redo
+				</button>
+			</div>
+
+			<div>
+				<canvas
+					width="640"
+					height="480"
+					style={{
+						border: "2px solid #999",
+					}}
+					ref={canvasRef}
+				/>
+			</div>
+
+			<img
+				ref={sourceRef}
+				src={Image}
+				alt=""
+				style={{
+					display: "none",
+				}}
+			/>
+		</>
+	);
+}
