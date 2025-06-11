@@ -1,32 +1,28 @@
 {
+  "type": "module",
   "name": "photo-editor",
   "version": "0.2.6",
   "description": "Simple and customizable photo editor for web applications.",
   "files": [
-    "dist",
-    "tools"
+    "dist"
   ],
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "dist/index.d.mts",
+  "module": "./dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "default": "./dist/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./tools": {
-      "types": "./dist/tools/index.d.mts",
-      "import": "./dist/tools/index.mjs",
-      "default": "./dist/tools/index.js"
+      "types": "./dist/tools/index.d.ts",
+      "import": "./dist/tools/index.js"
     }
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build:js": "tsup",
-    "build:proxy_directories": "exports-fallback -gf",
-    "build": "bun run build:js && bun run build:proxy_directories",
+    "build": "tsup",
     "test": "bun run lint && bun run test:unit",
     "lint": "biome check src",
     "lint:fix": "biome check src --write --unsafe",
@@ -54,7 +50,6 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@happy-dom/global-registrator": "^18.0.1",
-    "exports-fallback": "^1.0.2",
     "happy-dom": "^18.0.1",
     "rimraf": "^6.0.1",
     "tsup": "^8.5.0",

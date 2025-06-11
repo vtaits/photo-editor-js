@@ -5,9 +5,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-
-import { PhotoEditor } from "/home/vadim/projects/photo-editor-js/packages/photo-editor/src";
-
+import { PhotoEditor } from "../../../packages/photo-editor/src";
 import { Pencil } from "./Pencil";
 
 type Tools = {

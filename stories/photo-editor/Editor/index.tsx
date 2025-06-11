@@ -6,7 +6,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { PhotoEditor } from "/home/vadim/projects/photo-editor-js/packages/photo-editor/src";
+import { PhotoEditor } from "../../../packages/photo-editor/src";
 import {
 	Blur,
 	Brightness,
@@ -15,7 +15,7 @@ import {
 	Rectangle,
 	RotateLeft,
 	RotateRight,
-} from "/home/vadim/projects/photo-editor-js/packages/photo-editor/src/tools";
+} from "../../../packages/photo-editor/src/tools";
 import Image from "../../assets/image.jpeg";
 
 type Tools = {
