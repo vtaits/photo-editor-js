@@ -1,10 +1,8 @@
 // TO DO: tests
 import { unwrap } from "krustykrab";
-
-import { waitForImageComplete } from "./waitForImageComplete";
-
 import type { Tool } from "./Tool";
 import type { PhotoEditorOptions, SourceType } from "./types";
+import { waitForImageComplete } from "./waitForImageComplete";
 
 const emptyImageWarning = "PhotoEditor: source image is loaded with error";
 
@@ -18,7 +16,7 @@ export const imageToBase64 = async (
 	} else {
 		try {
 			await waitForImageComplete(image);
-		} catch (e) {
+		} catch (_e) {
 			console.warn(emptyImageWarning);
 		}
 	}

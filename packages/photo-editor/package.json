@@ -48,7 +48,7 @@
   },
   "homepage": "https://github.com/vtaits/photo-editor-js/tree/master/packages/photo-editor#readme",
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.0.0",
     "@happy-dom/global-registrator": "^18.0.1",
     "happy-dom": "^18.0.1",
     "rimraf": "^6.0.1",

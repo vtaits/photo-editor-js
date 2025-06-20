@@ -1,11 +1,9 @@
 import { EventEmitter } from "eventemitter3";
-
-import { Tool } from "./Tool";
 import { getInitialState } from "./getInitialState";
+import { Tool } from "./Tool";
+import type { PhotoEditorOptions, SourceType } from "./types";
 import { validateOptions } from "./validateOptions";
 import { waitForImageComplete } from "./waitForImageComplete";
-
-import type { PhotoEditorOptions, SourceType } from "./types";
 
 // biome-ignore lint/suspicious/noExplicitAny: options for any type of tools
 const defaultOptions: Partial<PhotoEditorOptions<any, "current-canvas">> = {
