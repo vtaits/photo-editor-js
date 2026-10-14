@@ -21,7 +21,7 @@
     },
     "packages/photo-editor": {
       "name": "photo-editor",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "dependencies": {
         "eventemitter3": "^5.0.4",
         "krustykrab": "^1.2.0",
