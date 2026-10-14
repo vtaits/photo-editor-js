@@ -1,32 +1,43 @@
 import { unwrap } from "krustykrab";
-import { Tool } from "../Tool";
+import { Tool } from "../Tool/index.js";
 
-type BorderType = "top" | "bottom" | "left" | "right";
+/**
+ * @typedef {"top" | "bottom" | "left" | "right"} BorderType
+ */
 
 export class Crop extends Tool {
-	originalImage: HTMLCanvasElement | null = null;
+	/** @type {HTMLCanvasElement | null} */
+	originalImage = null;
 
-	darkenImage: HTMLCanvasElement | null = null;
+	/** @type {HTMLCanvasElement | null} */
+	darkenImage = null;
 
 	cropping = false;
 
 	setted = false;
 
-	startX: number | null = null;
+	/** @type {number | null} */
+	startX = null;
 
-	startY: number | null = null;
+	/** @type {number | null} */
+	startY = null;
 
-	finishX: number | null = null;
+	/** @type {number | null} */
+	finishX = null;
 
-	finishY: number | null = null;
+	/** @type {number | null} */
+	finishY = null;
 
-	mousedownX: number | null = null;
+	/** @type {number | null} */
+	mousedownX = null;
 
-	mousedownY: number | null = null;
+	/** @type {number | null} */
+	mousedownY = null;
 
-	resizingBorder: BorderType | null = null;
+	/** @type {BorderType | null} */
+	resizingBorder = null;
 
-	showCropState(): void {
+	showCropState() {
 		const canvas = unwrap(this.el);
 
 		if (
@@ -61,7 +72,7 @@ export class Crop extends Tool {
 		ctx.drawImage(this.originalImage, x, y, width, height, x, y, width, height);
 	}
 
-	applyCrop(): void {
+	applyCrop() {
 		const canvas = unwrap(this.el);
 
 		if (
@@ -104,7 +115,7 @@ export class Crop extends Tool {
 		this.disable();
 	}
 
-	cancelCrop(): void {
+	cancelCrop() {
 		const canvas = unwrap(this.el);
 
 		this.startX = null;
@@ -123,7 +134,7 @@ export class Crop extends Tool {
 		this.disable();
 	}
 
-	sortCoords(): void {
+	sortCoords() {
 		if (
 			this.startX === null ||
 			this.startY === null ||
@@ -142,7 +153,13 @@ export class Crop extends Tool {
 		}
 	}
 
-	getResizingBorder(x: number, y: number): BorderType | null {
+	/**
+	 *
+	 * @param {number} x
+	 * @param {number} y
+	 * @returns {BorderType | null}
+	 */
+	getResizingBorder(x, y) {
 		if (
 			this.startX === null ||
 			this.startY === null ||
@@ -175,7 +192,10 @@ export class Crop extends Tool {
 		return null;
 	}
 
-	setCursorForResizingBorder(resizingBorder: BorderType): void {
+	/**
+	 * @param {BorderType} resizingBorder
+	 */
+	setCursorForResizingBorder(resizingBorder) {
 		const canvas = unwrap(this.el);
 
 		switch (resizingBorder) {
@@ -194,7 +214,10 @@ export class Crop extends Tool {
 		}
 	}
 
-	onStartDraw = (event: MouseEvent): void => {
+	/**
+	 * @param {MouseEvent} event
+	 */
+	onStartDraw = (event) => {
 		const canvas = unwrap(this.el);
 
 		const x =
@@ -220,7 +243,10 @@ export class Crop extends Tool {
 		this.mousedownY = y;
 	};
 
-	onProcessDraw = (event: MouseEvent): void => {
+	/**
+	 * @param {MouseEvent} event
+	 */
+	onProcessDraw = (event) => {
 		const canvas = unwrap(this.el);
 
 		const x =
@@ -284,7 +310,7 @@ export class Crop extends Tool {
 		}
 	};
 
-	onStopDraw = (): void => {
+	onStopDraw = () => {
 		const canvas = unwrap(this.el);
 
 		this.mousedownX = null;
@@ -309,7 +335,7 @@ export class Crop extends Tool {
 		}
 	};
 
-	onAfterEnable(): void {
+	onAfterEnable() {
 		const canvas = unwrap(this.el);
 
 		const { width, height } = canvas;
@@ -335,7 +361,7 @@ export class Crop extends Tool {
 		canvas.addEventListener("mouseup", this.onStopDraw);
 	}
 
-	onBeforeDisable(): void {
+	onBeforeDisable() {
 		const canvas = unwrap(this.el);
 
 		this.cropping = false;

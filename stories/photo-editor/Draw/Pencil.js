@@ -1,14 +1,19 @@
 import { unwrap } from "krustykrab";
-import { Tool } from "../../../packages/photo-editor/src";
+import { Tool } from "../../../packages/photo-editor/src/index.js";
 
 export class Pencil extends Tool {
 	drawing = false;
 
-	lastX: number | null = null;
+	/** @type {number | null} */
+	lastX = null;
 
-	lastY: number | null = null;
+	/** @type {number | null} */
+	lastY = null;
 
-	onStartDraw = (event: MouseEvent) => {
+	/**
+	 * @param {MouseEvent} event
+	 */
+	onStartDraw = (event) => {
 		const canvas = unwrap(this.el);
 
 		this.drawing = true;
@@ -17,7 +22,10 @@ export class Pencil extends Tool {
 		this.lastY = event.offsetY / (canvas.clientHeight / canvas.height);
 	};
 
-	onProcessDraw = (event: MouseEvent) => {
+	/**
+	 * @param {MouseEvent} event
+	 */
+	onProcessDraw = (event) => {
 		if (!this.drawing) {
 			return;
 		}

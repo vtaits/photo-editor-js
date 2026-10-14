@@ -1,42 +1,74 @@
 import { unwrap } from "krustykrab";
-import { Tool } from "../Tool";
+import { Tool } from "../Tool/index.js";
 
 class Pixel {
-	r: number;
+	/** @type {number} */
+	r;
 
-	g: number;
+	/** @type {number} */
+	g;
 
-	b: number;
+	/** @type {number} */
+	b;
 
-	constructor(r: number, g: number, b: number) {
+	/**
+	 * @param {number} r
+	 * @param {number} g
+	 * @param {number} b
+	 */
+	constructor(r, g, b) {
 		this.r = r;
 		this.g = g;
 		this.b = b;
 	}
 
-	add(pixel: Pixel) {
+	/**
+	 * @param {Pixel} pixel
+	 * @returns {Pixel}
+	 */
+	add(pixel) {
 		return new Pixel(this.r + pixel.r, this.g + pixel.g, this.b + pixel.b);
 	}
 
-	sub(pixel: Pixel) {
+	/**
+	 * @param {Pixel} pixel
+	 * @returns {Pixel}
+	 */
+	sub(pixel) {
 		return new Pixel(this.r - pixel.r, this.g - pixel.g, this.b - pixel.b);
 	}
 
-	mul(value: number) {
+	/**
+	 * @param {number} value
+	 * @returns {Pixel}
+	 */
+	mul(value) {
 		return new Pixel(this.r * value, this.g * value, this.b * value);
 	}
 
-	div(value: number) {
+	/**
+	 * @param {number} value
+	 * @returns {Pixel}
+	 */
+	div(value) {
 		return new Pixel(this.r / value, this.g / value, this.b / value);
 	}
 
+	/**
+	 * @returns {Pixel}
+	 */
 	clone() {
 		return new Pixel(this.r, this.g, this.b);
 	}
 }
 
-// standard deviation, number of boxes
-function boxesForGauss(sigma: number, n: number) {
+/**
+ * standard deviation, number of boxes
+ *
+ * @param {number} n
+ * @param {number} sigma
+ */
+function boxesForGauss(sigma, n) {
 	// Ideal averaging filter width
 	const wIdeal = Math.sqrt((12 * sigma * sigma) / n + 1);
 
@@ -60,13 +92,14 @@ function boxesForGauss(sigma: number, n: number) {
 	return sizes;
 }
 
-function boxBlurH(
-	scl: Pixel[],
-	tcl: Pixel[],
-	w: number,
-	h: number,
-	r: number,
-): void {
+/**
+ * @param {Pixel[]} scl
+ * @param {Pixel[]} tcl
+ * @param {number} w
+ * @param {number} h
+ * @param {number} r
+ */
+function boxBlurH(scl, tcl, w, h, r) {
 	const iarr = 1 / (r + r + 1);
 
 	for (let i = 0; i < h; ++i) {
@@ -109,13 +142,14 @@ function boxBlurH(
 	}
 }
 
-function boxBlurT(
-	scl: Pixel[],
-	tcl: Pixel[],
-	w: number,
-	h: number,
-	r: number,
-): void {
+/**
+ * @param {Pixel[]} scl
+ * @param {Pixel[]} tcl
+ * @param {number} w
+ * @param {number} h
+ * @param {number} r
+ */
+function boxBlurT(scl, tcl, w, h, r) {
 	const iarr = 1 / (r + r + 1);
 
 	for (let i = 0; i < w; ++i) {
@@ -158,13 +192,14 @@ function boxBlurT(
 	}
 }
 
-function boxBlur(
-	scl: Pixel[],
-	tcl: Pixel[],
-	w: number,
-	h: number,
-	r: number,
-): void {
+/**
+ * @param {Pixel[]} scl
+ * @param {Pixel[]} tcl
+ * @param {number} w
+ * @param {number} h
+ * @param {number} r
+ */
+function boxBlur(scl, tcl, w, h, r) {
 	for (let i = 0; i < scl.length; ++i) {
 		tcl[i] = scl[i].clone();
 	}
@@ -173,13 +208,14 @@ function boxBlur(
 	boxBlurT(scl, tcl, w, h, r);
 }
 
-function gaussBlur(
-	scl: Pixel[],
-	tcl: Pixel[],
-	w: number,
-	h: number,
-	r: number,
-): void {
+/**
+ * @param {Pixel[]} scl
+ * @param {Pixel[]} tcl
+ * @param {number} w
+ * @param {number} h
+ * @param {number} r
+ */
+function gaussBlur(scl, tcl, w, h, r) {
 	const bxs = boxesForGauss(r, 3);
 
 	boxBlur(scl, tcl, w, h, (bxs[0] - 1) / 2);
@@ -190,31 +226,42 @@ function gaussBlur(
 export class Blur extends Tool {
 	bluring = false;
 
-	lastX: number | null = null;
+	/** @type {number | null} */
+	lastX = null;
 
-	lastY: number | null = null;
+	/** @type {number | null} */
+	lastY = null;
 
 	sigma = 3;
 
 	radius = 10;
 
-	setRadius(value: number): void {
+	/**
+	 * @param {number} value
+	 */
+	setRadius(value) {
 		this.radius = Math.max(value, 1);
 	}
 
-	getRadius(): number {
+	getRadius() {
 		return this.radius;
 	}
 
-	setSigma(value: number): void {
+	/**
+	 * @param {number} value
+	 */
+	setSigma(value) {
 		this.sigma = Math.max(value, 0.1);
 	}
 
-	getSigma(): number {
+	getSigma() {
 		return this.sigma;
 	}
 
-	onStartDraw = (event: MouseEvent): void => {
+	/**
+	 * @param {MouseEvent} event
+	 */
+	onStartDraw = (event) => {
 		const canvas = unwrap(this.el);
 
 		this.bluring = true;
@@ -228,7 +275,10 @@ export class Blur extends Tool {
 		this.lastY = newLastY;
 	};
 
-	onProcessDraw = (event: MouseEvent): void => {
+	/**
+	 * @param {MouseEvent} event
+	 */
+	onProcessDraw = (event) => {
 		if (!this.bluring) {
 			return;
 		}
@@ -244,7 +294,7 @@ export class Blur extends Tool {
 		this.lastY = newLastY;
 	};
 
-	onStopDraw = (): void => {
+	onStopDraw = () => {
 		if (!this.bluring) {
 			return;
 		}
@@ -259,14 +309,18 @@ export class Blur extends Tool {
 		this.pushState(canvas.toDataURL());
 	};
 
-	blurAtPoint(_x: number, _y: number): void {
+	/**
+	 * @param {number} rawX
+	 * @param {number} rawY
+	 */
+	blurAtPoint(rawX, rawY) {
 		const canvas = unwrap(this.el);
 		const ctx = unwrap(canvas.getContext("2d"));
 
 		const radius = this.getRadius();
 		const sigma = this.getSigma();
-		const x = Math.round(_x);
-		const y = Math.round(_y);
+		const x = Math.round(rawX);
+		const y = Math.round(rawY);
 
 		const { width, height } = canvas;
 
@@ -303,7 +357,8 @@ export class Blur extends Tool {
 			}
 		}
 
-		const targetChannel: Pixel[] = [];
+		/** @type {Pixel[]} */
+		const targetChannel = [];
 		gaussBlur(sourceChannel, targetChannel, newImgWidth, newImgHeight, sigma);
 
 		for (let i = 0, l = newImgWidth * newImgHeight; i < l; ++i) {
@@ -339,7 +394,7 @@ export class Blur extends Tool {
 		ctx.restore();
 	}
 
-	onAfterEnable(): void {
+	onAfterEnable() {
 		const canvas = unwrap(this.el);
 
 		canvas.addEventListener("mousedown", this.onStartDraw);
@@ -347,7 +402,7 @@ export class Blur extends Tool {
 		canvas.addEventListener("mouseup", this.onStopDraw);
 	}
 
-	onBeforeDisable(): void {
+	onBeforeDisable() {
 		const canvas = unwrap(this.el);
 
 		this.bluring = false;

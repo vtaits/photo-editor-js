@@ -4,31 +4,35 @@
   "version": "1.0.0",
   "description": "Simple and customizable photo editor for web applications.",
   "files": [
-    "dist"
+    "dist",
+    "src",
+    "!src/**/*.test.js"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./src/index.js",
+  "module": "./src/index.js",
+  "types": "dist/ts/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./dist/ts/index.d.ts",
+      "import": "./src/index.js",
+      "default": "./src/index.js"
     },
     "./tools": {
-      "types": "./dist/tools/index.d.ts",
-      "import": "./dist/tools/index.js"
+      "types": "./dist/ts/tools/index.d.ts",
+      "import": "./src/tools/index.js",
+      "default": "./src/tools/index.js"
     }
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "tsup",
+    "build": "tsc -p tsconfig.build.json",
     "test": "bun run lint && bun run test:unit",
     "lint": "biome check src",
     "lint:fix": "biome check src --write --unsafe",
     "test:ts": "tsc",
     "test:unit": "bun test --coverage",
-    "test:unit:watch": "bun test --wathc",
+    "test:unit:watch": "bun test --watch",
     "prepare": "bun run clean && bun run build"
   },
   "repository": {
@@ -48,15 +52,15 @@
   },
   "homepage": "https://github.com/vtaits/photo-editor-js/tree/master/packages/photo-editor#readme",
   "devDependencies": {
-    "@biomejs/biome": "^2.0.0",
-    "@happy-dom/global-registrator": "^18.0.1",
-    "happy-dom": "^18.0.1",
-    "rimraf": "^6.0.1",
-    "tsup": "^8.5.0",
-    "typescript": "^5.8.3"
+    "@biomejs/biome": "^2.5.15",
+    "@happy-dom/global-registrator": "^20.14.5",
+    "@types/bun": "latest",
+    "happy-dom": "^20.14.5",
+    "rimraf": "^6.1.3",
+    "typescript": "^7.0.2"
   },
   "dependencies": {
-    "eventemitter3": "^5.0.1",
-    "krustykrab": "^1.1.0"
+    "eventemitter3": "^5.0.4",
+    "krustykrab": "^1.2.0"
   }
 }

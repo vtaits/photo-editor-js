@@ -1,27 +1,26 @@
-import {
-	type ReactElement,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
-import { PhotoEditor } from "../../../packages/photo-editor/src";
-import { Pencil } from "./Pencil";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { PhotoEditor } from "../../../packages/photo-editor/src/index.js";
+import { Pencil } from "./Pencil.js";
 
-type Tools = {
-	pencil: typeof Pencil;
-};
+/**
+ * @typedef {Object} Tools
+ * @property {typeof Pencil} pencil
+ */
 
-export function Draw(): ReactElement {
-	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const [currentTool, setCurrentTool] = useState<keyof Tools | null>(null);
-	const photoEditorRef = useRef<PhotoEditor<
+export function Draw() {
+	/** @type {React.RefObject<HTMLCanvasElement | null>} */
+	const canvasRef = useRef(null);
+	const [currentTool, setCurrentTool] = useState(
+		/** @type {keyof Tools | null} */ (null),
+	);
+	/** @type {React.RefObject<PhotoEditor<
 		{
 			pencil: typeof Pencil;
 		},
 		"pencil",
 		"current-canvas"
-	> | null>(null);
+	> | null>} */
+	const photoEditorRef = useRef(null);
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -38,9 +37,15 @@ export function Draw(): ReactElement {
 
 		photoEditorRef.current = photoEditor;
 
-		photoEditor.addListener("enableTool", (tool: keyof Tools) => {
-			setCurrentTool(tool);
-		});
+		photoEditor.addListener(
+			"enableTool",
+			/**
+			 * @param {keyof Tools} tool
+			 */
+			(tool) => {
+				setCurrentTool(tool);
+			},
+		);
 
 		photoEditor.addListener("disableTool", () => {
 			setCurrentTool(null);

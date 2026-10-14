@@ -1,4 +1,8 @@
-export const waitForImageComplete = (image: HTMLImageElement): Promise<void> =>
+/**
+ * @param {HTMLImageElement} image
+ * @returns {Promise<void>}
+ */
+export const waitForImageComplete = (image) =>
 	new Promise((resolve, reject) => {
 		const onLoad = () => {
 			image.removeEventListener("load", onLoad);

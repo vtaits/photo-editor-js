@@ -1,12 +1,5 @@
-import {
-	type ChangeEventHandler,
-	type ReactElement,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
-import { PhotoEditor } from "../../../packages/photo-editor/src";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { PhotoEditor } from "../../../packages/photo-editor/src/index.js";
 import {
 	Blur,
 	Brightness,
@@ -15,26 +8,30 @@ import {
 	Rectangle,
 	RotateLeft,
 	RotateRight,
-} from "../../../packages/photo-editor/src/tools";
+} from "../../../packages/photo-editor/src/tools/index.js";
 import Image from "../../assets/image.jpeg";
 
-type Tools = {
-	blur: typeof Blur;
-	crop: typeof Crop;
-	rectangle: typeof Rectangle;
-	rotateLeft: typeof RotateLeft;
-	rotateRight: typeof RotateRight;
-	contrast: typeof Contrast;
-	brightness: typeof Brightness;
-};
+/**
+ * @typedef {Object} Tools
+ * @property {typeof Blur} blur
+ * @property {typeof Crop} crop
+ * @property {typeof Rectangle} rectangle
+ * @property {typeof RotateLeft} rotateLeft
+ * @property {typeof RotateRight} rotateRight
+ * @property {typeof Contrast} contrast
+ * @property {typeof Brightness} brightness
+ */
 
-export function Editor(): ReactElement {
-	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const [currentTool, setCurrentTool] = useState<keyof Tools | null>(null);
-	const photoEditorRef = useRef<PhotoEditor<Tools, keyof Tools, "img"> | null>(
-		null,
+export function Editor() {
+	/** @type {React.RefObject<HTMLCanvasElement | null>} */
+	const canvasRef = useRef(null);
+	const [currentTool, setCurrentTool] = useState(
+		/** @type {keyof Tools | null} */ (null),
 	);
-	const sourceRef = useRef<HTMLImageElement>(null);
+	/** @type {React.RefObject<PhotoEditor<Tools, keyof Tools, "img"> | null>} */
+	const photoEditorRef = useRef(null);
+	/** @type {React.RefObject<HTMLImageElement | null>} */
+	const sourceRef = useRef(null);
 
 	const [radius, setRadius] = useState(10);
 	const [sigma, setSigma] = useState(3);
@@ -65,9 +62,15 @@ export function Editor(): ReactElement {
 
 		photoEditorRef.current = photoEditor;
 
-		photoEditor.addListener("enableTool", (tool: keyof Tools) => {
-			setCurrentTool(tool);
-		});
+		photoEditor.addListener(
+			"enableTool",
+			/**
+			 * @param {keyof Tools} tool
+			 */
+			(tool) => {
+				setCurrentTool(tool);
+			},
+		);
 
 		photoEditor.addListener("disableTool", () => {
 			setCurrentTool(null);
@@ -85,7 +88,10 @@ export function Editor(): ReactElement {
 		}
 	}, []);
 
-	const onChangeRadius = useCallback<ChangeEventHandler<HTMLInputElement>>(
+	const onChangeRadius = useCallback(
+		/**
+		 * @param {React.ChangeEvent<HTMLInputElement>} event
+		 */
 		(event) => {
 			const nextValue = Number(event.target.value);
 
@@ -95,7 +101,10 @@ export function Editor(): ReactElement {
 		[],
 	);
 
-	const onChangeSigma = useCallback<ChangeEventHandler<HTMLInputElement>>(
+	const onChangeSigma = useCallback(
+		/**
+		 * @param {React.ChangeEvent<HTMLInputElement>} event
+		 */
 		(event) => {
 			const nextValue = Number(event.target.value);
 
@@ -136,7 +145,10 @@ export function Editor(): ReactElement {
 		}
 	}, []);
 
-	const onChangeContrast = useCallback<ChangeEventHandler<HTMLInputElement>>(
+	const onChangeContrast = useCallback(
+		/**
+		 * @param {React.ChangeEvent<HTMLInputElement>} event
+		 */
 		(event) => {
 			const nextValue = Number(event.target.value);
 
@@ -153,7 +165,10 @@ export function Editor(): ReactElement {
 		}
 	}, []);
 
-	const onChangeBrightness = useCallback<ChangeEventHandler<HTMLInputElement>>(
+	const onChangeBrightness = useCallback(
+		/**
+		 * @param {React.ChangeEvent<HTMLInputElement>} event
+		 */
 		(event) => {
 			const nextValue = Number(event.target.value);
 

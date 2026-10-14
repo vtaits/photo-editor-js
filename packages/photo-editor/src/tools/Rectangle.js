@@ -1,20 +1,25 @@
 import { unwrap } from "krustykrab";
-import { Tool } from "../Tool";
+import { Tool } from "../Tool/index.js";
 
 export class Rectangle extends Tool {
-	originalImage: HTMLCanvasElement | null = null;
+	/** @type {HTMLCanvasElement | null} */
+	originalImage = null;
 
 	drawing = false;
 
-	startX: number | null = null;
+	/** @type {number | null} */
+	startX = null;
 
-	startY: number | null = null;
+	/** @type {number | null} */
+	startY = null;
 
-	finishX: number | null = null;
+	/** @type {number | null} */
+	finishX = null;
 
-	finishY: number | null = null;
+	/** @type {number | null} */
+	finishY = null;
 
-	showRectangle(): void {
+	showRectangle() {
 		const canvas = unwrap(this.el);
 		const ctx = unwrap(canvas.getContext("2d"));
 
@@ -49,7 +54,10 @@ export class Rectangle extends Tool {
 		ctx.stroke();
 	}
 
-	onStartDraw = (event: MouseEvent): void => {
+	/**
+	 * @param {MouseEvent} event
+	 */
+	onStartDraw = (event) => {
 		const canvas = unwrap(this.el);
 
 		const x = event.offsetX / (canvas.clientWidth / canvas.width);
@@ -61,7 +69,10 @@ export class Rectangle extends Tool {
 		this.startY = y;
 	};
 
-	onProcessDraw = (event: MouseEvent): void => {
+	/**
+	 * @param {MouseEvent} event
+	 */
+	onProcessDraw = (event) => {
 		const canvas = unwrap(this.el);
 
 		const x = event.offsetX / (canvas.clientWidth / canvas.width);
@@ -75,7 +86,7 @@ export class Rectangle extends Tool {
 		}
 	};
 
-	onStopDraw = (): void => {
+	onStopDraw = () => {
 		if (!this.drawing) {
 			return;
 		}
@@ -92,7 +103,7 @@ export class Rectangle extends Tool {
 		this.pushState(canvas.toDataURL());
 	};
 
-	onAfterEnable(): void {
+	onAfterEnable() {
 		const canvas = unwrap(this.el);
 
 		const { width, height } = canvas;
@@ -110,7 +121,7 @@ export class Rectangle extends Tool {
 		canvas.addEventListener("mouseup", this.onStopDraw);
 	}
 
-	onBeforeDisable(): void {
+	onBeforeDisable() {
 		const canvas = unwrap(this.el);
 
 		this.drawing = false;

@@ -1,14 +1,18 @@
 import { expect, mock, test } from "bun:test";
+import { PhotoEditor } from "./PhotoEditor.js";
+import { Tool } from "./Tool/index.js";
 
-import { PhotoEditor } from "./PhotoEditor";
-import { Tool, type ToolOptions } from "./Tool";
+/**
+ * @import { ToolOptions } from "./Tool/index.js"
+ * @import { PhotoEditorOptions, SourceType } from "./types.js"
+ */
 
-import type { PhotoEditorOptions, SourceType } from "./types";
-
-class SyncPhotoEditor<
-	Tools extends Record<string, typeof Tool>,
-	ToolKey extends string & keyof Tools,
-> extends PhotoEditor<Tools, ToolKey, "base64"> {
+/**
+ * @template {Record<string, typeof Tool>} Tools
+ * @template {string & keyof Tools} ToolKey
+ * @extends {PhotoEditor<Tools, ToolKey, "base64">}
+ */
+class SyncPhotoEditor extends PhotoEditor {
 	_init() {
 		if (!this._options) {
 			throw new Error("Options are not provided");
@@ -27,7 +31,7 @@ class SyncPhotoEditor<
 
 test("should throw an exception if element is not canvas", () => {
 	expect(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		new PhotoEditor("test");
 	}).toThrowError("Element for init PhotoEditor should be a canvas");
 });
@@ -35,7 +39,7 @@ test("should throw an exception if element is not canvas", () => {
 test("should throw an exception if tools is not object", () => {
 	expect(() => {
 		new PhotoEditor(document.createElement("canvas"), {
-			// @ts-ignore
+			// @ts-expect-error
 			tools: "123",
 		});
 	}).toThrowError("PhotoEditor tools should be an object");
@@ -44,7 +48,8 @@ test("should throw an exception if tools is not object", () => {
 test("should throw an exception if tools is null", () => {
 	expect(() => {
 		new PhotoEditor(document.createElement("canvas"), {
-			tools: null as unknown as Record<string, typeof Tool>,
+			// @ts-expect-error
+			tools: null,
 		});
 	}).toThrowError("PhotoEditor tools can't be null");
 });
@@ -53,7 +58,7 @@ test("should throw an exception if sourceType is invalid", () => {
 	expect(() => {
 		new PhotoEditor(document.createElement("canvas"), {
 			tools: {},
-			// @ts-ignore
+			// @ts-expect-error
 			sourceType: "test",
 		});
 	}).toThrowError(
@@ -66,7 +71,7 @@ test('should throw an exception if sourceType is "canvas" and source not canvas'
 		new PhotoEditor(document.createElement("canvas"), {
 			tools: {},
 			sourceType: "canvas",
-			// @ts-ignore
+			// @ts-expect-error
 			source: "test",
 		});
 	}).toThrowError(
@@ -79,7 +84,7 @@ test('should throw an exception if sourceType is "img" and source not image', ()
 		new PhotoEditor(document.createElement("canvas"), {
 			tools: {},
 			sourceType: "img",
-			// @ts-ignore
+			// @ts-expect-error
 			source: "test",
 		});
 	}).toThrowError('PhotoEditor source for sourceType "img" should be an image');
@@ -90,7 +95,8 @@ test('should throw an exception if sourceType is "base64" and source not string'
 		new PhotoEditor(document.createElement("canvas"), {
 			tools: {},
 			sourceType: "base64",
-			source: null as unknown as string,
+			// @ts-expect-error
+			source: null,
 		});
 	}).toThrowError(
 		'PhotoEditor source for sourceType "base64" should be a string',
@@ -105,24 +111,32 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
 	const tool2Mock = mock();
 
 	class Tool1 extends Tool {
-		constructor(options: ToolOptions) {
+		/**
+		 * @param {ToolOptions} options
+		 */
+		constructor(options) {
 			super(options);
 			tool1Mock(options);
 		}
 	}
 
 	class Tool2 extends Tool {
-		constructor(options: ToolOptions) {
+		/**
+		 * @param {ToolOptions} options
+		 */
+		constructor(options) {
 			super(options);
 			tool2Mock(options);
 		}
 	}
 
-	class WithSeparatedInit<
-		Tools extends Record<string, typeof Tool>,
-		ToolKey extends string & keyof Tools,
-		CurrentSource extends SourceType = "current-canvas",
-	> extends PhotoEditor<Tools, ToolKey, CurrentSource> {
+	/**
+	 * @template {Record<string, typeof Tool>} Tools
+	 * @template {string & keyof Tools} ToolKey
+	 * @template {SourceType} [CurrentSource="current-canvas"]
+	 * @extends {PhotoEditor<Tools, ToolKey, CurrentSource>}
+	 */
+	class WithSeparatedInit extends PhotoEditor {
 		_init() {
 			initMock();
 			return Promise.resolve();
@@ -133,13 +147,15 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
 		}
 	}
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<
+
+	/** @type {PhotoEditorOptions<
 		{
 			tool1: typeof Tool1;
 			tool2: typeof Tool2;
 		},
 		"base64"
-	> = {
+	>} */
+	const options = {
 		tools: {
 			tool1: Tool1,
 			tool2: Tool2,
@@ -185,11 +201,13 @@ test('should set correct initial state, init tools and emit "ready" event', asyn
 test('should not draw initialState if source-type is "current-canvas"', async () => {
 	const drawCurrentStateMock = mock();
 
-	class WithSeparatedInit<
-		Tools extends Record<string, typeof Tool>,
-		ToolKey extends string & keyof Tools,
-		CurrentSource extends SourceType = "current-canvas",
-	> extends PhotoEditor<Tools, ToolKey, CurrentSource> {
+	/**
+	 * @template {Record<string, typeof Tool>} Tools
+	 * @template {string & keyof Tools} ToolKey
+	 * @template {SourceType} [CurrentSource="current-canvas"]
+	 * @extends {PhotoEditor<Tools, ToolKey, CurrentSource>}
+	 */
+	class WithSeparatedInit extends PhotoEditor {
 		_init() {
 			return Promise.resolve();
 		}
@@ -201,13 +219,14 @@ test('should not draw initialState if source-type is "current-canvas"', async ()
 	// Fix missing method
 	el.toDataURL = mock();
 
-	const options: PhotoEditorOptions<
+	/** @type {PhotoEditorOptions<
 		{
 			tool1: typeof Tool;
 			tool2: typeof Tool;
 		},
 		"current-canvas"
-	> = {
+	>} */
+	const options = {
 		tools: {
 			tool1: Tool,
 			tool2: Tool,
@@ -225,11 +244,13 @@ test('should not draw initialState if source-type is "current-canvas"', async ()
 test('should draw initialState if source-type is not "current-canvas"', async () => {
 	const drawCurrentStateMock = mock();
 
-	class WithSeparatedInit<
-		Tools extends Record<string, typeof Tool>,
-		ToolKey extends keyof Tools,
-		CurrentSource extends SourceType = "current-canvas",
-	> extends PhotoEditor<Tools, string & ToolKey, CurrentSource> {
+	/**
+	 * @template {Record<string, typeof Tool>} Tools
+	 * @template {keyof Tools} ToolKey
+	 * @template {SourceType} [CurrentSource="current-canvas"]
+	 * @extends {PhotoEditor<Tools, string & ToolKey, CurrentSource>}
+	 */
+	class WithSeparatedInit extends PhotoEditor {
 		_init() {
 			return Promise.resolve();
 		}
@@ -238,13 +259,15 @@ test('should draw initialState if source-type is not "current-canvas"', async ()
 	}
 
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<
+
+	/** @type {PhotoEditorOptions<
 		{
 			tool1: typeof Tool;
 			tool2: typeof Tool;
 		},
 		"base64"
-	> = {
+	>} */
+	const options = {
 		tools: {
 			tool1: Tool,
 			tool2: Tool,
@@ -261,7 +284,8 @@ test('should draw initialState if source-type is not "current-canvas"', async ()
 
 test("should save state on pushState", () => {
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<Record<string, typeof Tool>, "base64"> = {
+	/** @type {PhotoEditorOptions<Record<string, typeof Tool>, "base64">} */
+	const options = {
 		tools: {},
 		sourceType: "base64",
 		source: "data:image/png;base64,test",
@@ -286,7 +310,8 @@ test("should save state on pushState", () => {
 
 test("should save state and slice extra states on pushState", () => {
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<Record<string, typeof Tool>, "base64"> = {
+	/** @type {PhotoEditorOptions<Record<string, typeof Tool>, "base64">} */
+	const options = {
 		tools: {},
 		sourceType: "base64",
 		source: "data:image/png;base64,test",
@@ -318,7 +343,8 @@ test("should save state and slice extra states on pushState", () => {
 
 test("should return correct currentState with getCurrentState", () => {
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<Record<string, typeof Tool>, "base64"> = {
+	/** @type {PhotoEditorOptions<Record<string, typeof Tool>, "base64">} */
+	const options = {
 		tools: {},
 		sourceType: "base64",
 		source: "data:image/png;base64,test",
@@ -338,13 +364,14 @@ test("should enable tool", () => {
 	const onEnableToolMock = mock();
 
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<
+	/** @type {PhotoEditorOptions<
 		{
 			tool1: typeof Tool;
 			tool2: typeof Tool;
 		},
 		"base64"
-	> = {
+	>} */
+	const options = {
 		tools: {
 			tool1: Tool,
 			tool2: Tool,
@@ -378,13 +405,14 @@ test("should disable enabled tool", () => {
 	const onDisableToolMock = mock();
 
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<
+	/** @type {PhotoEditorOptions<
 		{
 			tool1: typeof Tool;
 			tool2: typeof Tool;
 		},
 		"base64"
-	> = {
+	>} */
+	const options = {
 		tools: {
 			tool1: Tool,
 			tool2: Tool,
@@ -412,12 +440,13 @@ test("should toggle tool", () => {
 	const onDisableToolMock = mock();
 
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<
+	/** @type {PhotoEditorOptions<
 		{
 			tool1: typeof Tool;
 		},
 		"base64"
-	> = {
+	>} */
+	const options = {
 		tools: {
 			tool1: Tool,
 		},
@@ -448,13 +477,14 @@ test("should toggle tool", () => {
 
 test("should set touched state", () => {
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<
+	/** @type {PhotoEditorOptions<
 		{
 			tool1: typeof Tool;
 			tool2: typeof Tool;
 		},
 		"base64"
-	> = {
+	>} */
+	const options = {
 		tools: {
 			tool1: Tool,
 			tool2: Tool,
@@ -480,13 +510,14 @@ test("should set touched state", () => {
 
 test("should set previous state on undo call", () => {
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<
+	/** @type {PhotoEditorOptions<
 		{
 			tool1: typeof Tool;
 			tool2: typeof Tool;
 		},
 		"base64"
-	> = {
+	>} */
+	const options = {
 		tools: {
 			tool1: Tool,
 			tool2: Tool,
@@ -514,13 +545,14 @@ test("should set previous state on undo call", () => {
 
 test("should set next state on undo call", () => {
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<
+	/** @type {PhotoEditorOptions<
 		{
 			tool1: typeof Tool;
 			tool2: typeof Tool;
 		},
 		"base64"
-	> = {
+	>} */
+	const options = {
 		tools: {
 			tool1: Tool,
 			tool2: Tool,
@@ -561,13 +593,14 @@ test("should set destroyed state and destroy all tools", async () => {
 	}
 
 	const el = document.createElement("canvas");
-	const options: PhotoEditorOptions<
+	/** @type {PhotoEditorOptions<
 		{
 			tool1: typeof Tool;
 			tool2: typeof Tool;
 		},
 		"base64"
-	> = {
+	>} */
+	const options = {
 		tools: {
 			tool1: Tool1,
 			tool2: Tool2,

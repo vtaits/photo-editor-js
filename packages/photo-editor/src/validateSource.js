@@ -1,21 +1,23 @@
-import type { Tool } from "./Tool";
-import type { PhotoEditorOptions, SourceType } from "./types";
+/**
+ * @import { Tool } from "./Tool/index.js"
+ * @import { PhotoEditorOptions, SourceType } from "./types.js"
+ */
 
-export const validateSource = <
-	Tools extends Record<string, typeof Tool>,
-	CurrentSource extends SourceType,
->(
-	options: PhotoEditorOptions<Tools, CurrentSource>,
-): void => {
+/**
+ * @template {Record<string, typeof Tool>} Tools
+ * @template {SourceType} CurrentSource
+ * @param {PhotoEditorOptions<Tools, CurrentSource>} options
+ */
+export const validateSource = (options) => {
 	switch (options.sourceType) {
 		case "current-canvas":
 			return;
 
 		case "canvas": {
-			const { source } = options as unknown as PhotoEditorOptions<
+			const { source } = /** @type {PhotoEditorOptions<
 				Tools,
 				"canvas"
-			>;
+			>}*/ (options);
 
 			if (!(source instanceof HTMLElement) || source.tagName !== "CANVAS") {
 				throw new Error(
@@ -27,7 +29,10 @@ export const validateSource = <
 		}
 
 		case "img": {
-			const { source } = options as unknown as PhotoEditorOptions<Tools, "img">;
+			const { source } = /** @type {PhotoEditorOptions<
+				Tools,
+				"img"
+			>}*/ (options);
 
 			if (!(source instanceof HTMLElement) || source.tagName !== "IMG") {
 				throw new Error(
@@ -39,10 +44,10 @@ export const validateSource = <
 		}
 
 		case "base64": {
-			const { source } = options as unknown as PhotoEditorOptions<
+			const { source } = /** @type {PhotoEditorOptions<
 				Tools,
 				"base64"
-			>;
+			>}*/ (options);
 
 			if (typeof source !== "string") {
 				throw new Error(

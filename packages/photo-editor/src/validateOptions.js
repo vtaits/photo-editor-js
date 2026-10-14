@@ -1,13 +1,15 @@
-import type { Tool } from "./Tool";
-import type { PhotoEditorOptions, SourceType } from "./types";
-import { validateSource } from "./validateSource";
+import { validateSource } from "./validateSource.js";
+/**
+ * @import { Tool } from "./Tool/index.js"
+ * @import { PhotoEditorOptions, SourceType } from "./types.js"
+ */
 
-export const validateOptions = <
-	Tools extends Record<string, typeof Tool>,
-	CurrentSource extends SourceType,
->(
-	options: PhotoEditorOptions<Tools, CurrentSource>,
-): void => {
+/**
+ * @template {Record<string, typeof Tool>} Tools
+ * @template {SourceType} CurrentSource
+ * @param {PhotoEditorOptions<Tools, CurrentSource>} options
+ */
+export const validateOptions = (options) => {
 	if (typeof options !== "object") {
 		throw new Error("PhotoEditor options should be an object");
 	}

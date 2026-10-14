@@ -1,8 +1,6 @@
 import { expect, mock, test } from "bun:test";
 import { EventEmitter } from "eventemitter3";
-
-import { Tool } from "./Tool";
-import type { ToolOptions } from "./types";
+import { Tool } from "./Tool.js";
 
 const toolOptions = {
 	el: document.createElement("canvas"),
@@ -14,27 +12,28 @@ const toolOptions = {
 
 test("should throw an exception if options is not object", () => {
 	expect(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		new Tool("test");
 	}).toThrowError("Tool options should be an object");
 });
 
 test("should throw an exception if options is null", () => {
 	expect(() => {
-		new Tool(null as unknown as ToolOptions);
+		// @ts-expect-error
+		new Tool(null);
 	}).toThrowError("Tool options can't be null");
 });
 
 test("should throw an exception if element is not canvas", () => {
 	expect(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		new Tool({});
 	}).toThrowError("Element for init Tool should be a canvas");
 });
 
 test("should throw an exception if pushState is not a function", () => {
 	expect(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		new Tool({
 			el: document.createElement("canvas"),
 			updateState: () => {},
@@ -44,7 +43,7 @@ test("should throw an exception if pushState is not a function", () => {
 
 test("should throw an exception if updateState is not a function", () => {
 	expect(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		new Tool({
 			el: document.createElement("canvas"),
 			pushState: () => {},
@@ -54,7 +53,7 @@ test("should throw an exception if updateState is not a function", () => {
 
 test("should throw an exception if disable is not a function", () => {
 	expect(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		new Tool({
 			el: document.createElement("canvas"),
 			pushState: () => {},
@@ -65,7 +64,7 @@ test("should throw an exception if disable is not a function", () => {
 
 test("should throw an exception if touch is not a function", () => {
 	expect(() => {
-		// @ts-ignore
+		// @ts-expect-error
 		new Tool({
 			el: document.createElement("canvas"),
 			pushState: () => {},

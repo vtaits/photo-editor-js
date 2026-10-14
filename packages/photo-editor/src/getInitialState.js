@@ -1,14 +1,20 @@
 // TO DO: tests
 import { unwrap } from "krustykrab";
-import type { Tool } from "./Tool";
-import type { PhotoEditorOptions, SourceType } from "./types";
-import { waitForImageComplete } from "./waitForImageComplete";
+import { waitForImageComplete } from "./waitForImageComplete.js";
+
+/**
+ * @import { Tool } from "./Tool/index.js"
+ * @import { PhotoEditorOptions, SourceType } from "./types.js"
+ */
 
 const emptyImageWarning = "PhotoEditor: source image is loaded with error";
 
-export const imageToBase64 = async (
-	image: HTMLImageElement,
-): Promise<string> => {
+/**
+ *
+ * @param {HTMLImageElement} image
+ * @returns {Promise<string>}
+ */
+export const imageToBase64 = async (image) => {
 	if (image.complete) {
 		if (image.naturalWidth === 0) {
 			console.warn(emptyImageWarning);
@@ -31,32 +37,33 @@ export const imageToBase64 = async (
 
 	return fakeCanvasEl.toDataURL();
 };
-
-export const getInitialState = async <
-	Tools extends Record<string, typeof Tool>,
-	CurrentSource extends SourceType,
->(
-	el: HTMLCanvasElement,
-	options: PhotoEditorOptions<Tools, CurrentSource>,
-): Promise<string> => {
+/**
+ * @template {Record<string, typeof Tool>} Tools
+ * @template {SourceType} CurrentSource
+ * @param {HTMLCanvasElement} el
+ * @param {PhotoEditorOptions<Tools, CurrentSource>} options
+ * @returns {Promise<string>}
+ */
+export const getInitialState = async (el, options) => {
 	switch (options.sourceType) {
 		case "current-canvas":
 			return el.toDataURL();
 
 		case "canvas":
-			return (
-				options as unknown as PhotoEditorOptions<Tools, "canvas">
+			return /** @type {PhotoEditorOptions<Tools, "canvas">} */ (
+				options
 			).source.toDataURL();
 
 		case "img": {
 			const base64image = await imageToBase64(
-				(options as unknown as PhotoEditorOptions<Tools, "img">).source,
+				/** @type {PhotoEditorOptions<Tools, "img">} */ (options).source,
 			);
 			return base64image;
 		}
 
 		case "base64":
-			return (options as unknown as PhotoEditorOptions<Tools, "base64">).source;
+			return /** @type {PhotoEditorOptions<Tools, "base64">} */ (options)
+				.source;
 
 		default:
 			throw new Error(

@@ -1,47 +1,59 @@
 import { EventEmitter } from "eventemitter3";
-import { getInitialState } from "./getInitialState";
-import { Tool } from "./Tool";
-import type { PhotoEditorOptions, SourceType } from "./types";
-import { validateOptions } from "./validateOptions";
-import { waitForImageComplete } from "./waitForImageComplete";
+import { getInitialState } from "./getInitialState.js";
+import { Tool } from "./Tool/index.js";
+import { validateOptions } from "./validateOptions.js";
+import { waitForImageComplete } from "./waitForImageComplete.js";
 
-// biome-ignore lint/suspicious/noExplicitAny: options for any type of tools
-const defaultOptions: Partial<PhotoEditorOptions<any, "current-canvas">> = {
+/**
+ * @import { PhotoEditorOptions, SourceType } from "./types.js"
+ */
+
+/** @type {Partial<PhotoEditorOptions<any, "current-canvas">>} */
+const defaultOptions = {
 	sourceType: "current-canvas",
 };
 
-export class PhotoEditor<
-	Tools extends Record<string, typeof Tool>,
-	ToolKey extends string & keyof Tools,
-	CurrentSource extends SourceType = "current-canvas",
-> extends EventEmitter {
-	_el: HTMLCanvasElement | null = null;
+/**
+ * @template {Record<string, typeof Tool>} Tools
+ * @template {string & keyof Tools} ToolKey
+ * @template {SourceType} [CurrentSource="current-canvas"]
+ */
+export class PhotoEditor extends EventEmitter {
+	/** @type {HTMLCanvasElement | null} */
+	_el = null;
 
-	_options: PhotoEditorOptions<Tools, CurrentSource> | null = null;
+	/** @type {PhotoEditorOptions<Tools, CurrentSource> | null} */
+	_options = null;
 
 	_currentState = -1;
 
-	_states: string[] = [];
+	/** @type {string[]} */
+	_states = [];
 
-	_enabledToolId: ToolKey | null = null;
+	/** @type {ToolKey | null} */
+	_enabledToolId = null;
 
 	_touched = false;
 
 	_destroyed = false;
 
-	tools: {
+	/** @type {{
 		[key in ToolKey]: InstanceType<Tools[key]>;
-	} = {} as {
+	}} */
+	tools = /** @type {{
 		[key in ToolKey]: InstanceType<Tools[key]>;
-	};
+	}} */ ({});
 
-	constructor(
-		el: HTMLCanvasElement,
-		editorOptions: PhotoEditorOptions<Tools, CurrentSource>,
-	) {
+	/**
+	 *
+	 * @param {HTMLCanvasElement} el
+	 * @param {PhotoEditorOptions<Tools, CurrentSource>} editorOptions
+	 */
+	constructor(el, editorOptions) {
 		super();
 
-		const options: PhotoEditorOptions<Tools, CurrentSource> = {
+		/** @type {PhotoEditorOptions<Tools, CurrentSource>} */
+		const options = {
 			...defaultOptions,
 			...editorOptions,
 		};
@@ -58,7 +70,7 @@ export class PhotoEditor<
 		this._init();
 	}
 
-	async _init(): Promise<void> {
+	async _init() {
 		if (!this._el) {
 			throw new Error("Canvas is not provided");
 		}
@@ -81,7 +93,7 @@ export class PhotoEditor<
 		this.emit("ready");
 	}
 
-	_initTools(): void {
+	_initTools() {
 		if (!this._el) {
 			throw new Error("Canvas is not provided");
 		}
@@ -95,7 +107,7 @@ export class PhotoEditor<
 		const el = this._el;
 
 		for (const toolIdRaw of Object.keys(tools)) {
-			const toolId = toolIdRaw as ToolKey;
+			const toolId = /** @type {ToolKey} */ (toolIdRaw);
 
 			const ToolConstructor = tools[toolId];
 
@@ -105,13 +117,15 @@ export class PhotoEditor<
 				);
 			}
 
-			const tool = new ToolConstructor({
-				el,
-				pushState: this._pushState,
-				updateState: this._updateState,
-				disable: this.disableTool,
-				touch: this.touch,
-			}) as InstanceType<Tools[ToolKey]>;
+			const tool = /** @type {InstanceType<Tools[ToolKey]>} */ (
+				new ToolConstructor({
+					el,
+					pushState: this._pushState,
+					updateState: this._updateState,
+					disable: this.disableTool,
+					touch: this.touch,
+				})
+			);
 
 			if (!(tool instanceof Tool)) {
 				throw new Error(
@@ -123,7 +137,10 @@ export class PhotoEditor<
 		}
 	}
 
-	_pushState = (state: string): void => {
+	/**
+	 * @param {string} state
+	 */
+	_pushState = (state) => {
 		const slicedStates = this._states.slice(0, this._currentState + 1);
 		slicedStates.push(state);
 
@@ -131,14 +148,17 @@ export class PhotoEditor<
 		this._states = slicedStates;
 	};
 
-	_updateState = (state: string): void => {
+	/**
+	 * @param {string} state
+	 */
+	_updateState = (state) => {
 		const slicedStates = this._states.slice(0, this._currentState);
 		slicedStates.push(state);
 
 		this._states = slicedStates;
 	};
 
-	async _drawCurrentState(): Promise<void> {
+	async _drawCurrentState() {
 		// TO DO: test
 		const base64 = this.getCurrentState();
 
@@ -168,21 +188,24 @@ export class PhotoEditor<
 		ctx.drawImage(image, 0, 0);
 	}
 
-	destroy(): void {
+	destroy() {
 		this._destroyed = true;
 
 		for (const toolId of Object.keys(this.tools)) {
-			const tool = this.tools[toolId as ToolKey];
+			const tool = this.tools[/** @type {ToolKey} */ (toolId)];
 
 			tool.destroy();
 		}
 	}
 
-	getCurrentState(): string {
+	getCurrentState() {
 		return this._states[this._currentState];
 	}
 
-	enableTool(toolId: ToolKey): void {
+	/**
+	 * @param {ToolKey} toolId
+	 */
+	enableTool(toolId) {
 		if (!this.tools[toolId]) {
 			throw new Error(`PhotoEditor tool with id "${toolId}" is not defined`);
 		}
@@ -212,7 +235,10 @@ export class PhotoEditor<
 		}
 	};
 
-	toggleTool(toolId: ToolKey): void {
+	/**
+	 * @param {ToolKey} toolId
+	 */
+	toggleTool(toolId) {
 		if (this._enabledToolId === toolId) {
 			this.disableTool();
 		} else {
@@ -224,7 +250,7 @@ export class PhotoEditor<
 		this._touched = true;
 	};
 
-	undo(): void {
+	undo() {
 		if (this._currentState > 0) {
 			--this._currentState;
 
@@ -234,7 +260,7 @@ export class PhotoEditor<
 		}
 	}
 
-	redo(): void {
+	redo() {
 		if (this._currentState < this._states.length - 1) {
 			++this._currentState;
 

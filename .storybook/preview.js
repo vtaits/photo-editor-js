@@ -1,6 +1,9 @@
-import type { Preview } from '@storybook/react-vite';
+/**
+ * @import { Preview } from '@storybook/react-vite'
+ */
 
-const preview: Preview = {
+/** @type {Preview} */
+const preview = {
   parameters: {
     actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {

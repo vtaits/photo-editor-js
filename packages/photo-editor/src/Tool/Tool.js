@@ -1,21 +1,35 @@
 import { EventEmitter } from "eventemitter3";
 
-import type { ToolOptions } from "./types";
+/**
+ * @import {ToolOptions} from "./types.js"
+ */
 
 export class Tool extends EventEmitter {
-	el: HTMLCanvasElement | null = null;
+	/** @type {HTMLCanvasElement | null} */
+	el = null;
 
 	enabled = false;
 
-	pushState: (nextState: string) => void = () => {};
+	/**
+	 * @param {string} _nextState
+	 * @returns {void}
+	 */
+	pushState = (_nextState) => {};
 
-	updateState: (nextState: string) => void = () => {};
+	/**
+	 * @param {string} _nextState
+	 * @returns {void}
+	 */
+	updateState = (_nextState) => {};
 
-	touch: () => void = () => {};
+	touch = () => {};
 
-	disable: () => void = () => {};
+	disable = () => {};
 
-	constructor(options: ToolOptions) {
+	/**
+	 * @param {ToolOptions} options
+	 */
+	constructor(options) {
 		super();
 
 		if (typeof options !== "object") {
@@ -60,17 +74,17 @@ export class Tool extends EventEmitter {
 		this.touch = options.touch;
 	}
 
-	onBeforeDisable(): void {}
+	onBeforeDisable() {}
 
-	onAfterDisable(): void {}
+	onAfterDisable() {}
 
-	onBeforeEnable(): void {}
+	onBeforeEnable() {}
 
-	onAfterEnable(): void {}
+	onAfterEnable() {}
 
-	onBeforeDestroy(): void {}
+	onBeforeDestroy() {}
 
-	disableFromEditor(): void {
+	disableFromEditor() {
 		if (this.onBeforeDisable) {
 			this.onBeforeDisable();
 		}
@@ -82,7 +96,7 @@ export class Tool extends EventEmitter {
 		}
 	}
 
-	enableFromEditor(): void {
+	enableFromEditor() {
 		if (this.onBeforeEnable) {
 			this.onBeforeEnable();
 		}
@@ -94,11 +108,11 @@ export class Tool extends EventEmitter {
 		}
 	}
 
-	destroy(): void {
+	destroy() {
 		if (this.onBeforeDestroy) {
 			this.onBeforeDestroy();
 		}
 	}
 
-	reset(): void {}
+	reset() {}
 }

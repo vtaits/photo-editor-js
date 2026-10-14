@@ -1,8 +1,8 @@
 import { unwrap } from "krustykrab";
-import { Tool } from "../Tool";
+import { Tool } from "../Tool/index.js";
 
-export class RotateLeft extends Tool {
-	onAfterEnable(): void {
+export class RotateRight extends Tool {
+	onAfterEnable() {
 		const canvas = unwrap(this.el);
 		const ctx = unwrap(canvas.getContext("2d"));
 
@@ -16,7 +16,7 @@ export class RotateLeft extends Tool {
 
 		otherCtx.clearRect(0, 0, width, height);
 		otherCtx.translate(height / 2, width / 2);
-		otherCtx.rotate(-Math.PI / 2);
+		otherCtx.rotate(Math.PI / 2);
 		otherCtx.translate(-width / 2, -height / 2);
 		otherCtx.drawImage(canvas, 0, 0);
 

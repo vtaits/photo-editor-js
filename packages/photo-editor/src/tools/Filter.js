@@ -1,14 +1,18 @@
 import { unwrap } from "krustykrab";
-import { Tool } from "../Tool";
+import { Tool } from "../Tool/index.js";
 
 export class Filter extends Tool {
 	value = 0;
 
 	applied = false;
 
-	originalImageData: ImageData | null = null;
+	/** @type {ImageData | null} */
+	originalImageData = null;
 
-	setValue(value: number): void {
+	/**
+	 * @param {number} value
+	 */
+	setValue(value) {
 		const newValue = Math.min(Math.max(value, -1), 1);
 		if (newValue === this.value) {
 			return;
@@ -18,15 +22,15 @@ export class Filter extends Tool {
 		this.apply();
 	}
 
-	getValue(): number {
+	getValue() {
 		return this.value;
 	}
 
-	newImageData(): ImageData {
+	newImageData() {
 		return unwrap(this.originalImageData);
 	}
 
-	apply(): void {
+	apply() {
 		const canvas = unwrap(this.el);
 		const ctx = unwrap(canvas.getContext("2d"));
 
@@ -40,7 +44,7 @@ export class Filter extends Tool {
 		}
 	}
 
-	onAfterEnable(): void {
+	onAfterEnable() {
 		const canvas = unwrap(this.el);
 		const ctx = unwrap(canvas.getContext("2d"));
 		const { width, height } = canvas;
@@ -48,7 +52,7 @@ export class Filter extends Tool {
 		this.originalImageData = ctx.getImageData(0, 0, width, height);
 	}
 
-	onBeforeDisable(): void {
+	onBeforeDisable() {
 		this.value = 0;
 		this.applied = false;
 		this.originalImageData = null;

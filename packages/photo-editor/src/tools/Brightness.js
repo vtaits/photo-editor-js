@@ -1,7 +1,7 @@
-import { Filter } from "./Filter";
+import { Filter } from "./Filter.js";
 
 export class Brightness extends Filter {
-	newImageData = (): ImageData => {
+	newImageData = () => {
 		const value = this.getValue();
 
 		if (!this.originalImageData) {
